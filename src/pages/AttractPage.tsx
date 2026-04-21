@@ -16,27 +16,35 @@ export function AttractPage() {
 
   return (
     <ScreenCard title={quizPtContent.title} subtitle={quizPtContent.subtitle}>
-      <Stack justifyContent="space-between" height="100%">
+      <Stack justifyContent="space-between" height="100%" gap={4}>
         <Box
           sx={{
             flex: 1,
-            borderRadius: 3,
+            borderRadius: 4,
             background:
-              "linear-gradient(140deg, rgba(0,47,108,0.95) 0%, rgba(0,47,108,0.75) 65%, rgba(255,184,28,0.8) 100%)",
+              "linear-gradient(125deg, rgba(0,47,108,0.96) 0%, rgba(15,74,153,0.8) 48%, rgba(255,184,28,0.82) 100%)",
             color: "white",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            p: 4,
+            p: { xs: 3, md: 6 },
+            border: "1px solid rgba(229,226,225,0.16)",
+            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.05)",
           }}
         >
-          <Typography variant="h4" align="center" maxWidth={720}>
-            Boutique de carnes do mundo
-          </Typography>
+          <Stack spacing={2.5} alignItems="center">
+            <Typography variant="h3" align="center" maxWidth={900}>
+              Boutique de carnes do mundo
+            </Typography>
+            <Typography variant="h6" align="center" maxWidth={860} sx={{ opacity: 0.95 }}>
+              Experiência interativa para conhecer o cordeiro uruguaio, responder rápido e retirar
+              seu brinde.
+            </Typography>
+          </Stack>
         </Box>
 
-        <Box display="flex" justifyContent="center" pt={3}>
-          <Button size="large" onClick={() => navigate(ROUTES.language)}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button size="large" variant="contained" onClick={() => navigate(ROUTES.language)}>
             {quizPtContent.ctaLabel}
           </Button>
         </Box>

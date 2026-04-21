@@ -16,19 +16,18 @@ export function BrandLogo({ size = 120 }: BrandLogoProps) {
         sx={{
           width: size,
           height: size * 0.32,
-          border: "1px dashed",
-          borderColor: "primary.main",
-          borderRadius: 1,
+          border: "1px dashed rgba(255,184,28,0.7)",
+          borderRadius: 1.5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           px: 1,
-          bgcolor: "rgba(0,47,108,0.04)",
+          bgcolor: "rgba(0,47,108,0.25)",
         }}
       >
         <Typography
           variant="caption"
-          sx={{ color: "primary.main", fontWeight: 700, textAlign: "center" }}
+          sx={{ color: "secondary.main", fontWeight: 700, textAlign: "center" }}
         >
           {t("missingLogoLabel")}
         </Typography>

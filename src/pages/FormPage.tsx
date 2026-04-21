@@ -28,7 +28,7 @@ export function FormPage() {
         <Box
           sx={{
             display: "grid",
-            gap: 2,
+            gap: 2.5,
             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           }}
         >
@@ -56,14 +56,21 @@ export function FormPage() {
                         field.id === "buysUruguayMeat"
                           ? "repeat(2, minmax(0, 1fr))"
                           : { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-                      gap: 1,
+                      gap: 1.2,
                       "& .MuiToggleButton-root": {
-                        minHeight: 56,
-                        borderRadius: 2,
-                        border: "1px solid",
-                        borderColor: "rgba(0,47,108,0.2)",
+                        minHeight: 64,
+                        borderRadius: 3,
+                        border: "1px solid rgba(229,226,225,0.18)",
+                        backgroundColor: "rgba(28,27,27,0.76)",
                         textTransform: "none",
                         fontWeight: 700,
+                        fontSize: "1rem",
+                        color: "text.primary",
+                        "&.Mui-selected": {
+                          backgroundColor: "rgba(0,47,108,0.88)",
+                          borderColor: "secondary.main",
+                          color: "common.white",
+                        },
                       },
                     }}
                   >
@@ -85,8 +92,10 @@ export function FormPage() {
           })}
         </Box>
 
-        <Stack direction="row" justifyContent="flex-end">
-          <Button onClick={submitStaticForm}>{t("continueLabel")}</Button>
+        <Stack direction="row" justifyContent="flex-end" mt={1}>
+          <Button variant="contained" onClick={submitStaticForm}>
+            {t("continueLabel")}
+          </Button>
         </Stack>
       </Stack>
     </ScreenCard>
