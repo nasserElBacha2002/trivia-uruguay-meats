@@ -21,6 +21,10 @@ type SessionState = {
   answers: QuizAnswer[];
   score: number;
   quizCompleted: boolean;
+  /** Backend `participants.id` after successful form submit. */
+  participantId: number | null;
+  /** Backend `quiz_sessions.id` for this kiosk run. */
+  sessionId: number | null;
 };
 
 type SessionStore = {
@@ -28,7 +32,10 @@ type SessionStore = {
   setCurrentStep: (step: SessionStep) => void;
   enterLanguage: () => void;
   enterForm: (language: Language) => void;
-  setLeadData: (leadData: LeadSubmission) => void;
+  setLeadData: (
+    leadData: LeadSubmission,
+    backendIds?: { participantId: number; sessionId: number },
+  ) => void;
   submitAnswer: (answer: QuizAnswer) => void;
   goToNextQuestion: (totalQuestions: number) => void;
   finishQuiz: (totalQuestions: number) => void;
@@ -44,6 +51,8 @@ const initialState: SessionState = {
   answers: [],
   score: 0,
   quizCompleted: false,
+  participantId: null,
+  sessionId: null,
 };
 
 const SessionContext = createContext<SessionStore | null>(null);
@@ -71,16 +80,21 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const setLeadData = useCallback((leadData: LeadSubmission) => {
-    setState((prev) => ({
-      ...prev,
-      leadData,
-      currentQuestionIndex: 0,
-      answers: [],
-      score: 0,
-      quizCompleted: false,
-    }));
-  }, []);
+  const setLeadData = useCallback(
+    (leadData: LeadSubmission, backendIds?: { participantId: number; sessionId: number }) => {
+      setState((prev) => ({
+        ...prev,
+        leadData,
+        currentQuestionIndex: 0,
+        answers: [],
+        score: 0,
+        quizCompleted: false,
+        participantId: backendIds != null ? backendIds.participantId : prev.participantId,
+        sessionId: backendIds != null ? backendIds.sessionId : prev.sessionId,
+      }));
+    },
+    [],
+  );
 
   const submitAnswer = useCallback((answer: QuizAnswer) => {
     setState((prev) => {

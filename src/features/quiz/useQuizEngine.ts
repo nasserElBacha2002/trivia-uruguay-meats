@@ -4,6 +4,7 @@ import { ROUTES } from "../../config/routes";
 import { getQuizContent } from "../../content/quizContent";
 import type { QuizAnswer, FeedbackState } from "./quizTypes";
 import { useSessionStore } from "../session/useSessionStore";
+import { submitQuizAnswer as persistQuizAnswer } from "../../services/triviaApi";
 
 export function useQuizEngine() {
   const navigate = useNavigate();
@@ -58,6 +59,12 @@ export function useQuizEngine() {
 
     setSelectedOptionId(optionId);
     submitAnswer(answer);
+    const sid = state.sessionId;
+    if (sid != null) {
+      void persistQuizAnswer(sid, answer).catch((err) => {
+        console.error("[triviaApi] Failed to persist quiz answer", err);
+      });
+    }
     setFeedbackState({
       isVisible: true,
       isCorrect,

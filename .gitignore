@@ -20,6 +20,9 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+!backend/.env.example
+
+backend/data/*.db
 
 # OS / editor files
 .DS_Store

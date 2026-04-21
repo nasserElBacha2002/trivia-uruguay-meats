@@ -44,6 +44,7 @@ export const resources = {
       attractBadgePadraoLabel: "Padrão",
       attractBadgePadraoTitle: "Exportação premium",
       attractBrandMark: "Uruguay Meats",
+      apiParticipantError: "Não foi possível salvar seus dados. Verifique a conexão e tente novamente.",
     },
   },
   en: {
@@ -91,6 +92,7 @@ export const resources = {
       attractBadgePadraoLabel: "Standard",
       attractBadgePadraoTitle: "Premium export",
       attractBrandMark: "Uruguay Meats",
+      apiParticipantError: "We could not save your details. Check the connection and try again.",
     },
   },
 } as const;

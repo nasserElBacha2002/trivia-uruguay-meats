@@ -14,6 +14,7 @@ import {
   type LeadFormValues,
 } from "../features/lead/leadTypes";
 import { useSessionStore } from "../features/session/useSessionStore";
+import { createParticipantSession } from "../services/triviaApi";
 import type { QuizDataCollectionField, QuizFieldOption } from "../types/quizContent";
 
 const compactFieldSx = {
@@ -57,6 +58,7 @@ export function FormPage() {
     control,
     register,
     handleSubmit,
+    setError,
     formState: { errors, isValid, isSubmitting },
   } = useForm<LeadFormValues, unknown, LeadSchema>({
     resolver: zodResolver(leadSchema),
@@ -64,12 +66,30 @@ export function FormPage() {
     mode: "onChange",
   });
 
-  const onSubmit = (values: LeadSchema) => {
+  const onSubmit = async (values: LeadSchema) => {
     const payload = mapLeadFormValuesToSubmission(values, state.language);
+    const quizMeta = getQuizContent(state.language);
 
-    setLeadData(payload);
-    setCurrentStep("quiz");
-    navigate(ROUTES.quiz);
+    try {
+      const { participantId, sessionId } = await createParticipantSession({
+        name: payload.name,
+        email: payload.email,
+        country: payload.country,
+        sectorId: values.sectorId,
+        buysUruguayMeat: payload.buysUruguayMeat,
+        language: payload.language,
+        quizVersion: quizMeta.slug,
+      });
+      setLeadData(payload, { participantId, sessionId });
+      setCurrentStep("quiz");
+      navigate(ROUTES.quiz);
+    } catch (err) {
+      console.error(err);
+      setError("root", {
+        type: "server",
+        message: t("apiParticipantError"),
+      });
+    }
   };
 
   const renderTextBlock = (field: QuizDataCollectionField | undefined, regKey: "name" | "email" | "country") => {
@@ -375,6 +395,22 @@ export function FormPage() {
             />
           ) : null}
         </Box>
+
+        {errors.root?.message ? (
+          <Typography
+            role="alert"
+            sx={{
+              color: "#ffb4ab",
+              fontSize: "0.88rem",
+              maxWidth: 960,
+              width: "100%",
+              mx: "auto",
+              px: 0.5,
+            }}
+          >
+            {errors.root.message}
+          </Typography>
+        ) : null}
 
         <Paper
           elevation={0}
