@@ -2,7 +2,6 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import { useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
@@ -33,34 +32,87 @@ export function AttractPage() {
   }, [resetSession, shouldResetSession]);
 
   return (
-    <ScreenCard>
-      <Stack justifyContent="space-between" height="100%" gap={4}>
+    <Box sx={{ height: "100%", position: "relative", borderRadius: 4, overflow: "hidden" }}>
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          background:
+            "linear-gradient(180deg, rgba(0,27,68,0.2) 0%, rgba(0,27,68,0.74) 46%, rgba(0,27,68,0.94) 100%)",
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          opacity: 0.3,
+          backgroundImage:
+            "repeating-linear-gradient(120deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 18px)",
+        }}
+      />
+
+      <Stack
+        justifyContent="space-between"
+        alignItems="center"
+        height="100%"
+        gap={4}
+        sx={{
+          position: "relative",
+          zIndex: 2,
+          py: { xs: 6, md: 8 },
+          px: { xs: 1, md: 4 },
+          textAlign: "center",
+        }}
+      >
         <Box
           sx={{
-            flex: 1,
-            borderRadius: 4,
-            background:
-              "linear-gradient(125deg, rgba(0,47,108,0.96) 0%, rgba(15,74,153,0.8) 48%, rgba(255,184,28,0.82) 100%)",
-            color: "white",
+            maxWidth: 1080,
+            mt: { xs: 3, md: 6 },
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: { xs: 3, md: 6 },
-            border: "1px solid rgba(229,226,225,0.16)",
-            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.05)",
+            flexDirection: "column",
+            gap: 2.5,
           }}
         >
-          <Stack spacing={2.5} alignItems="center">
-            <Typography variant="h3" align="center" maxWidth={900}>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              letterSpacing: "0.22em",
+              opacity: 0.56,
+              fontSize: { xs: "0.68rem", md: "0.78rem" },
+              textTransform: "uppercase",
+            }}
+          >
+            Uruguay Lamb
+          </Typography>
+          <Typography
+            align="center"
+            sx={{
+              fontSize: { xs: "2.5rem", md: "4.5rem", lg: "5.15rem" },
+              lineHeight: 1.02,
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              textShadow: "0 18px 48px rgba(0,0,0,0.45)",
+            }}
+          >
               {quizContent.title}
-            </Typography>
-            <Typography variant="h6" align="center" maxWidth={860} sx={{ opacity: 0.95 }}>
-              {quizContent.subtitle}
-            </Typography>
-          </Stack>
+          </Typography>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{
+              maxWidth: 900,
+              opacity: 0.84,
+              fontWeight: 400,
+              fontSize: { xs: "1.08rem", md: "1.4rem" },
+            }}
+          >
+            {quizContent.subtitle}
+          </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: { xs: 3, md: 5 } }}>
           <Button
             size="large"
             variant="contained"
@@ -68,11 +120,21 @@ export function AttractPage() {
               enterLanguage();
               navigate(ROUTES.language);
             }}
+            sx={{
+              minWidth: { xs: 280, md: 420 },
+              minHeight: { xs: 82, md: 92 },
+              borderRadius: 2.6,
+              fontSize: { xs: "1.3rem", md: "1.7rem" },
+              fontWeight: 700,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              boxShadow: "0 26px 70px rgba(0, 27, 68, 0.55)",
+            }}
           >
             {quizContent.ctaLabel}
           </Button>
         </Box>
       </Stack>
-    </ScreenCard>
+    </Box>
   );
 }
