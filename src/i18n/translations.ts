@@ -32,6 +32,11 @@ export const resources = {
       scoreBandMedium: "Pontuação média",
       scoreBandLow: "Pontuação baixa",
       missingLogoLabel: "Logo oficial pendente",
+      attractBadgeCertLabel: "Certificação",
+      attractBadgeCertTitle: "Origem garantida",
+      attractBadgePadraoLabel: "Padrão",
+      attractBadgePadraoTitle: "Exportação premium",
+      attractBrandMark: "Uruguay Meats",
     },
   },
   en: {
@@ -67,6 +72,11 @@ export const resources = {
       scoreBandMedium: "Medium score",
       scoreBandLow: "Low score",
       missingLogoLabel: "Official logo pending",
+      attractBadgeCertLabel: "Certification",
+      attractBadgeCertTitle: "Guaranteed origin",
+      attractBadgePadraoLabel: "Standard",
+      attractBadgePadraoTitle: "Premium export",
+      attractBrandMark: "Uruguay Meats",
     },
   },
 } as const;
