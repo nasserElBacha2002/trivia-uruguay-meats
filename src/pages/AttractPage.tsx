@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
@@ -10,16 +10,30 @@ import { useSessionStore } from "../features/session/useSessionStore";
 export function AttractPage() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const { state, resetSession } = useSessionStore();
-  const quizContent = getQuizContent(state.language);
+  const { state, resetSession, enterLanguage } = useSessionStore();
+  const quizContent = getQuizContent("pt");
 
-  useEffect(() => {
-    resetSession();
+  const shouldResetSession =
+    state.currentStep !== "attract" ||
+    state.hasChosenLanguage ||
+    state.leadData !== null ||
+    state.currentQuestionIndex !== 0 ||
+    state.answers.length > 0 ||
+    state.score > 0 ||
+    state.quizCompleted ||
+    state.language !== "pt";
+
+  useLayoutEffect(() => {
     void i18n.changeLanguage("pt");
-  }, [resetSession, i18n]);
+  }, [i18n]);
+
+  useLayoutEffect(() => {
+    if (!shouldResetSession) return;
+    resetSession();
+  }, [resetSession, shouldResetSession]);
 
   return (
-    <ScreenCard title={quizContent.title} subtitle={quizContent.subtitle}>
+    <ScreenCard>
       <Stack justifyContent="space-between" height="100%" gap={4}>
         <Box
           sx={{
@@ -38,16 +52,23 @@ export function AttractPage() {
         >
           <Stack spacing={2.5} alignItems="center">
             <Typography variant="h3" align="center" maxWidth={900}>
-              {quizContent.closingMessage}
+              {quizContent.title}
             </Typography>
             <Typography variant="h6" align="center" maxWidth={860} sx={{ opacity: 0.95 }}>
-              {quizContent.objectives.join(" • ")}
+              {quizContent.subtitle}
             </Typography>
           </Stack>
         </Box>
 
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button size="large" variant="contained" onClick={() => navigate(ROUTES.language)}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={() => {
+              enterLanguage();
+              navigate(ROUTES.language);
+            }}
+          >
             {quizContent.ctaLabel}
           </Button>
         </Box>

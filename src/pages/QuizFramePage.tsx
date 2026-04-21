@@ -1,4 +1,4 @@
-import { Box, Button, LinearProgress, Paper, Stack, Typography } from "@mui/material";
+import { Button, LinearProgress, Paper, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ScreenCard } from "../components/ScreenCard";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
@@ -38,7 +38,7 @@ export function QuizFramePage() {
         />
         <Typography variant="h5">{currentQuestion.prompt}</Typography>
 
-        <Stack spacing={1.25}>
+        <Stack spacing={1.25} sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
           {currentQuestion.options.map((option) => {
             const isSelected = selectedOptionId === option.id;
             const isCorrect = option.id === currentQuestion.correctOptionId;
@@ -88,30 +88,36 @@ export function QuizFramePage() {
         </Stack>
 
         {feedbackState.isVisible ? (
-          <Box
+          <Paper
+            elevation={0}
             sx={{
-              borderRadius: 2.5,
-              px: 2,
-              py: 1.5,
+              borderRadius: 3,
+              px: 2.5,
+              py: 2,
               border: "1px solid",
-              borderColor: feedbackState.isCorrect ? "#4caf50" : "#ff6b6b",
-              backgroundColor: feedbackState.isCorrect
-                ? "rgba(76,175,80,0.14)"
-                : "rgba(255,107,107,0.14)",
+              borderColor: feedbackState.isCorrect ? "rgba(76,175,80,0.55)" : "rgba(255,107,107,0.55)",
+              background:
+                feedbackState.isCorrect
+                  ? "linear-gradient(135deg, rgba(76,175,80,0.16) 0%, rgba(19,19,19,0.55) 65%)"
+                  : "linear-gradient(135deg, rgba(255,107,107,0.14) 0%, rgba(19,19,19,0.55) 65%)",
+              boxShadow: "0 18px 40px rgba(0,0,0,0.28)",
             }}
           >
-            <Typography variant="body1" sx={{ fontWeight: 700, mb: feedbackState.message ? 0.5 : 0 }}>
+            <Typography variant="overline" sx={{ letterSpacing: 1.2, opacity: 0.85 }}>
+              {t("quizFeedbackHeading")}
+            </Typography>
+            <Typography variant="h5" sx={{ mt: 0.5, fontWeight: 800 }}>
               {feedbackState.isCorrect ? t("answerCorrectLabel") : t("answerIncorrectLabel")}
             </Typography>
             {feedbackState.message ? (
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body1" sx={{ mt: 1.25, color: "text.secondary" }}>
                 {feedbackState.message}
               </Typography>
             ) : null}
-          </Box>
+          </Paper>
         ) : null}
 
-        <Stack direction="row" justifyContent="flex-end" mt="auto">
+        <Stack direction="row" justifyContent="flex-end" mt="auto" sx={{ pt: 1 }}>
           {canContinue ? (
             <Button variant="contained" onClick={continueToNext}>
               {isLastQuestion ? t("seeResultLabel") : t("continueLabel")}

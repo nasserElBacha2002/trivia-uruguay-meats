@@ -25,14 +25,14 @@ type SessionState = {
 
 type SessionStore = {
   state: SessionState;
-  setLanguage: (language: Language) => void;
   setCurrentStep: (step: SessionStep) => void;
+  enterLanguage: () => void;
+  enterForm: (language: Language) => void;
   setLeadData: (leadData: LeadSubmission) => void;
   submitAnswer: (answer: QuizAnswer) => void;
   goToNextQuestion: (totalQuestions: number) => void;
   finishQuiz: (totalQuestions: number) => void;
   resetSession: () => void;
-  canAccessStep: (step: SessionStep) => boolean;
 };
 
 const initialState: SessionState = {
@@ -51,33 +51,24 @@ const SessionContext = createContext<SessionStore | null>(null);
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SessionState>(initialState);
 
-  const canAccessStep = useCallback(
-    (step: SessionStep) => {
-      if (step === "attract") return true;
-      if (step === "language")
-        return state.currentStep === "attract" || state.currentStep === "language";
-      if (step === "form") return state.hasChosenLanguage && state.currentStep === "form";
-      if (step === "quiz") {
-        return state.hasChosenLanguage && Boolean(state.leadData) && state.currentStep === "quiz";
-      }
-      if (step === "result") {
-        return state.quizCompleted && state.currentStep === "result";
-      }
-      return false;
-    },
-    [state],
-  );
+  const setCurrentStep = useCallback((step: SessionStep) => {
+    setState((prev) => ({ ...prev, currentStep: step }));
+  }, []);
 
-  const setLanguage = useCallback((language: Language) => {
+  const enterLanguage = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      currentStep: "language",
+    }));
+  }, []);
+
+  const enterForm = useCallback((language: Language) => {
     setState((prev) => ({
       ...prev,
       language,
       hasChosenLanguage: true,
+      currentStep: "form",
     }));
-  }, []);
-
-  const setCurrentStep = useCallback((step: SessionStep) => {
-    setState((prev) => ({ ...prev, currentStep: step }));
   }, []);
 
   const setLeadData = useCallback((leadData: LeadSubmission) => {
@@ -108,7 +99,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setState((prev) => {
       const nextIndex = prev.currentQuestionIndex + 1;
       if (nextIndex >= totalQuestions) {
-        return { ...prev, currentStep: "result" };
+        return prev;
       }
 
       return { ...prev, currentQuestionIndex: nextIndex };
@@ -132,25 +123,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SessionStore>(
     () => ({
       state,
-      setLanguage,
       setCurrentStep,
+      enterLanguage,
+      enterForm,
       setLeadData,
       submitAnswer,
       goToNextQuestion,
       finishQuiz,
       resetSession,
-      canAccessStep,
     }),
     [
       state,
-      setLanguage,
       setCurrentStep,
+      enterLanguage,
+      enterForm,
       setLeadData,
       submitAnswer,
       goToNextQuestion,
       finishQuiz,
       resetSession,
-      canAccessStep,
     ],
   );
 

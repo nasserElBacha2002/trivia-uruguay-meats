@@ -1,11 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../config/routes";
 import { getQuizContent } from "../../content/quizContent";
 import type { QuizAnswer, FeedbackState } from "./quizTypes";
 import { useSessionStore } from "../session/useSessionStore";
 
 export function useQuizEngine() {
+  const navigate = useNavigate();
   const { state, submitAnswer, goToNextQuestion, finishQuiz } = useSessionStore();
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const pendingResultNavigationRef = useRef(false);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>({
     isVisible: false,
     isCorrect: false,
@@ -28,6 +32,13 @@ export function useQuizEngine() {
     () => ((safeQuestionIndex + 1) / questions.length) * 100,
     [questions.length, safeQuestionIndex],
   );
+
+  useEffect(() => {
+    if (!pendingResultNavigationRef.current) return;
+    if (!state.quizCompleted || state.currentStep !== "result") return;
+    navigate(ROUTES.result, { replace: true });
+    pendingResultNavigationRef.current = false;
+  }, [navigate, state.currentStep, state.quizCompleted]);
 
   const selectOption = (optionId: string) => {
     if (hasAnsweredCurrent) return;
@@ -57,6 +68,7 @@ export function useQuizEngine() {
 
     if (isLastQuestion) {
       finishQuiz(questions.length);
+      pendingResultNavigationRef.current = true;
       return;
     }
 

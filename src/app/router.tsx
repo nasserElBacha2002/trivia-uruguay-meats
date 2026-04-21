@@ -1,5 +1,4 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
-import { FlowGuard } from "../components/FlowGuard";
 import { KioskShell } from "../components/KioskShell";
 import { ROUTES } from "../config/routes";
 import { AttractPage } from "../pages/AttractPage";
@@ -16,35 +15,19 @@ export const appRouter = createBrowserRouter([
       { index: true, element: <AttractPage /> },
       {
         path: ROUTES.language.slice(1),
-        element: (
-          <FlowGuard step="language">
-            <LanguagePage />
-          </FlowGuard>
-        ),
+        element: <LanguagePage />,
       },
       {
         path: ROUTES.form.slice(1),
-        element: (
-          <FlowGuard step="form">
-            <FormPage />
-          </FlowGuard>
-        ),
+        element: <FormPage />,
       },
       {
         path: ROUTES.quiz.slice(1),
-        element: (
-          <FlowGuard step="quiz">
-            <QuizFramePage />
-          </FlowGuard>
-        ),
+        element: <QuizFramePage />,
       },
       {
         path: ROUTES.result.slice(1),
-        element: (
-          <FlowGuard step="result">
-            <ResultFramePage />
-          </FlowGuard>
-        ),
+        element: <ResultFramePage />,
       },
       { path: "*", element: <Navigate to={ROUTES.attract} replace /> },
     ],

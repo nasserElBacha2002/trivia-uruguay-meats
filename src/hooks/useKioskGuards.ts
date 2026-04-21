@@ -4,11 +4,13 @@ export function useKioskGuards() {
   useEffect(() => {
     const onContextMenu = (event: MouseEvent) => event.preventDefault();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (
+      const key = event.key.toLowerCase();
+      const isReloadChord =
         event.key === "F5" ||
-        (event.altKey && event.key === "ArrowLeft") ||
-        (event.metaKey && event.key.toLowerCase() === "r")
-      ) {
+        ((event.metaKey || event.ctrlKey) && key === "r") ||
+        ((event.metaKey || event.ctrlKey) && event.shiftKey && key === "r");
+
+      if (isReloadChord || (event.altKey && event.key === "ArrowLeft")) {
         event.preventDefault();
       }
     };

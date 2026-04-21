@@ -17,6 +17,21 @@ export function useInactivityReset() {
   const location = useLocation();
   const navigate = useNavigate();
   const timeoutRef = useRef<number | null>(null);
+  const pathnameRef = useRef(location.pathname);
+  const navigateRef = useRef(navigate);
+  const resetSessionRef = useRef(resetSession);
+
+  useEffect(() => {
+    pathnameRef.current = location.pathname;
+  }, [location.pathname]);
+
+  useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
+
+  useEffect(() => {
+    resetSessionRef.current = resetSession;
+  }, [resetSession]);
 
   const clearTimer = useCallback(() => {
     if (timeoutRef.current) {
@@ -28,12 +43,12 @@ export function useInactivityReset() {
   const startTimer = useCallback(() => {
     clearTimer();
     timeoutRef.current = window.setTimeout(() => {
-      resetSession();
-      if (location.pathname !== ROUTES.attract) {
-        navigate(ROUTES.attract, { replace: true });
+      resetSessionRef.current();
+      if (pathnameRef.current !== ROUTES.attract) {
+        navigateRef.current(ROUTES.attract, { replace: true });
       }
     }, KIOSK_IDLE_TIMEOUT_MS);
-  }, [clearTimer, location.pathname, navigate, resetSession]);
+  }, [clearTimer]);
 
   useEffect(() => {
     startTimer();

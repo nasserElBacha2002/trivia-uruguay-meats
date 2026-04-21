@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 
 type ScreenCardProps = {
-  title: string;
+  title?: string;
   subtitle?: string;
   children?: ReactNode;
 };
@@ -24,16 +24,20 @@ export function ScreenCard({ title, subtitle, children }: ScreenCardProps) {
         gap: 4,
       }}
     >
-      <Box sx={{ maxWidth: "min(1100px, 100%)" }}>
-        <Typography variant="h2" color="text.primary">
-          {title}
-        </Typography>
-        {subtitle ? (
-          <Typography variant="h5" sx={{ mt: 1.5, color: "text.secondary", fontWeight: 400 }}>
-            {subtitle}
-          </Typography>
-        ) : null}
-      </Box>
+      {title || subtitle ? (
+        <Box sx={{ maxWidth: "min(1100px, 100%)" }}>
+          {title ? (
+            <Typography variant="h2" color="text.primary">
+              {title}
+            </Typography>
+          ) : null}
+          {subtitle ? (
+            <Typography variant="h5" sx={{ mt: title ? 1.5 : 0, color: "text.secondary", fontWeight: 400 }}>
+              {subtitle}
+            </Typography>
+          ) : null}
+        </Box>
+      ) : null}
       <Box sx={{ flex: 1, minHeight: 0 }}>{children}</Box>
     </Paper>
   );
