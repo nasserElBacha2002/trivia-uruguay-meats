@@ -3,19 +3,19 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizPtContent } from "../content/quizContent";
-import { useFlowState } from "../features/session/flowState";
+import { quizContent } from "../mocks/quizContent";
+import { useSessionStore } from "../features/session/useSessionStore";
 
 export function AttractPage() {
   const navigate = useNavigate();
-  const { resetFlow } = useFlowState();
+  const { resetSession } = useSessionStore();
 
   useEffect(() => {
-    resetFlow();
-  }, [resetFlow]);
+    resetSession();
+  }, [resetSession]);
 
   return (
-    <ScreenCard title={quizPtContent.title} subtitle={quizPtContent.subtitle}>
+    <ScreenCard title={quizContent.title} subtitle={quizContent.subtitle}>
       <Stack justifyContent="space-between" height="100%" gap={4}>
         <Box
           sx={{
@@ -45,7 +45,7 @@ export function AttractPage() {
 
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button size="large" variant="contained" onClick={() => navigate(ROUTES.language)}>
-            {quizPtContent.ctaLabel}
+            {quizContent.ctaLabel}
           </Button>
         </Box>
       </Stack>

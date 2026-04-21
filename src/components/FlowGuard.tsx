@@ -1,17 +1,17 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { ROUTES } from "../config/routes";
-import { useFlowState, type FlowStep } from "../features/session/flowState";
+import { useSessionStore, type SessionStep } from "../features/session/useSessionStore";
 
 type FlowGuardProps = {
-  step: FlowStep;
+  step: SessionStep;
   children: ReactNode;
 };
 
 export function FlowGuard({ step, children }: FlowGuardProps) {
-  const { canAccess } = useFlowState();
+  const { canAccessStep } = useSessionStore();
 
-  if (!canAccess(step)) {
+  if (!canAccessStep(step)) {
     return <Navigate to={ROUTES.attract} replace />;
   }
 

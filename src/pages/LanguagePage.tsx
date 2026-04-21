@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { useFlowState } from "../features/session/flowState";
+import { useSessionStore } from "../features/session/useSessionStore";
 
 export function LanguagePage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { markLanguageSelected } = useFlowState();
+  const { setLanguage } = useSessionStore();
 
   const selectLanguage = async (lang: "pt" | "en") => {
     await i18n.changeLanguage(lang);
-    markLanguageSelected();
+    setLanguage(lang);
     navigate(ROUTES.form);
   };
 
