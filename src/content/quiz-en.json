@@ -1,0 +1,232 @@
+{
+  "id": "uruguay-lamb-quiz-en",
+  "slug": "uruguay-lamb-quiz-en",
+  "title": "How much do you know about Uruguayan lamb from the Boutique of meats of the world?",
+  "subtitle": "Answer correctly and win a prize",
+  "ctaLabel": "Start",
+  "durationSecondsMin": 60,
+  "durationSecondsMax": 90,
+  "totalQuestions": 6,
+  "objectives": [
+    "Generate a qualified database",
+    "Educate about Uruguay Lamb",
+    "Position \"Boutique of meats of the world\""
+  ],
+  "dataCollection": {
+    "fields": [
+      {
+        "id": "name",
+        "label": "Name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "email",
+        "label": "Email",
+        "type": "email",
+        "required": true
+      },
+      {
+        "id": "country",
+        "label": "Country",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "buysUruguayMeat",
+        "label": "Do you buy Uruguayan meat?",
+        "type": "single_select",
+        "required": true,
+        "options": [
+          {
+            "id": "buys_yes",
+            "label": "Yes"
+          },
+          {
+            "id": "buys_no",
+            "label": "No"
+          }
+        ]
+      },
+      {
+        "id": "sector",
+        "label": "Which sector do you belong to?",
+        "type": "single_select",
+        "required": true,
+        "options": [
+          {
+            "id": "sector_importador",
+            "label": "Importer"
+          },
+          {
+            "id": "sector_distribuidor",
+            "label": "Distributor"
+          },
+          {
+            "id": "sector_varejo_supermercado",
+            "label": "Retail / Supermarket"
+          },
+          {
+            "id": "sector_foodservice_restaurante",
+            "label": "Foodservice / Restaurant"
+          },
+          {
+            "id": "sector_industria",
+            "label": "Industry"
+          },
+          {
+            "id": "sector_outro",
+            "label": "Other"
+          }
+        ]
+      }
+    ]
+  },
+  "quizFormat": {
+    "type": "multiple_choice",
+    "feedbackMode": "immediate",
+    "singleCorrectOption": true
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "order": 1,
+      "prompt": "What types of meat does Uruguay export to Brazil?",
+      "options": [
+        {
+          "id": "q1_o1",
+          "label": "Beef and lamb"
+        },
+        {
+          "id": "q1_o2",
+          "label": "Beef, lamb and poultry"
+        },
+        {
+          "id": "q1_o3",
+          "label": "Beef, lamb and pork"
+        },
+        {
+          "id": "q1_o4",
+          "label": "Only beef"
+        }
+      ],
+      "correctOptionId": "q1_o1",
+      "feedback": "Uruguay is recognized for producing and exporting beef and lamb, with high quality standards and a strong presence in international markets."
+    },
+    {
+      "id": "q2",
+      "order": 2,
+      "prompt": "What is Uruguay Lamb?",
+      "options": [
+        {
+          "id": "q2_o1",
+          "label": "An exporting company"
+        },
+        {
+          "id": "q2_o2",
+          "label": "A promotional brand for Uruguayan lamb"
+        },
+        {
+          "id": "q2_o3",
+          "label": "A type of meat cut"
+        }
+      ],
+      "correctOptionId": "q2_o2",
+      "feedback": "Uruguay Lamb is the country brand that represents and promotes Uruguayan lamb in international markets. It is not a private brand, but a sector initiative led by the National Meat Institute."
+    },
+    {
+      "id": "q3",
+      "order": 3,
+      "prompt": "According to the Uruguay Lamb campaign, Uruguayan lamb is part of:",
+      "options": [
+        {
+          "id": "q3_o1",
+          "label": "A global commodity"
+        },
+        {
+          "id": "q3_o2",
+          "label": "A standard mass production"
+        },
+        {
+          "id": "q3_o3",
+          "label": "The Boutique of meats of the world"
+        },
+        {
+          "id": "q3_o4",
+          "label": "A low-cost product"
+        }
+      ],
+      "correctOptionId": "q3_o3",
+      "feedback": null
+    },
+    {
+      "id": "q4",
+      "order": 4,
+      "prompt": "What characterizes the Uruguayan lamb production system?",
+      "options": [
+        {
+          "id": "q4_o1",
+          "label": "Intensive confined production"
+        },
+        {
+          "id": "q4_o2",
+          "label": "Urban industrial production"
+        },
+        {
+          "id": "q4_o3",
+          "label": "Extensive production on natural pastures"
+        }
+      ],
+      "correctOptionId": "q4_o3",
+      "feedback": "Uruguayan lamb is mostly raised on natural pastures, which contributes to quality, flavor and a more sustainable production."
+    },
+    {
+      "id": "q5",
+      "order": 5,
+      "prompt": "Why is lamb more tender than sheep meat?",
+      "options": [
+        {
+          "id": "q5_o1",
+          "label": "Because of the animal's age"
+        },
+        {
+          "id": "q5_o2",
+          "label": "Because of the breed"
+        },
+        {
+          "id": "q5_o3",
+          "label": "Because of the cut type"
+        }
+      ],
+      "correctOptionId": "q5_o1",
+      "feedback": "Lamb is more tender because it comes from young animals (between 4 and 12 months), resulting in softer, more tender meat."
+    },
+    {
+      "id": "q6",
+      "order": 6,
+      "prompt": "How can lamb be consumed?",
+      "options": [
+        {
+          "id": "q6_o1",
+          "label": "Only in long preparations"
+        },
+        {
+          "id": "q6_o2",
+          "label": "Only on the grill"
+        },
+        {
+          "id": "q6_o3",
+          "label": "In various preparations"
+        }
+      ],
+      "correctOptionId": "q6_o3",
+      "feedback": "Lamb is a versatile meat: it can be prepared on the grill, in the oven or in quick cuts, adapting to different occasions."
+    }
+  ],
+  "finalResults": {
+    "high": "You know Uruguayan lamb from the Boutique of meats of the world very well! Stop by the counter and collect your gift!",
+    "medium": "You are on the right track. It's time to try Uruguayan lamb from the Boutique of meats of the world.",
+    "low": "You'll get it right next time. You still need to learn more about Uruguayan lamb from the Boutique of meats of the world."
+  },
+  "closingMessage": "Uruguayan lamb, from the Boutique of meats of the world."
+}

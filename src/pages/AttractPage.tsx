@@ -1,18 +1,22 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizContent } from "../content/quizContent";
+import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
 
 export function AttractPage() {
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const { resetSession } = useSessionStore();
+  const { state, resetSession } = useSessionStore();
+  const quizContent = getQuizContent(state.language);
 
   useEffect(() => {
     resetSession();
-  }, [resetSession]);
+    void i18n.changeLanguage("pt");
+  }, [resetSession, i18n]);
 
   return (
     <ScreenCard title={quizContent.title} subtitle={quizContent.subtitle}>
@@ -34,11 +38,10 @@ export function AttractPage() {
         >
           <Stack spacing={2.5} alignItems="center">
             <Typography variant="h3" align="center" maxWidth={900}>
-              Boutique de carnes do mundo
+              {quizContent.closingMessage}
             </Typography>
             <Typography variant="h6" align="center" maxWidth={860} sx={{ opacity: 0.95 }}>
-              Experiência interativa para conhecer o cordeiro uruguaio, responder rápido e retirar
-              seu brinde.
+              {quizContent.objectives.join(" • ")}
             </Typography>
           </Stack>
         </Box>

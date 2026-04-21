@@ -8,13 +8,14 @@ import {
   Typography,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizContent } from "../content/quizContent";
-import { leadDefaultValues, leadSchema, type LeadSchema } from "../features/lead/leadSchema";
+import { getQuizContent } from "../content/quizContent";
+import { createLeadSchema, leadDefaultValues, type LeadSchema } from "../features/lead/leadSchema";
 import {
   mapLeadFormValuesToSubmission,
   type LeadFormValues,
@@ -25,7 +26,9 @@ export function FormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { state, setLeadData, setCurrentStep } = useSessionStore();
-  const fields = quizContent.dataCollection.fields;
+  const leadSchema = useMemo(() => createLeadSchema(t), [t]);
+  const currentQuizContent = getQuizContent(state.language);
+  const fields = currentQuizContent.dataCollection.fields;
 
   const {
     control,

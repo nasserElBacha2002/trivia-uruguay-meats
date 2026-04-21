@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { quizContent } from "../../content/quizContent";
+import { getQuizContent } from "../../content/quizContent";
 import type { QuizAnswer, FeedbackState } from "./quizTypes";
 import { useSessionStore } from "../session/useSessionStore";
 
@@ -12,16 +12,21 @@ export function useQuizEngine() {
     message: null,
   });
 
+  const quizContent = getQuizContent(state.language);
   const questions = quizContent.questions;
-  const currentQuestion = questions[state.currentQuestionIndex];
-  const isLastQuestion = state.currentQuestionIndex === questions.length - 1;
+  const safeQuestionIndex =
+    state.currentQuestionIndex >= 0 && state.currentQuestionIndex < questions.length
+      ? state.currentQuestionIndex
+      : 0;
+  const currentQuestion = questions[safeQuestionIndex];
+  const isLastQuestion = safeQuestionIndex === questions.length - 1;
   const hasAnsweredCurrent = state.answers.some(
     (answer) => answer.questionId === currentQuestion.id,
   );
 
   const progressValue = useMemo(
-    () => ((state.currentQuestionIndex + 1) / questions.length) * 100,
-    [questions.length, state.currentQuestionIndex],
+    () => ((safeQuestionIndex + 1) / questions.length) * 100,
+    [questions.length, safeQuestionIndex],
   );
 
   const selectOption = (optionId: string) => {
@@ -63,7 +68,7 @@ export function useQuizEngine() {
   return {
     questions,
     currentQuestion,
-    currentQuestionIndex: state.currentQuestionIndex,
+    currentQuestionIndex: safeQuestionIndex,
     selectedOptionId,
     feedbackState,
     progressValue,

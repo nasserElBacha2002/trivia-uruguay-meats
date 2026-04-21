@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizContent } from "../content/quizContent";
+import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
 
 export function ResultFramePage() {
@@ -11,6 +11,7 @@ export function ResultFramePage() {
   const navigate = useNavigate();
   const { state, resetSession } = useSessionStore();
   const score = state.score;
+  const quizContent = getQuizContent(state.language);
 
   const resultBand = score >= 5 ? "high" : score >= 3 ? "medium" : "low";
   const scoreLabelKey =

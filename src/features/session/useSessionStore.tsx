@@ -54,10 +54,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const canAccessStep = useCallback(
     (step: SessionStep) => {
       if (step === "attract") return true;
-      if (step === "language") return state.currentStep === "attract" || state.currentStep === "language";
-      if (step === "form") {
-        return state.hasChosenLanguage && ["form", "quiz", "result"].includes(state.currentStep);
-      }
+      if (step === "language")
+        return state.currentStep === "attract" || state.currentStep === "language";
+      if (step === "form") return state.hasChosenLanguage && state.currentStep === "form";
       if (step === "quiz") {
         return state.hasChosenLanguage && Boolean(state.leadData) && state.currentStep === "quiz";
       }

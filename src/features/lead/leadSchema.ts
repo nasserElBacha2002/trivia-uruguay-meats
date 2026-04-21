@@ -11,33 +11,37 @@ export const sectorOptions = [
   "sector_outro",
 ] as const satisfies readonly SectorOptionId[];
 
-export const leadSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Nome é obrigatório")
-    .transform((value) => value.replace(/\s+/g, " ")),
-  email: z
-    .string()
-    .trim()
-    .min(1, "Email é obrigatório")
-    .email("Email inválido"),
-  country: z
-    .string()
-    .trim()
-    .min(1, "País é obrigatório")
-    .transform((value) => value.replace(/\s+/g, " ")),
-  buysUruguayMeat: z
-    .string()
-    .min(1, "Selecione uma opção")
-    .pipe(z.enum(buysOptions)),
-  sectorId: z
-    .string()
-    .min(1, "Selecione uma opção")
-    .pipe(z.enum(sectorOptions)),
-});
+type TranslateFn = (key: string) => string;
 
-export type LeadSchema = z.infer<typeof leadSchema>;
+export function createLeadSchema(t: TranslateFn) {
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, t("validationNameRequired"))
+      .transform((value) => value.replace(/\s+/g, " ")),
+    email: z
+      .string()
+      .trim()
+      .min(1, t("validationEmailRequired"))
+      .email(t("validationEmailInvalid")),
+    country: z
+      .string()
+      .trim()
+      .min(1, t("validationCountryRequired"))
+      .transform((value) => value.replace(/\s+/g, " ")),
+    buysUruguayMeat: z
+      .string()
+      .min(1, t("validationSelectRequired"))
+      .pipe(z.enum(buysOptions)),
+    sectorId: z
+      .string()
+      .min(1, t("validationSelectRequired"))
+      .pipe(z.enum(sectorOptions)),
+  });
+}
+
+export type LeadSchema = z.infer<ReturnType<typeof createLeadSchema>>;
 
 export const leadDefaultValues: LeadFormValues = {
   name: "",

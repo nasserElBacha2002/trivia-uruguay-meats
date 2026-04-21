@@ -1,0 +1,1 @@
+export const KIOSK_IDLE_TIMEOUT_MS = 25_000;

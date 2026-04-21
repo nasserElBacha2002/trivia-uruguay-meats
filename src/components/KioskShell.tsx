@@ -1,10 +1,12 @@
 import { Box, Container } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useKioskGuards } from "../hooks/useKioskGuards";
+import { useInactivityReset } from "../hooks/useInactivityReset";
 import { BrandLogo } from "./BrandLogo";
 
 export function KioskShell() {
   useKioskGuards();
+  useInactivityReset();
 
   return (
     <Box
