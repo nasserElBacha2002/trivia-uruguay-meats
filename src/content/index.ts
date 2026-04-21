@@ -1,0 +1,1 @@
+export { getQuizContent } from "./quizContent";

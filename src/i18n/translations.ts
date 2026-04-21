@@ -2,11 +2,13 @@ export const resources = {
   pt: {
     translation: {
       languageTitle: "Selecione seu idioma",
-      languageSubtitle: "Escolha o idioma para iniciar a experiencia imersiva.",
+      languageHeroPrimary: "Escolha seu idioma",
+      languageHeroSecondary: "Select your language",
       languagePt: "Português",
-      languagePtSubtitle: "Continuar em portugues do Brasil",
+      languagePtSubtitle: "Continuar em português do Brasil",
       languageEn: "Inglês",
-      languageEnSubtitle: "Continue em ingles internacional",
+      languageEnSubtitle: "Continue in International English",
+      languageFooterStrip: "Uruguay Lamb · Experiência premium",
       formTitle: "Dados para participar",
       formIntro: "Preencha os dados abaixo para personalizar sua jornada premium Uruguay Lamb.",
       continueLabel: "Continuar",
@@ -42,11 +44,13 @@ export const resources = {
   en: {
     translation: {
       languageTitle: "Select your language",
-      languageSubtitle: "Choose your language to begin the immersive experience.",
+      languageHeroPrimary: "Select your language",
+      languageHeroSecondary: "Escolha seu idioma",
       languagePt: "Portuguese",
       languagePtSubtitle: "Continue in Brazilian Portuguese",
       languageEn: "English",
-      languageEnSubtitle: "Continue in international English",
+      languageEnSubtitle: "Continue in International English",
+      languageFooterStrip: "Uruguay Lamb · Premium experience",
       formTitle: "Participant details",
       formIntro: "Please complete the details below to personalize your premium Uruguay Lamb experience.",
       continueLabel: "Continue",

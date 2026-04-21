@@ -13,14 +13,16 @@ import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { ROUTES } from "../config/routes";
-import { getQuizContent } from "../content/quizContent";
+import { getQuizContent } from "../content";
 import { createLeadSchema, leadDefaultValues, type LeadSchema } from "../features/lead/leadSchema";
 import {
   mapLeadFormValuesToSubmission,
   type LeadFormValues,
 } from "../features/lead/leadTypes";
 import { useSessionStore } from "../features/session/useSessionStore";
+import type { QuizDataCollectionField, QuizFieldOption } from "../types/quizContent";
 
 export function FormPage() {
   const { t } = useTranslation();
@@ -28,7 +30,7 @@ export function FormPage() {
   const { state, setLeadData, setCurrentStep } = useSessionStore();
   const leadSchema = useMemo(() => createLeadSchema(t), [t]);
   const currentQuizContent = getQuizContent(state.language);
-  const fields = currentQuizContent.dataCollection.fields;
+  const fields: QuizDataCollectionField[] = currentQuizContent.dataCollection.fields;
 
   const {
     control,
@@ -50,31 +52,20 @@ export function FormPage() {
   };
 
   return (
-    <Stack
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-      gap={2.8}
-      height="100%"
-      sx={{
-        position: "relative",
-        px: { xs: 0.5, md: 2 },
-        py: { xs: 1.5, md: 2.5 },
-      }}
-    >
-      <Box
+    <Box sx={{ position: "relative", height: "100%", width: "100%", overflow: "hidden" }}>
+      <KioskRightOcclusion zIndex={0} />
+      <Stack
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        gap={2.8}
+        height="100%"
         sx={{
-          position: "absolute",
-          top: { xs: 30, md: -20 },
-          right: { xs: -80, md: -120 },
-          width: { xs: 220, md: 350 },
-          height: { xs: 220, md: 350 },
-          borderRadius: "50%",
-          background: "rgba(255,184,28,0.18)",
-          filter: "blur(35px)",
-          pointerEvents: "none",
+          position: "relative",
+          zIndex: 1,
+          px: { xs: 0.5, md: 2 },
+          py: { xs: 1.5, md: 2.5 },
         }}
-      />
-
+      >
       <Stack spacing={1.5} sx={{ maxWidth: 920, mt: { xs: 1.5, md: 3.5 }, px: { xs: 1, md: 2 } }}>
         <Typography
           sx={{
@@ -104,8 +95,8 @@ export function FormPage() {
           }}
         >
           {fields
-            .filter((field) => field.type !== "single_select")
-            .map((field) => (
+            .filter((field: QuizDataCollectionField) => field.type !== "single_select")
+            .map((field: QuizDataCollectionField) => (
               <Box key={field.id}>
                 <Typography
                   sx={{
@@ -147,8 +138,8 @@ export function FormPage() {
             ))}
 
           {fields
-            .filter((field) => field.type === "single_select")
-            .map((field) => (
+            .filter((field: QuizDataCollectionField) => field.type === "single_select")
+            .map((field: QuizDataCollectionField) => (
               <Controller
                 key={field.id}
                 name={field.id === "sector" ? "sectorId" : "buysUruguayMeat"}
@@ -203,7 +194,7 @@ export function FormPage() {
                         },
                       }}
                     >
-                      {(field.options ?? []).map((option) => (
+                      {(field.options ?? []).map((option: QuizFieldOption) => (
                         <ToggleButton key={option.id} value={option.id}>
                           {option.label}
                         </ToggleButton>
@@ -248,6 +239,7 @@ export function FormPage() {
           </Button>
         </Paper>
       </Stack>
-    </Stack>
+      </Stack>
+    </Box>
   );
 }

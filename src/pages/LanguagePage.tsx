@@ -1,6 +1,9 @@
 import { Box, ButtonBase, Stack, Typography } from "@mui/material";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { StitchGlobeIcon, StitchLanguageIcon } from "../components/icons/LanguageScreenIcons";
+import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { ROUTES } from "../config/routes";
 import { useSessionStore } from "../features/session/useSessionStore";
 
@@ -16,112 +19,198 @@ export function LanguagePage() {
   };
 
   return (
-    <Stack
-      justifyContent="space-between"
-      height="100%"
-      sx={{ position: "relative", px: { xs: 0.5, md: 2 }, py: { xs: 1.5, md: 2.5 } }}
+    <Box sx={{ position: "relative", height: "100%", width: "100%", overflow: "hidden" }}>
+      <KioskRightOcclusion zIndex={0} />
+
+      <Stack
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          height: "100%",
+          minHeight: 0,
+          px: { xs: 1.5, md: 3, lg: 5 },
+          pt: { xs: 2, md: 3 },
+          pb: { xs: 2, md: 3 },
+        }}
+      >
+        <Box
+          sx={{
+            textAlign: "center",
+            maxWidth: 980,
+            mx: "auto",
+            width: "100%",
+            pt: { xs: 1, md: 2 },
+            pb: { xs: 2.5, md: 4 },
+          }}
+        >
+          <Typography
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              fontSize: { xs: "2.65rem", sm: "3.6rem", md: "4.75rem", lg: "5.35rem" },
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            {t("languageHeroPrimary")}
+            <br />
+            <Box
+              component="span"
+              sx={{
+                display: "inline-block",
+                mt: { xs: 0.75, md: 1 },
+                fontWeight: 400,
+                fontSize: { xs: "1.55rem", sm: "2rem", md: "2.65rem", lg: "2.85rem" },
+                lineHeight: 1.15,
+                opacity: 0.4,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {t("languageHeroSecondary")}
+            </Box>
+          </Typography>
+        </Box>
+
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={{ xs: 2.5, md: 3.5 }}
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            width: "100%",
+            maxWidth: 1180,
+            mx: "auto",
+            alignItems: "stretch",
+            justifyContent: "center",
+            pb: { xs: 1, md: 2 },
+          }}
+        >
+          <LanguageChoiceCard
+            icon={<StitchGlobeIcon />}
+            watermark="PT"
+            title={t("languagePt")}
+            subtitle={t("languagePtSubtitle")}
+            onClick={() => void selectLanguage("pt")}
+            variant="pt"
+          />
+          <LanguageChoiceCard
+            icon={<StitchLanguageIcon />}
+            watermark="EN"
+            title={t("languageEn")}
+            subtitle={t("languageEnSubtitle")}
+            onClick={() => void selectLanguage("en")}
+            variant="en"
+          />
+        </Stack>
+
+        <Box
+          sx={{
+            px: { xs: 1, md: 2 },
+            pt: { xs: 1, md: 0 },
+            pb: { xs: 0.5, md: 0 },
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={1.25}>
+            <Box sx={{ width: 32, height: 4, bgcolor: "secondary.main", borderRadius: 999 }} />
+            <Typography
+              sx={{
+                fontSize: "0.72rem",
+                letterSpacing: "0.22em",
+                opacity: 0.42,
+                textTransform: "uppercase",
+                fontWeight: 700,
+              }}
+            >
+              {t("languageFooterStrip")}
+            </Typography>
+          </Stack>
+        </Box>
+      </Stack>
+    </Box>
+  );
+}
+
+type LanguageChoiceCardProps = {
+  icon: ReactNode;
+  watermark: string;
+  title: string;
+  subtitle: string;
+  onClick: () => void;
+  variant: "pt" | "en";
+};
+
+function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant }: LanguageChoiceCardProps) {
+  const glass =
+    variant === "pt"
+      ? "linear-gradient(155deg, rgba(0,47,108,0.82) 0%, rgba(0,27,68,0.88) 100%)"
+      : "linear-gradient(155deg, rgba(0,47,108,0.55) 0%, rgba(22,22,22,0.82) 100%)";
+
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        position: "relative",
+        flex: 1,
+        borderRadius: 3,
+        overflow: "hidden",
+        textAlign: "left",
+        alignItems: "stretch",
+        minHeight: { xs: 260, md: 320 },
+        px: { xs: 2.75, md: 4 },
+        py: { xs: 2.75, md: 4 },
+        border: "1px solid rgba(255,255,255,0.08)",
+        background: glass,
+        backdropFilter: "blur(40px)",
+        WebkitBackdropFilter: "blur(40px)",
+        boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
+        transition: "transform 160ms ease, background 200ms ease, border-color 200ms ease",
+        "&:hover": {
+          background:
+            variant === "pt"
+              ? "linear-gradient(155deg, rgba(0,47,108,0.95) 0%, rgba(0,27,68,0.92) 100%)"
+              : "linear-gradient(155deg, rgba(0,47,108,0.72) 0%, rgba(22,22,22,0.88) 100%)",
+          borderColor: "rgba(255,184,28,0.35)",
+        },
+        "&:active": { transform: "scale(0.985)" },
+      }}
     >
-      <Box
+      <Typography
         sx={{
           position: "absolute",
-          top: { xs: -90, md: -130 },
-          right: { xs: -120, md: -170 },
-          width: { xs: 280, md: 430 },
-          height: { xs: 280, md: 430 },
-          borderRadius: "50%",
-          background: "rgba(17,88,194,0.35)",
-          filter: "blur(38px)",
+          right: -6,
+          bottom: -10,
+          fontSize: { xs: "5.5rem", md: "7.25rem" },
+          fontWeight: 900,
+          lineHeight: 1,
+          opacity: 0.14,
+          letterSpacing: "-0.04em",
+          userSelect: "none",
           pointerEvents: "none",
         }}
-      />
-      <Box sx={{ maxWidth: 1040, mt: { xs: 2, md: 5 }, px: { xs: 1, md: 2 } }}>
-        <Typography
-          sx={{
-            fontWeight: 700,
-            letterSpacing: "0.14em",
-            fontSize: { xs: "0.75rem", md: "0.83rem" },
-            opacity: 0.62,
-            textTransform: "uppercase",
-            mb: 2,
-          }}
-        >
-          Select Language
-        </Typography>
-        <Typography sx={{ fontSize: { xs: "2.2rem", md: "4.4rem" }, lineHeight: 1.04, fontWeight: 700 }}>
-          {t("languageTitle")}
-        </Typography>
-        <Typography sx={{ mt: 1.2, fontSize: { xs: "1rem", md: "1.45rem" }, opacity: 0.72 }}>
-          {t("languageSubtitle")}
-        </Typography>
-      </Box>
+      >
+        {watermark}
+      </Typography>
 
-      <Stack direction={{ xs: "column", md: "row" }} spacing={3} sx={{ px: { xs: 1, md: 2 }, mt: 3 }}>
-        <ButtonBase
-          onClick={() => void selectLanguage("pt")}
-          sx={{
-            flex: 1,
-            borderRadius: 3.5,
-            overflow: "hidden",
-            border: "1px solid rgba(229,226,225,0.12)",
-            background: "linear-gradient(155deg, rgba(0,47,108,0.88) 0%, rgba(5,35,82,0.9) 100%)",
-            minHeight: { xs: 235, md: 340 },
-            px: { xs: 2.5, md: 4.2 },
-            py: { xs: 2.5, md: 4 },
-            textAlign: "left",
-            alignItems: "stretch",
-            boxShadow: "0 24px 62px rgba(0,0,0,0.34)",
-          }}
-        >
-          <Stack sx={{ width: "100%", justifyContent: "space-between" }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Typography sx={{ fontSize: { xs: "2.2rem", md: "2.8rem" }, color: "secondary.main" }}>◉</Typography>
-              <Typography sx={{ fontSize: { xs: "3rem", md: "5rem" }, opacity: 0.18, fontWeight: 700 }}>PT</Typography>
-            </Stack>
-            <Box>
-              <Typography sx={{ fontSize: { xs: "2rem", md: "2.7rem" }, fontWeight: 700 }}>{t("languagePt")}</Typography>
-              <Typography sx={{ mt: 0.6, fontSize: { xs: "1rem", md: "1.2rem" }, opacity: 0.74 }}>
-                {t("languagePtSubtitle")}
-              </Typography>
-            </Box>
-          </Stack>
-        </ButtonBase>
-
-        <ButtonBase
-          onClick={() => void selectLanguage("en")}
-          sx={{
-            flex: 1,
-            borderRadius: 3.5,
-            overflow: "hidden",
-            border: "1px solid rgba(229,226,225,0.16)",
-            background: "linear-gradient(150deg, rgba(34,33,33,0.84) 0%, rgba(0,27,68,0.68) 100%)",
-            minHeight: { xs: 235, md: 340 },
-            px: { xs: 2.5, md: 4.2 },
-            py: { xs: 2.5, md: 4 },
-            textAlign: "left",
-            alignItems: "stretch",
-            boxShadow: "0 24px 62px rgba(0,0,0,0.34)",
-          }}
-        >
-          <Stack sx={{ width: "100%", justifyContent: "space-between" }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Typography sx={{ fontSize: { xs: "2.2rem", md: "2.8rem" }, color: "secondary.main" }}>◎</Typography>
-              <Typography sx={{ fontSize: { xs: "3rem", md: "5rem" }, opacity: 0.2, fontWeight: 700 }}>EN</Typography>
-            </Stack>
-            <Box>
-              <Typography sx={{ fontSize: { xs: "2rem", md: "2.7rem" }, fontWeight: 700 }}>{t("languageEn")}</Typography>
-              <Typography sx={{ mt: 0.6, fontSize: { xs: "1rem", md: "1.2rem" }, opacity: 0.74 }}>
-                {t("languageEnSubtitle")}
-              </Typography>
-            </Box>
-          </Stack>
-        </ButtonBase>
+      <Stack sx={{ position: "relative", zIndex: 1, height: "100%", width: "100%", minHeight: { xs: 220, md: 280 } }}>
+        <Box sx={{ mb: "auto" }}>{icon}</Box>
+        <Box sx={{ mt: "auto", pr: { xs: 5, md: 7 } }}>
+          <Typography sx={{ fontSize: { xs: "1.85rem", md: "2.5rem" }, fontWeight: 700, lineHeight: 1.15 }}>
+            {title}
+          </Typography>
+          <Typography
+            sx={{
+              mt: 1,
+              fontSize: { xs: "1.02rem", md: "1.18rem" },
+              fontWeight: 500,
+              lineHeight: 1.35,
+              opacity: 0.78,
+              color: "rgba(229,226,225,0.92)",
+            }}
+          >
+            {subtitle}
+          </Typography>
+        </Box>
       </Stack>
-
-      <Box sx={{ px: { xs: 1, md: 2 }, mb: { xs: 1, md: 2 } }}>
-        <Typography sx={{ fontSize: "0.74rem", letterSpacing: "0.2em", opacity: 0.45, textTransform: "uppercase" }}>
-          Premium Interactive Kiosk
-        </Typography>
-      </Box>
-    </Stack>
+    </ButtonBase>
   );
 }

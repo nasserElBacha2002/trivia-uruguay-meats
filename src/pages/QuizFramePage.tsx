@@ -1,6 +1,7 @@
-import { Button, LinearProgress, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Paper, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ScreenCard } from "../components/ScreenCard";
+import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
 
 export function QuizFramePage() {
@@ -21,7 +22,10 @@ export function QuizFramePage() {
   } = useQuizEngine();
 
   return (
-    <ScreenCard title={t("quizTitle", { current: currentQuestionIndex + 1, total: questions.length })}>
+    <Box sx={{ position: "relative", height: "100%", width: "100%", overflow: "hidden" }}>
+      <KioskRightOcclusion zIndex={0} />
+      <Box sx={{ position: "relative", zIndex: 1, height: "100%" }}>
+        <ScreenCard title={t("quizTitle", { current: currentQuestionIndex + 1, total: questions.length })}>
       <Stack gap={4} height="100%">
         <LinearProgress
           variant="determinate"
@@ -129,6 +133,8 @@ export function QuizFramePage() {
           )}
         </Stack>
       </Stack>
-    </ScreenCard>
+        </ScreenCard>
+      </Box>
+    </Box>
   );
 }
