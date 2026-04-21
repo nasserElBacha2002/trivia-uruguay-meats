@@ -14,11 +14,13 @@ export type SessionStep = "attract" | "language" | "form" | "quiz" | "result";
 
 type SessionState = {
   currentStep: SessionStep;
+  hasChosenLanguage: boolean;
   language: Language;
   leadData: LeadSubmission | null;
   currentQuestionIndex: number;
   answers: QuizAnswer[];
   score: number;
+  quizCompleted: boolean;
 };
 
 type SessionStore = {
@@ -28,18 +30,20 @@ type SessionStore = {
   setLeadData: (leadData: LeadSubmission) => void;
   submitAnswer: (answer: QuizAnswer) => void;
   goToNextQuestion: (totalQuestions: number) => void;
-  finishQuiz: () => void;
+  finishQuiz: (totalQuestions: number) => void;
   resetSession: () => void;
   canAccessStep: (step: SessionStep) => boolean;
 };
 
 const initialState: SessionState = {
   currentStep: "attract",
+  hasChosenLanguage: false,
   language: "pt",
   leadData: null,
   currentQuestionIndex: 0,
   answers: [],
   score: 0,
+  quizCompleted: false,
 };
 
 const SessionContext = createContext<SessionStore | null>(null);
@@ -49,10 +53,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const canAccessStep = useCallback(
     (step: SessionStep) => {
-      if (step === "attract" || step === "language") return true;
-      if (step === "form") return state.currentStep !== "attract";
-      if (step === "quiz") return Boolean(state.leadData);
-      if (step === "result") return state.answers.length > 0 && state.currentStep === "result";
+      if (step === "attract") return true;
+      if (step === "language") return state.currentStep === "attract" || state.currentStep === "language";
+      if (step === "form") {
+        return state.hasChosenLanguage && ["form", "quiz", "result"].includes(state.currentStep);
+      }
+      if (step === "quiz") {
+        return state.hasChosenLanguage && Boolean(state.leadData) && state.currentStep === "quiz";
+      }
+      if (step === "result") {
+        return state.quizCompleted && state.currentStep === "result";
+      }
       return false;
     },
     [state],
@@ -62,7 +73,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setState((prev) => ({
       ...prev,
       language,
-      currentStep: "form",
+      hasChosenLanguage: true,
     }));
   }, []);
 
@@ -74,10 +85,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setState((prev) => ({
       ...prev,
       leadData,
-      currentStep: "quiz",
       currentQuestionIndex: 0,
       answers: [],
       score: 0,
+      quizCompleted: false,
     }));
   }, []);
 
@@ -105,8 +116,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const finishQuiz = useCallback(() => {
-    setState((prev) => ({ ...prev, currentStep: "result" }));
+  const finishQuiz = useCallback((totalQuestions: number) => {
+    setState((prev) => {
+      if (!prev.leadData || prev.answers.length < totalQuestions) {
+        return prev;
+      }
+
+      return { ...prev, quizCompleted: true, currentStep: "result" };
+    });
   }, []);
 
   const resetSession = useCallback(() => {

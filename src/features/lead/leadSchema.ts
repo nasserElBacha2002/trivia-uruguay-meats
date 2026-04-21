@@ -1,15 +1,15 @@
 import { z } from "zod";
-import type { LeadFormValues } from "./leadTypes";
+import type { BuysOptionId, LeadFormValues, SectorOptionId } from "./leadTypes";
 
-const buysOptions = ["buys_yes", "buys_no"] as const;
-const sectorOptions = [
+export const buysOptions = ["buys_yes", "buys_no"] as const satisfies readonly BuysOptionId[];
+export const sectorOptions = [
   "sector_importador",
   "sector_distribuidor",
   "sector_varejo_supermercado",
   "sector_foodservice_restaurante",
   "sector_industria",
   "sector_outro",
-] as const;
+] as const satisfies readonly SectorOptionId[];
 
 export const leadSchema = z.object({
   name: z

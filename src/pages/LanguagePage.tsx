@@ -8,11 +8,12 @@ import { useSessionStore } from "../features/session/useSessionStore";
 export function LanguagePage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { setLanguage } = useSessionStore();
+  const { setLanguage, setCurrentStep } = useSessionStore();
 
   const selectLanguage = async (lang: "pt" | "en") => {
     await i18n.changeLanguage(lang);
     setLanguage(lang);
+    setCurrentStep("form");
     navigate(ROUTES.form);
   };
 

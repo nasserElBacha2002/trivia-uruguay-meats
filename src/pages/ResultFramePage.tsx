@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizContent } from "../mocks/quizContent";
+import { quizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
 
 export function ResultFramePage() {

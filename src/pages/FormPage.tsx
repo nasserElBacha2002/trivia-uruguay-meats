@@ -13,15 +13,18 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
-import { quizContent } from "../mocks/quizContent";
-import { leadDefaultValues, leadSchema } from "../features/lead/leadSchema";
-import type { LeadFormValues, LeadSubmission } from "../features/lead/leadTypes";
+import { quizContent } from "../content/quizContent";
+import { leadDefaultValues, leadSchema, type LeadSchema } from "../features/lead/leadSchema";
+import {
+  mapLeadFormValuesToSubmission,
+  type LeadFormValues,
+} from "../features/lead/leadTypes";
 import { useSessionStore } from "../features/session/useSessionStore";
 
 export function FormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state, setLeadData } = useSessionStore();
+  const { state, setLeadData, setCurrentStep } = useSessionStore();
   const fields = quizContent.dataCollection.fields;
 
   const {
@@ -29,24 +32,17 @@ export function FormPage() {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<LeadFormValues>({
+  } = useForm<LeadFormValues, unknown, LeadSchema>({
     resolver: zodResolver(leadSchema),
     defaultValues: leadDefaultValues,
     mode: "onChange",
   });
 
-  const onSubmit = (values: LeadFormValues) => {
-    const parsedValues = leadSchema.parse(values);
-    const payload: LeadSubmission = {
-      name: parsedValues.name,
-      email: parsedValues.email,
-      country: parsedValues.country,
-      buysUruguayMeat: parsedValues.buysUruguayMeat,
-      sectorId: parsedValues.sectorId,
-      language: state.language,
-    };
+  const onSubmit = (values: LeadSchema) => {
+    const payload = mapLeadFormValuesToSubmission(values, state.language);
 
     setLeadData(payload);
+    setCurrentStep("quiz");
     navigate(ROUTES.quiz);
   };
 

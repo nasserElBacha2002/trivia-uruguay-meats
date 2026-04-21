@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { quizContent } from "../../mocks/quizContent";
+import { quizContent } from "../../content/quizContent";
 import type { QuizAnswer, FeedbackState } from "./quizTypes";
 import { useSessionStore } from "../session/useSessionStore";
 
@@ -50,14 +50,13 @@ export function useQuizEngine() {
   const continueToNext = () => {
     if (!feedbackState.isVisible) return;
 
-    setSelectedOptionId(null);
-    setFeedbackState({ isVisible: false, isCorrect: false, message: null });
-
     if (isLastQuestion) {
-      finishQuiz();
+      finishQuiz(questions.length);
       return;
     }
 
+    setSelectedOptionId(null);
+    setFeedbackState({ isVisible: false, isCorrect: false, message: null });
     goToNextQuestion(questions.length);
   };
 
