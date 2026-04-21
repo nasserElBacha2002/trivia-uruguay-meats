@@ -23,3 +23,10 @@ export function countCorrectAnswers(db: SqliteDatabase, sessionId: number): numb
     .get(sessionId) as { c: number };
   return row.c;
 }
+
+export function countAnswersForSession(db: SqliteDatabase, sessionId: number): number {
+  const row = db
+    .prepare(`SELECT COUNT(*) as c FROM quiz_answers WHERE session_id = ?`)
+    .get(sessionId) as { c: number };
+  return row.c;
+}

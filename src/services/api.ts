@@ -14,13 +14,20 @@ export class ApiError extends Error {
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const hasJsonBody =
+    init?.body !== undefined && init.body !== null && init.body !== "" && typeof init.body === "string";
+
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    ...(init?.headers as Record<string, string> | undefined),
+  };
+  if (hasJsonBody) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(url, {
     ...init,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
+    headers,
   });
 
   const text = await res.text();

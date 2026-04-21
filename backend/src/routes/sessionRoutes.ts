@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { countCorrectAnswers, insertAnswer } from "../repositories/answerRepository.js";
+import { countAnswersForSession, countCorrectAnswers, insertAnswer } from "../repositories/answerRepository.js";
 import { completeSession, getSessionById } from "../repositories/sessionRepository.js";
 import type { CompleteSessionBody, SubmitAnswerBody } from "../types/api.js";
 import type { SqliteDatabase } from "../types/db.js";
+
+function isScoreBand(x: unknown): x is CompleteSessionBody["scoreBand"] {
+  return x === "high" || x === "medium" || x === "low";
+}
 
 export function createSessionRouter(db: SqliteDatabase) {
   const router = Router();
@@ -80,21 +84,49 @@ export function createSessionRouter(db: SqliteDatabase) {
       }
 
       const body = req.body as Partial<CompleteSessionBody>;
-      if (
-        typeof body?.score !== "number" ||
-        typeof body?.totalQuestions !== "number" ||
-        (body.scoreBand !== "high" && body.scoreBand !== "medium" && body.scoreBand !== "low")
-      ) {
-        res.status(400).json({
-          error: "Invalid body: score (number), totalQuestions (number), scoreBand (high|medium|low) required",
+      const { score, totalQuestions, scoreBand } = body;
+
+      if (typeof score !== "number" || !Number.isInteger(score) || score < 0) {
+        res.status(400).json({ error: "score must be an integer >= 0" });
+        return;
+      }
+      if (typeof totalQuestions !== "number" || !Number.isInteger(totalQuestions) || totalQuestions < 1) {
+        res.status(400).json({ error: "totalQuestions must be an integer > 0" });
+        return;
+      }
+      if (!isScoreBand(scoreBand)) {
+        res.status(400).json({ error: "scoreBand must be high, medium, or low" });
+        return;
+      }
+      if (score > totalQuestions) {
+        res.status(400).json({ error: "score cannot exceed totalQuestions" });
+        return;
+      }
+
+      const dbCorrect = countCorrectAnswers(db, sessionId);
+      if (score !== dbCorrect) {
+        res.status(422).json({
+          error: "score does not match recorded correct answers in database",
+          expectedScore: dbCorrect,
+          receivedScore: score,
+        });
+        return;
+      }
+
+      const answerRows = countAnswersForSession(db, sessionId);
+      if (answerRows !== totalQuestions) {
+        res.status(422).json({
+          error: "totalQuestions does not match number of saved answers for this session",
+          expectedAnswerCount: answerRows,
+          receivedTotalQuestions: totalQuestions,
         });
         return;
       }
 
       const payload: CompleteSessionBody = {
-        score: body.score,
-        totalQuestions: body.totalQuestions,
-        scoreBand: body.scoreBand,
+        score,
+        totalQuestions,
+        scoreBand,
       };
 
       completeSession(db, sessionId, payload);

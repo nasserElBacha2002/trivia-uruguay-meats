@@ -1,4 +1,4 @@
-import { Box, Button, ButtonBase, LinearProgress, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, LinearProgress, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
@@ -19,6 +19,9 @@ export function QuizFramePage() {
     answerWithOption,
     continueToNext,
     questions,
+    isAnswerPersistencePending,
+    answerPersistError,
+    dismissAnswerPersistError,
   } = useQuizEngine();
 
   const options = currentQuestion.options;
@@ -124,6 +127,43 @@ export function QuizFramePage() {
               py: { xs: 2, md: 2.5 },
             }}
           >
+            {answerPersistError ? (
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                alignItems={{ xs: "stretch", sm: "center" }}
+                sx={{
+                  maxWidth: 920,
+                  width: "100%",
+                  mx: "auto",
+                  mb: 2,
+                  p: 1.5,
+                  borderRadius: 2,
+                  border: "1px solid rgba(239,128,128,0.5)",
+                  bgcolor: "rgba(183,28,28,0.18)",
+                }}
+              >
+                <Typography sx={{ flex: 1, fontSize: "0.92rem", color: "#ffb4ab" }}>{answerPersistError}</Typography>
+                <Button type="button" variant="outlined" size="small" onClick={dismissAnswerPersistError} sx={{ flexShrink: 0 }}>
+                  {t("quizApiAnswerDismiss")}
+                </Button>
+              </Stack>
+            ) : null}
+            {isAnswerPersistencePending ? (
+              <LinearProgress
+                variant="indeterminate"
+                sx={{
+                  maxWidth: 920,
+                  width: "100%",
+                  mx: "auto",
+                  mb: 2,
+                  height: 3,
+                  borderRadius: 99,
+                  bgcolor: "rgba(255,255,255,0.08)",
+                  "& .MuiLinearProgress-bar": { bgcolor: "secondary.main" },
+                }}
+              />
+            ) : null}
             <Box
               sx={{
                 display: "grid",
@@ -150,8 +190,8 @@ export function QuizFramePage() {
                   <ButtonBase
                     key={option.id}
                     type="button"
-                    disabled={feedbackState.isVisible}
-                    onClick={() => answerWithOption(option.id)}
+                    disabled={feedbackState.isVisible || isAnswerPersistencePending}
+                    onClick={() => void answerWithOption(option.id)}
                     sx={{
                       gridColumn: spanFullRow ? { xs: "auto", md: "1 / -1" } : "auto",
                       justifyContent: "flex-start",

@@ -49,7 +49,19 @@ app.use(
   },
 );
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Trivia API listening on http://localhost:${PORT}`);
   console.log(`SQLite database: ${dbPath}`);
+});
+
+server.on("error", (err: NodeJS.ErrnoException) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(
+      `[trivia-api] Port ${PORT} is already in use. Stop the other process (e.g. another \`npm run dev:api\`) or set a different PORT in backend/.env.\n` +
+        `  macOS: lsof -i :${PORT}   then   kill <PID>`,
+    );
+  } else {
+    console.error("[trivia-api] Server error:", err);
+  }
+  process.exit(1);
 });

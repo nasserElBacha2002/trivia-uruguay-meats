@@ -45,6 +45,16 @@ export const resources = {
       attractBadgePadraoTitle: "Exportação premium",
       attractBrandMark: "Uruguay Meats",
       apiParticipantError: "Não foi possível salvar seus dados. Verifique a conexão e tente novamente.",
+      quizApiAnswerError: "Não foi possível salvar sua resposta. Verifique a conexão e toque na opção novamente.",
+      quizApiAnswerDismiss: "Fechar",
+      resultCompleteSyncError: "Não foi possível sincronizar o resultado com o servidor. Pode tentar de novo.",
+      resultCompleteRetry: "Tentar novamente",
+      resultClaimDialogTitle: "Retirar seu brinde",
+      resultClaimDialogIntro: "Dirija-se ao balcão da experiência Uruguay Lamb com sua participação registrada.",
+      resultClaimDialogBody:
+        "A equipe validará sua participação e entregará o brinde conforme as regras do estande. Obrigado por completar a trivia.",
+      resultClaimDialogClose: "Voltar",
+      resultClaimDialogFinish: "Concluir e voltar ao início",
     },
   },
   en: {
@@ -93,6 +103,16 @@ export const resources = {
       attractBadgePadraoTitle: "Premium export",
       attractBrandMark: "Uruguay Meats",
       apiParticipantError: "We could not save your details. Check the connection and try again.",
+      quizApiAnswerError: "We could not save your answer. Check the connection and tap an option again.",
+      quizApiAnswerDismiss: "Dismiss",
+      resultCompleteSyncError: "We could not sync your result to the server. You can try again.",
+      resultCompleteRetry: "Try again",
+      resultClaimDialogTitle: "Claim your gift",
+      resultClaimDialogIntro: "Please go to the Uruguay Lamb experience desk with your registered participation.",
+      resultClaimDialogBody:
+        "Staff will validate your entry and provide the gift according to booth rules. Thank you for completing the trivia.",
+      resultClaimDialogClose: "Back",
+      resultClaimDialogFinish: "Finish and return to start",
     },
   },
 } as const;

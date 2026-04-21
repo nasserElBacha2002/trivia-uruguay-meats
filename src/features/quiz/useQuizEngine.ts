@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/routes";
 import { getQuizContent } from "../../content/quizContent";
@@ -7,6 +8,7 @@ import { useSessionStore } from "../session/useSessionStore";
 import { submitQuizAnswer as persistQuizAnswer } from "../../services/triviaApi";
 
 export function useQuizEngine() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { state, submitAnswer, goToNextQuestion, finishQuiz } = useSessionStore();
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -16,14 +18,22 @@ export function useQuizEngine() {
     isCorrect: false,
     message: null,
   });
+  const [answerPersistError, setAnswerPersistError] = useState<string | null>(null);
+  const [isAnswerPersistencePending, setIsAnswerPersistencePending] = useState(false);
 
   const quizContent = getQuizContent(state.language);
   const questions = quizContent.questions;
+  if (questions.length === 0) {
+    throw new Error("Quiz content has no questions.");
+  }
   const safeQuestionIndex =
     state.currentQuestionIndex >= 0 && state.currentQuestionIndex < questions.length
       ? state.currentQuestionIndex
       : 0;
   const currentQuestion = questions[safeQuestionIndex];
+  if (!currentQuestion) {
+    throw new Error("Quiz content is missing the question at the current index.");
+  }
   const isLastQuestion = safeQuestionIndex === questions.length - 1;
   const hasAnsweredCurrent = state.answers.some(
     (answer) => answer.questionId === currentQuestion.id,
@@ -41,14 +51,18 @@ export function useQuizEngine() {
     pendingResultNavigationRef.current = false;
   }, [navigate, state.currentStep, state.quizCompleted]);
 
+  const dismissAnswerPersistError = useCallback(() => {
+    setAnswerPersistError(null);
+  }, []);
+
   const selectOption = (optionId: string) => {
-    if (hasAnsweredCurrent) return;
+    if (hasAnsweredCurrent || isAnswerPersistencePending) return;
     setSelectedOptionId(optionId);
   };
 
-  /** Immediate answer + feedback (kiosk: tap option = submit, no separate “Answer” step). */
-  const answerWithOption = (optionId: string) => {
-    if (!optionId || hasAnsweredCurrent || feedbackState.isVisible) return;
+  /** Persist answer first when a backend session exists; then local score + feedback. */
+  const answerWithOption = async (optionId: string) => {
+    if (!optionId || hasAnsweredCurrent || feedbackState.isVisible || isAnswerPersistencePending) return;
 
     const isCorrect = optionId === currentQuestion.correctOptionId;
     const answer: QuizAnswer = {
@@ -57,14 +71,24 @@ export function useQuizEngine() {
       isCorrect,
     };
 
+    setAnswerPersistError(null);
     setSelectedOptionId(optionId);
-    submitAnswer(answer);
+
     const sid = state.sessionId;
     if (sid != null) {
-      void persistQuizAnswer(sid, answer).catch((err) => {
-        console.error("[triviaApi] Failed to persist quiz answer", err);
-      });
+      setIsAnswerPersistencePending(true);
+      try {
+        await persistQuizAnswer(sid, answer);
+      } catch {
+        setAnswerPersistError(t("quizApiAnswerError"));
+        setSelectedOptionId(null);
+        setIsAnswerPersistencePending(false);
+        return;
+      }
+      setIsAnswerPersistencePending(false);
     }
+
+    submitAnswer(answer);
     setFeedbackState({
       isVisible: true,
       isCorrect,
@@ -73,8 +97,8 @@ export function useQuizEngine() {
   };
 
   const submitCurrentAnswer = () => {
-    if (!selectedOptionId || hasAnsweredCurrent || feedbackState.isVisible) return;
-    answerWithOption(selectedOptionId);
+    if (!selectedOptionId || hasAnsweredCurrent || feedbackState.isVisible || isAnswerPersistencePending) return;
+    void answerWithOption(selectedOptionId);
   };
 
   const continueToNext = () => {
@@ -99,8 +123,11 @@ export function useQuizEngine() {
     feedbackState,
     progressValue,
     isLastQuestion,
-    canSubmit: Boolean(selectedOptionId) && !feedbackState.isVisible,
+    canSubmit: Boolean(selectedOptionId) && !feedbackState.isVisible && !isAnswerPersistencePending,
     canContinue: feedbackState.isVisible,
+    isAnswerPersistencePending,
+    answerPersistError,
+    dismissAnswerPersistError,
     selectOption,
     answerWithOption,
     submitCurrentAnswer,
