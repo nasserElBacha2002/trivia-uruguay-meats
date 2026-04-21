@@ -45,22 +45,29 @@ export function useQuizEngine() {
     setSelectedOptionId(optionId);
   };
 
-  const submitCurrentAnswer = () => {
-    if (!selectedOptionId || hasAnsweredCurrent) return;
+  /** Immediate answer + feedback (kiosk: tap option = submit, no separate “Answer” step). */
+  const answerWithOption = (optionId: string) => {
+    if (!optionId || hasAnsweredCurrent || feedbackState.isVisible) return;
 
-    const isCorrect = selectedOptionId === currentQuestion.correctOptionId;
+    const isCorrect = optionId === currentQuestion.correctOptionId;
     const answer: QuizAnswer = {
       questionId: currentQuestion.id,
-      selectedOptionId,
+      selectedOptionId: optionId,
       isCorrect,
     };
 
+    setSelectedOptionId(optionId);
     submitAnswer(answer);
     setFeedbackState({
       isVisible: true,
       isCorrect,
       message: currentQuestion.feedback,
     });
+  };
+
+  const submitCurrentAnswer = () => {
+    if (!selectedOptionId || hasAnsweredCurrent || feedbackState.isVisible) return;
+    answerWithOption(selectedOptionId);
   };
 
   const continueToNext = () => {
@@ -88,6 +95,7 @@ export function useQuizEngine() {
     canSubmit: Boolean(selectedOptionId) && !feedbackState.isVisible,
     canContinue: feedbackState.isVisible,
     selectOption,
+    answerWithOption,
     submitCurrentAnswer,
     continueToNext,
   };
