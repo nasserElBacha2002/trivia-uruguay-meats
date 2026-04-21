@@ -1,0 +1,232 @@
+{
+  "id": "uruguay-lamb-quiz-pt",
+  "slug": "uruguay-lamb-quiz-pt",
+  "title": "Quanto você sabe sobre o cordeiro uruguaio da Boutique de carnes do mundo?",
+  "subtitle": "Responda corretamente e ganhe um prêmio",
+  "ctaLabel": "Começar",
+  "durationSecondsMin": 60,
+  "durationSecondsMax": 90,
+  "totalQuestions": 6,
+  "objectives": [
+    "Gerar uma base de dados qualificada",
+    "Educar sobre Uruguay Lamb",
+    "Posicionar “Boutique de carnes do mundo”"
+  ],
+  "dataCollection": {
+    "fields": [
+      {
+        "id": "name",
+        "label": "Nome",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "email",
+        "label": "Email",
+        "type": "email",
+        "required": true
+      },
+      {
+        "id": "country",
+        "label": "País",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "buysUruguayMeat",
+        "label": "Você compra carne uruguaia?",
+        "type": "single_select",
+        "required": true,
+        "options": [
+          {
+            "id": "buys_yes",
+            "label": "Sim"
+          },
+          {
+            "id": "buys_no",
+            "label": "Não"
+          }
+        ]
+      },
+      {
+        "id": "sector",
+        "label": "A que setor você pertence?",
+        "type": "single_select",
+        "required": true,
+        "options": [
+          {
+            "id": "sector_importador",
+            "label": "Importador"
+          },
+          {
+            "id": "sector_distribuidor",
+            "label": "Distribuidor"
+          },
+          {
+            "id": "sector_varejo_supermercado",
+            "label": "Varejo / Supermercado"
+          },
+          {
+            "id": "sector_foodservice_restaurante",
+            "label": "Foodservice / Restaurante"
+          },
+          {
+            "id": "sector_industria",
+            "label": "Indústria"
+          },
+          {
+            "id": "sector_outro",
+            "label": "Outro"
+          }
+        ]
+      }
+    ]
+  },
+  "quizFormat": {
+    "type": "multiple_choice",
+    "feedbackMode": "immediate",
+    "singleCorrectOption": true
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "order": 1,
+      "prompt": "Que tipo de carnes o Uruguai exporta para o Brasil?",
+      "options": [
+        {
+          "id": "q1_o1",
+          "label": "Carne bovina e ovina"
+        },
+        {
+          "id": "q1_o2",
+          "label": "Carne bovina, ovina e de aves"
+        },
+        {
+          "id": "q1_o3",
+          "label": "Carne bovina, ovina e suína"
+        },
+        {
+          "id": "q1_o4",
+          "label": "Apenas carne bovina"
+        }
+      ],
+      "correctOptionId": "q1_o1",
+      "feedback": "O Uruguai é reconhecido pela produção e exportação de carne bovina e ovina, com altos padrões de qualidade e forte presença nos mercados internacionais."
+    },
+    {
+      "id": "q2",
+      "order": 2,
+      "prompt": "O que é Uruguay Lamb?",
+      "options": [
+        {
+          "id": "q2_o1",
+          "label": "Uma empresa exportadora"
+        },
+        {
+          "id": "q2_o2",
+          "label": "Uma marca de promoção do cordeiro uruguaio"
+        },
+        {
+          "id": "q2_o3",
+          "label": "Um tipo de corte de carne"
+        }
+      ],
+      "correctOptionId": "q2_o2",
+      "feedback": "Uruguay Lamb é a marca país que representa e promove o cordeiro uruguaio nos mercados internacionais. Não é uma marca privada, mas uma iniciativa do setor liderada pelo Instituto Nacional de Carnes."
+    },
+    {
+      "id": "q3",
+      "order": 3,
+      "prompt": "Segundo a campanha de Uruguay Lamb, o cordeiro uruguaio faz parte de:",
+      "options": [
+        {
+          "id": "q3_o1",
+          "label": "Uma commodity global"
+        },
+        {
+          "id": "q3_o2",
+          "label": "Uma produção massiva padrão"
+        },
+        {
+          "id": "q3_o3",
+          "label": "A Boutique de carnes do mundo"
+        },
+        {
+          "id": "q3_o4",
+          "label": "Um produto de baixo custo"
+        }
+      ],
+      "correctOptionId": "q3_o3",
+      "feedback": null
+    },
+    {
+      "id": "q4",
+      "order": 4,
+      "prompt": "O que caracteriza o sistema produtivo do cordeiro uruguaio?",
+      "options": [
+        {
+          "id": "q4_o1",
+          "label": "Produção intensiva em confinamento"
+        },
+        {
+          "id": "q4_o2",
+          "label": "Produção industrial urbana"
+        },
+        {
+          "id": "q4_o3",
+          "label": "Produção extensiva em pastagens naturais"
+        }
+      ],
+      "correctOptionId": "q4_o3",
+      "feedback": "O cordeiro uruguaio é criado majoritariamente em pastagens naturais, o que contribui para a qualidade, sabor e uma produção mais sustentável."
+    },
+    {
+      "id": "q5",
+      "order": 5,
+      "prompt": "Por que o cordeiro é mais macio que a ovelha?",
+      "options": [
+        {
+          "id": "q5_o1",
+          "label": "Pela idade do animal"
+        },
+        {
+          "id": "q5_o2",
+          "label": "Pela raça"
+        },
+        {
+          "id": "q5_o3",
+          "label": "Pelo tipo de corte"
+        }
+      ],
+      "correctOptionId": "q5_o1",
+      "feedback": "O cordeiro é mais macio porque provém de animais jovens (entre 4 e 12 meses), o que resulta em uma carne mais suave e macia."
+    },
+    {
+      "id": "q6",
+      "order": 6,
+      "prompt": "Como o cordeiro pode ser consumido?",
+      "options": [
+        {
+          "id": "q6_o1",
+          "label": "Apenas em preparações longas"
+        },
+        {
+          "id": "q6_o2",
+          "label": "Apenas na churrasqueira"
+        },
+        {
+          "id": "q6_o3",
+          "label": "Em diversas preparações"
+        }
+      ],
+      "correctOptionId": "q6_o3",
+      "feedback": "O cordeiro é uma carne versátil: pode ser preparado na churrasqueira, no forno ou em cortes rápidos, adaptando-se a diferentes ocasiões."
+    }
+  ],
+  "finalResults": {
+    "high": "Você conhece bem o cordeiro uruguaio da Boutique de carnes do mundo! Passe no balcão e retire seu brinde!",
+    "medium": "Você está no caminho certo. É hora de experimentar o cordeiro uruguaio da Boutique de carnes do mundo.",
+    "low": "Na próxima você acerta. Ainda falta conhecer mais sobre o cordeiro uruguaio da Boutique de carnes do mundo."
+  },
+  "closingMessage": "Cordeiro uruguaio, da Boutique de carnes do mundo."
+}

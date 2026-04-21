@@ -1,0 +1,23 @@
+import { Navigate, createBrowserRouter } from "react-router-dom";
+import { KioskShell } from "../components/KioskShell";
+import { ROUTES } from "../config/routes";
+import { AttractPage } from "../pages/AttractPage";
+import { FormPage } from "../pages/FormPage";
+import { LanguagePage } from "../pages/LanguagePage";
+import { QuizFramePage } from "../pages/QuizFramePage";
+import { ResultFramePage } from "../pages/ResultFramePage";
+
+export const appRouter = createBrowserRouter([
+  {
+    path: ROUTES.attract,
+    element: <KioskShell />,
+    children: [
+      { index: true, element: <AttractPage /> },
+      { path: ROUTES.language.slice(1), element: <LanguagePage /> },
+      { path: ROUTES.form.slice(1), element: <FormPage /> },
+      { path: ROUTES.quiz.slice(1), element: <QuizFramePage /> },
+      { path: ROUTES.result.slice(1), element: <ResultFramePage /> },
+      { path: "*", element: <Navigate to={ROUTES.attract} replace /> },
+    ],
+  },
+]);
