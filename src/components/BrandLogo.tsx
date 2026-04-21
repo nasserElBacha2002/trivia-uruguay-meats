@@ -1,10 +1,41 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type BrandLogoProps = {
   size?: number;
 };
 
 export function BrandLogo({ size = 120 }: BrandLogoProps) {
+  const { t } = useTranslation();
+  const [assetMissing, setAssetMissing] = useState(false);
+
+  if (assetMissing) {
+    return (
+      <Box
+        sx={{
+          width: size,
+          height: size * 0.32,
+          border: "1px dashed",
+          borderColor: "primary.main",
+          borderRadius: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 1,
+          bgcolor: "rgba(0,47,108,0.04)",
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{ color: "primary.main", fontWeight: 700, textAlign: "center" }}
+        >
+          {t("missingLogoLabel")}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="img"
@@ -17,8 +48,8 @@ export function BrandLogo({ size = 120 }: BrandLogoProps) {
         display: "block",
       }}
       onError={(event) => {
-        // Keep reserved area for the official logo until the real asset is provided.
-        event.currentTarget.style.visibility = "hidden";
+        event.currentTarget.style.display = "none";
+        setAssetMissing(true);
       }}
     />
   );

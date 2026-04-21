@@ -1,15 +1,21 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScreenCard } from "../components/ScreenCard";
 import { ROUTES } from "../config/routes";
+import { quizPtContent } from "../content/quizContent";
+import { useFlowState } from "../features/session/flowState";
 
 export function AttractPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { resetFlow } = useFlowState();
+
+  useEffect(() => {
+    resetFlow();
+  }, [resetFlow]);
 
   return (
-    <ScreenCard title={t("attractTitle")} subtitle={t("attractSubtitle")}>
+    <ScreenCard title={quizPtContent.title} subtitle={quizPtContent.subtitle}>
       <Stack justifyContent="space-between" height="100%">
         <Box
           sx={{
@@ -31,7 +37,7 @@ export function AttractPage() {
 
         <Box display="flex" justifyContent="center" pt={3}>
           <Button size="large" onClick={() => navigate(ROUTES.language)}>
-            {t("startAction")}
+            {quizPtContent.ctaLabel}
           </Button>
         </Box>
       </Stack>
