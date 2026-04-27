@@ -7,6 +7,7 @@ import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
+import { kioskCtaBreathe, kioskCtaGoldGlow } from "../animations/kioskKeyframes";
 import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
 import { BRAND_GOLD } from "../theme/appTheme";
@@ -20,11 +21,6 @@ const attractCtaEnter = keyframes`
 const attractCtaExit = keyframes`
   from { opacity: 1; transform: translateY(0) scale(1); }
   to { opacity: 0; transform: translateY(4px) scale(0.98); }
-`;
-
-const attractCtaIdle = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
 `;
 
 export function AttractPage() {
@@ -106,7 +102,7 @@ export function AttractPage() {
 
       <KioskScreen
         variant="hero"
-        header={<KioskHeader logoSize="hero" />}
+        header={<KioskHeader logoSize="hero" brandMotion="attract" />}
         rootSx={{
           bgcolor: "transparent",
           position: "relative",
@@ -172,9 +168,14 @@ export function AttractPage() {
             <Box
               sx={{
                 display: "inline-flex",
-                ...(ctaExiting
-                  ? { [mediaNoReducedMotion]: { animation: "none" } }
-                  : { [mediaNoReducedMotion]: { animation: `${attractCtaIdle} 3.1s ease-in-out infinite`, animationDelay: "0.6s" } }),
+                ...(!ctaExiting
+                  ? {
+                      [mediaNoReducedMotion]: {
+                        animation: `${kioskCtaBreathe} 2.1s ease-in-out infinite`,
+                        animationDelay: "0.45s",
+                      },
+                    }
+                  : { [mediaNoReducedMotion]: { animation: "none" } }),
               }}
             >
               <Button
@@ -223,6 +224,14 @@ export function AttractPage() {
                     outline: "none",
                     boxShadow: `0 0 0 3px rgba(0, 0, 0, 0.9), 0 0 0 6px ${BRAND_GOLD}`,
                   },
+                  ...(!ctaExiting
+                    ? {
+                        [mediaNoReducedMotion]: {
+                          animation: `${kioskCtaGoldGlow} 2.1s ease-in-out infinite`,
+                          animationDelay: "0.45s",
+                        },
+                      }
+                    : {}),
                 }}
               >
                 {quizContent.ctaLabel}

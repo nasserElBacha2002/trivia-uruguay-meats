@@ -2,15 +2,25 @@ import { Box, Button, Collapse, Stack, Typography, useMediaQuery } from "@mui/ma
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import {
+  kioskHeadlineCelebrate,
+  kioskResultCtaPulse,
+  kioskResultCtaPulseSoft,
+  kioskResultCtaPulseSubtle,
+  kioskResultHeroZoom,
+  kioskScoreReveal,
+  kioskSecondaryIdlePulse,
+} from "../animations/kioskKeyframes";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
+import { GoldParticles } from "../components/motion/GoldParticles";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useCompleteQuizSession } from "../features/result/useCompleteQuizSession";
 import { useSessionStore } from "../features/session/useSessionStore";
 import { BRAND_GOLD } from "../theme/appTheme";
-import { motion } from "../theme/motion";
+import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => void }) {
   if (failed) {
@@ -39,6 +49,10 @@ function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => voi
         objectFit: "cover",
         objectPosition: "center",
         display: "block",
+        [mediaNoReducedMotion]: {
+          animation: `${kioskResultHeroZoom} 0.9s cubic-bezier(0.22, 1, 0.36, 1) both`,
+        },
+        [mediaReducedMotion]: { animation: "none" },
       }}
     />
   );
@@ -128,11 +142,17 @@ function ResultFramePageContent() {
             }}
           >
             <ResultHeroBand failed={heroFailed} onFail={onHeroFail} />
+            {scoreBand === "high" && !heroFailed ? (
+              <Box sx={{ position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}>
+                <GoldParticles />
+              </Box>
+            ) : null}
             <Box
               sx={{
                 position: "absolute",
                 inset: 0,
                 pointerEvents: "none",
+                zIndex: 2,
                 background: "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.5) 100%)",
               }}
             />
@@ -163,6 +183,13 @@ function ResultFramePageContent() {
                 fontWeight: 900,
                 letterSpacing: "-0.03em",
                 mb: 2,
+                [mediaNoReducedMotion]:
+                  scoreBand === "high"
+                    ? { animation: `${kioskHeadlineCelebrate} 0.95s cubic-bezier(0.22, 1, 0.36, 1) both` }
+                    : scoreBand === "medium"
+                      ? { animation: `${kioskScoreReveal} 0.7s cubic-bezier(0.22, 1, 0.36, 1) both` }
+                      : { animation: `${kioskScoreReveal} 0.55s ease-out both` },
+                [mediaReducedMotion]: { animation: "none" },
               }}
             >
               {headline}
@@ -178,6 +205,11 @@ function ResultFramePageContent() {
                   border: `1px solid rgba(205,153,65,0.32)`,
                   textAlign: "center",
                   minWidth: "min(280px, 80vw)",
+                  [mediaNoReducedMotion]: {
+                    animation: `${kioskScoreReveal} 0.65s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                    animationDelay: "0.1s",
+                  },
+                  [mediaReducedMotion]: { animation: "none" },
                 }}
               >
                 <Typography sx={{ fontSize: "clamp(0.85rem, 1.4dvh, 1rem)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", mb: 1 }}>
@@ -230,6 +262,21 @@ function ResultFramePageContent() {
                       color: "#0a0a0a",
                       gap: 1,
                       "&:hover": { bgcolor: "#d4a855" },
+                      [mediaNoReducedMotion]:
+                        scoreBand === "high"
+                          ? {
+                              animation: `${kioskResultCtaPulse} 1.65s ease-in-out infinite`,
+                              animationDelay: "0.35s",
+                            }
+                          : scoreBand === "medium"
+                            ? {
+                                animation: `${kioskResultCtaPulseSoft} 2.35s ease-in-out infinite`,
+                                animationDelay: "0.25s",
+                              }
+                            : {
+                                animation: `${kioskResultCtaPulseSubtle} 3.2s ease-in-out infinite`,
+                              },
+                      [mediaReducedMotion]: { animation: "none" },
                     }}
                   >
                     {t("resultPrimaryCta")}
@@ -251,6 +298,12 @@ function ResultFramePageContent() {
                       borderColor: "rgba(205,153,65,0.45)",
                       color: "common.white",
                       textTransform: "none",
+                      transition: `transform ${motion.durationFast}ms ${motion.easingOut}, border-color ${motion.duration}ms ease, background-color ${motion.duration}ms ease`,
+                      [mediaNoReducedMotion]: {
+                        animation: `${kioskSecondaryIdlePulse} 3.6s ease-in-out infinite`,
+                      },
+                      [mediaReducedMotion]: { animation: "none" },
+                      "&:active": { transform: "scale(0.985)" },
                       "&:hover": {
                         borderWidth: 2,
                         borderColor: "rgba(205,153,65,0.65)",

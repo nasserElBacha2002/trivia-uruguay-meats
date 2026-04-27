@@ -2,6 +2,14 @@ import { keyframes } from "@emotion/react";
 import { Box, Button, ButtonBase, LinearProgress, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  kioskCheckPop,
+  kioskCorrectGlowPulse,
+  kioskQuestionEnter,
+  kioskShakeSubtle,
+  quizOptionCardFloat,
+  quizOptionCardFloatReverse,
+} from "../animations/kioskKeyframes";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
@@ -11,9 +19,10 @@ import type { QuizQuestion, QuizQuestionOption } from "../types/quizContent";
 
 const OPTION_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+/** Card mount: opacity only so inner shell can run transform idle without fighting this animation. */
 const quizOptionEnter = keyframes`
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 const quizOptionSheen = keyframes`
@@ -134,6 +143,9 @@ function QuizQuestionLayout({
 }) {
   const { t } = useTranslation();
 
+  /** Idle float only while reading — stops on tap or while answer persists; feedback view handles motion. */
+  const optionFloatIdle = selectedOptionId == null && !isAnswerPersistencePending;
+
   return (
     <Stack
       spacing={1.5}
@@ -159,7 +171,17 @@ function QuizQuestionLayout({
         <LinearProgress variant="indeterminate" sx={{ height: 4, borderRadius: 99, bgcolor: "rgba(255,255,255,0.08)", "& .MuiLinearProgress-bar": { bgcolor: "secondary.main" } }} />
       ) : null}
 
-      <Box sx={{ textAlign: "center", flexShrink: 0 }}>
+      <Box
+        key={currentQuestion.id}
+        sx={{
+          textAlign: "center",
+          flexShrink: 0,
+          [mediaNoReducedMotion]: {
+            animation: `${kioskQuestionEnter} 0.48s cubic-bezier(0.22, 1, 0.36, 1) both`,
+          },
+          [mediaReducedMotion]: { animation: "none" },
+        }}
+      >
         <Typography
           sx={{
             mb: 1,
@@ -192,6 +214,9 @@ function QuizQuestionLayout({
             const isSelected = selectedOptionId === option.id;
             const awaiting = isSelected && !isAnswerPersistencePending;
             const staggerMs = index * 45;
+            const floatDurationSec = 4.05 + (index % 4) * 0.28;
+            const floatDelaySec = 0.42 + index * 0.58;
+            const floatKeyframes = index % 2 === 0 ? quizOptionCardFloat : quizOptionCardFloatReverse;
             return (
               <ButtonBase
                 key={option.id}
@@ -212,6 +237,9 @@ function QuizQuestionLayout({
                   backgroundColor: "rgba(255,255,255,0.06)",
                   color: "text.primary",
                   transition: `background-color ${motion.duration}ms ${motion.easingOut}, border-color ${motion.duration}ms`,
+                  "&:active:not(.Mui-disabled) .quiz-option-inner": {
+                    transform: "scale(0.985)",
+                  },
                   [mediaNoReducedMotion]: {
                     animation: `${quizOptionEnter} ${motion.durationSlow}ms ${motion.easing} both`,
                     animationDelay: `${staggerMs}ms`,
@@ -251,12 +279,50 @@ function QuizQuestionLayout({
                     : {}),
                 }}
               >
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ position: "relative", zIndex: 1, width: "100%", pr: 1 }}>
-                  <Typography className="quiz-option-letter" component="span" sx={{ ...optLetter, color: "rgba(255,255,255,0.9)", flexShrink: 0 }}>
-                    {letter}
-                  </Typography>
-                  <Typography sx={optText}>{option.label}</Typography>
-                </Stack>
+                <Box
+                  className="quiz-option-float-shell"
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "stretch",
+                    flex: 1,
+                    minWidth: 0,
+                    ...(optionFloatIdle
+                      ? {
+                          [mediaNoReducedMotion]: {
+                            animation: `${floatKeyframes} ${floatDurationSec}s ease-in-out infinite`,
+                            animationDelay: `${floatDelaySec}s`,
+                            willChange: "transform",
+                          },
+                          [mediaReducedMotion]: { animation: "none", transform: "none" },
+                        }
+                      : {
+                          [mediaNoReducedMotion]: { animation: "none", transform: "none", willChange: "auto" },
+                          [mediaReducedMotion]: { animation: "none", transform: "none" },
+                        }),
+                  }}
+                >
+                  <Stack
+                    className="quiz-option-inner"
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="center"
+                    sx={{
+                      position: "relative",
+                      zIndex: 2,
+                      width: "100%",
+                      pr: 1,
+                      transition: `transform ${motion.durationFast}ms ${motion.easingOut}`,
+                    }}
+                  >
+                    <Typography className="quiz-option-letter" component="span" sx={{ ...optLetter, color: "rgba(255,255,255,0.9)", flexShrink: 0 }}>
+                      {letter}
+                    </Typography>
+                    <Typography sx={optText}>{option.label}</Typography>
+                  </Stack>
+                </Box>
               </ButtonBase>
             );
           })}
@@ -342,6 +408,7 @@ function QuizFeedbackLayout({
       ) : null}
 
       <Box
+        key={`${currentQuestion.id}-${feedbackState.isCorrect ? "ok" : "no"}`}
         sx={{
           p: { xs: 2, sm: 2.25 },
           borderRadius: 2.5,
@@ -349,11 +416,41 @@ function QuizFeedbackLayout({
           borderColor: feedbackState.isCorrect ? "rgba(129,199,132,0.5)" : "rgba(239,128,128,0.5)",
           backgroundColor: feedbackState.isCorrect ? "rgba(32, 72, 40, 0.35)" : "rgba(72, 28, 28, 0.36)",
           width: "100%",
+          [mediaNoReducedMotion]: feedbackState.isCorrect
+            ? { animation: `${kioskCorrectGlowPulse} 1.75s ease-in-out 2` }
+            : { animation: `${kioskShakeSubtle} 0.48s ease-out both` },
+          [mediaReducedMotion]: { animation: "none" },
         }}
       >
-        <Typography sx={{ fontSize: "clamp(1.25rem, 2.5dvh, 1.65rem)", fontWeight: 800 }}>
-          {feedbackState.isCorrect ? t("answerCorrectLabel") : t("answerIncorrectLabel")}
-        </Typography>
+        <Stack direction="row" spacing={1.25} alignItems="center">
+          {feedbackState.isCorrect ? (
+            <Box
+              aria-hidden
+              sx={{
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                bgcolor: "rgba(129,199,132,0.2)",
+                border: "1px solid rgba(129,199,132,0.55)",
+                color: "rgba(200, 230, 205, 0.98)",
+                [mediaNoReducedMotion]: {
+                  animation: `${kioskCheckPop} 0.55s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                },
+              }}
+            >
+              <Box component="svg" viewBox="0 0 24 24" sx={{ width: 26, height: 26, fill: "currentColor" }}>
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+              </Box>
+            </Box>
+          ) : null}
+          <Typography sx={{ fontSize: "clamp(1.25rem, 2.5dvh, 1.65rem)", fontWeight: 800 }}>
+            {feedbackState.isCorrect ? t("answerCorrectLabel") : t("answerIncorrectLabel")}
+          </Typography>
+        </Stack>
         {feedbackState.message ? (
           <Typography sx={{ mt: 1.25, fontSize: "clamp(1.15rem, 2.1dvh, 1.5rem)", lineHeight: 1.5, color: "rgba(247,242,234,0.93)" }}>
             {feedbackState.message}

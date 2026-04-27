@@ -1,17 +1,22 @@
 import { Box, ButtonBase, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { kioskCardEnterUp } from "../animations/kioskKeyframes";
 import { StitchGlobeIcon, StitchLanguageIcon } from "../components/icons/LanguageScreenIcons";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
+import { ShimmerOverlay } from "../components/motion/ShimmerOverlay";
 import { ROUTES } from "../config/routes";
 import { useSessionStore } from "../features/session/useSessionStore";
+import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 export function LanguagePage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { enterForm } = useSessionStore();
+  const [pressing, setPressing] = useState<"pt" | "en" | null>(null);
 
   const selectLanguage = async (lang: "pt" | "en") => {
     await i18n.changeLanguage(lang);
@@ -69,6 +74,11 @@ export function LanguagePage() {
             subtitle={t("languagePtSubtitle")}
             onClick={() => void selectLanguage("pt")}
             variant="pt"
+            enterDelayMs={0}
+            shimmerDelaySec={0.35}
+            isPressing={pressing === "pt"}
+            onPressStart={() => setPressing("pt")}
+            onPressEnd={() => setPressing(null)}
           />
           <LanguageChoiceCard
             icon={<StitchLanguageIcon />}
@@ -77,6 +87,11 @@ export function LanguagePage() {
             subtitle={t("languageEnSubtitle")}
             onClick={() => void selectLanguage("en")}
             variant="en"
+            enterDelayMs={140}
+            shimmerDelaySec={1.25}
+            isPressing={pressing === "en"}
+            onPressStart={() => setPressing("en")}
+            onPressEnd={() => setPressing(null)}
           />
         </Stack>
       </Stack>
@@ -91,9 +106,26 @@ type LanguageChoiceCardProps = {
   subtitle: string;
   onClick: () => void;
   variant: "pt" | "en";
+  enterDelayMs: number;
+  shimmerDelaySec: number;
+  isPressing: boolean;
+  onPressStart: () => void;
+  onPressEnd: () => void;
 };
 
-function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant }: LanguageChoiceCardProps) {
+function LanguageChoiceCard({
+  icon,
+  watermark,
+  title,
+  subtitle,
+  onClick,
+  variant,
+  enterDelayMs,
+  shimmerDelaySec,
+  isPressing,
+  onPressStart,
+  onPressEnd,
+}: LanguageChoiceCardProps) {
   const glass =
     variant === "pt"
       ? "linear-gradient(155deg, rgba(205,153,65,0.2) 0%, rgba(10,10,10,0.92) 100%)"
@@ -102,6 +134,10 @@ function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant
   return (
     <ButtonBase
       onClick={onClick}
+      onPointerDown={onPressStart}
+      onPointerUp={onPressEnd}
+      onPointerCancel={onPressEnd}
+      onPointerLeave={onPressEnd}
       sx={{
         position: "relative",
         width: "100%",
@@ -120,13 +156,22 @@ function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
         boxShadow: "0 20px 50px rgba(0,0,0,0.4)",
-        transition: "transform 160ms ease, border-color 200ms ease",
-        "&:hover": {
-          borderColor: "rgba(205,153,65,0.45)",
+        transition: `transform ${motion.durationFast}ms ${motion.easingOut}, border-color ${motion.duration}ms ease`,
+        transform: isPressing ? "scale(0.97)" : "scale(1)",
+        [mediaNoReducedMotion]: {
+          animation: `${kioskCardEnterUp} 520ms cubic-bezier(0.22, 1, 0.36, 1) both`,
+          animationDelay: `${enterDelayMs}ms`,
         },
-        "&:active": { transform: "scale(0.99)" },
+        [mediaReducedMotion]: { animation: "none" },
+        "@media (hover: hover) and (pointer: fine)": {
+          "&:hover": {
+            borderColor: "rgba(205,153,65,0.45)",
+          },
+        },
+        "&:active": { transform: "scale(0.97)" },
       }}
     >
+      <ShimmerOverlay cycleSec={8.5} delaySec={shimmerDelaySec} />
       <Typography
         sx={{
           position: "absolute",

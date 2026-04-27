@@ -8,9 +8,11 @@ export type KioskHeaderProps = {
   logoSize?: KioskHeaderLogoSize;
   /** 0–100: muestra barra bajo el logo. Omitir para ocultar barra. */
   progress?: number;
+  /** Attract-only: logo entrance + idle float on the Uruguay Lamb lockup. */
+  brandMotion?: "attract";
 };
 
-export function KioskHeader({ logoSize = "standard", progress }: KioskHeaderProps) {
+export function KioskHeader({ logoSize = "standard", progress, brandMotion }: KioskHeaderProps) {
   const showProgress = typeof progress === "number" && !Number.isNaN(progress);
   const headerMax =
     logoSize === "hero" ? "min(760px, 92vw)" : "min(520px, 88vw)";
@@ -30,7 +32,7 @@ export function KioskHeader({ logoSize = "standard", progress }: KioskHeaderProp
         flexShrink: 0,
       }}
     >
-      <BrandLogo prominence={logoSize === "hero" ? "hero" : "standard"} />
+      <BrandLogo prominence={logoSize === "hero" ? "hero" : "standard"} brandMotion={brandMotion} />
       {showProgress ? (
         <Box sx={{ width: "100%", maxWidth: "min(720px, 90vw)" }}>
           <LinearProgress
@@ -44,6 +46,7 @@ export function KioskHeader({ logoSize = "standard", progress }: KioskHeaderProp
               "& .MuiLinearProgress-bar": {
                 bgcolor: BRAND_GOLD,
                 background: `linear-gradient(90deg, ${BRAND_GOLD} 0%, rgba(232, 200, 130, 0.95) 100%)`,
+                transition: "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)",
               },
             }}
           />

@@ -4,9 +4,12 @@ import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { kioskSelectSnap } from "../animations/kioskKeyframes";
 import { sectorOptionIcon } from "../components/icons/sectorOptionIcon";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
+import { SectorIconIdle } from "../components/motion/SectorIconIdle";
+import { ShimmerOverlay } from "../components/motion/ShimmerOverlay";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content";
 import { createLeadSchema, leadDefaultValues, type LeadSchema } from "../features/lead/leadSchema";
@@ -16,6 +19,7 @@ import {
 } from "../features/lead/leadTypes";
 import { useSessionStore } from "../features/session/useSessionStore";
 import { createParticipantSession } from "../services/triviaApi";
+import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 import type { QuizDataCollectionField, QuizFieldOption } from "../types/quizContent";
 
 const fieldRootSx = {
@@ -24,6 +28,7 @@ const fieldRootSx = {
     borderRadius: 2,
     fontSize: "clamp(1.05rem, 2dvh, 1.2rem)",
     background: "linear-gradient(140deg, rgba(205,153,65,0.12) 0%, rgba(22,22,22,0.78) 100%)",
+    transition: `box-shadow ${motion.duration}ms ease, border-color ${motion.duration}ms ease`,
   },
   "& .MuiOutlinedInput-input": {
     py: 1.5,
@@ -31,6 +36,11 @@ const fieldRootSx = {
   },
   "& .MuiOutlinedInput-notchedOutline": {
     borderColor: "rgba(229,226,225,0.16)",
+    transition: `border-color ${motion.duration}ms ease, box-shadow ${motion.duration}ms ease`,
+  },
+  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(205,153,65,0.78)",
+    boxShadow: "0 0 0 1px rgba(205,153,65,0.35), 0 0 20px rgba(205,153,65,0.18)",
   },
   "& .MuiFormHelperText-root": {
     ml: 0,
@@ -138,6 +148,8 @@ export function FormPage() {
   };
 
   const sectorToggleSx = {
+    position: "relative" as const,
+    overflow: "hidden" as const,
     minWidth: 0,
     width: "100%",
     minHeight: "clamp(88px, 9dvh, 120px)",
@@ -151,11 +163,17 @@ export function FormPage() {
     gap: 0.5,
     justifyContent: "center",
     alignItems: "center",
+    transition: `transform ${motion.durationFast}ms ${motion.easingOut}, border-color ${motion.duration}ms ease`,
+    "&:active": { transform: "scale(0.98)" },
     "&.Mui-selected": {
       background: "linear-gradient(145deg, rgba(205,153,65,0.22) 0%, rgba(10,10,10,0.94) 100%)",
       borderColor: "secondary.main",
       color: "common.white",
       boxShadow: "0 6px 18px rgba(0,0,0,0.3)",
+      [mediaNoReducedMotion]: {
+        animation: `${kioskSelectSnap} 340ms cubic-bezier(0.16, 1, 0.3, 1)`,
+      },
+      [mediaReducedMotion]: { animation: "none" },
     },
   };
 
@@ -244,7 +262,7 @@ export function FormPage() {
                       gap: 1,
                     }}
                   >
-                    {(sectorField.options ?? []).map((option: QuizFieldOption) => (
+                    {(sectorField.options ?? []).map((option: QuizFieldOption, sectorIdx: number) => (
                       <ToggleButton
                         key={option.id}
                         type="button"
@@ -255,10 +273,23 @@ export function FormPage() {
                         }}
                         sx={sectorToggleSx}
                       >
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5, textAlign: "center" }}>
-                          <Box sx={{ lineHeight: 0, "& svg": { fontSize: "clamp(1.75rem, 3dvh, 2.25rem)" } }}>
-                            {sectorOptionIcon(option.id)}
-                          </Box>
+                        <ShimmerOverlay cycleSec={9.2} delaySec={0.5 + sectorIdx * 0.55} />
+                        <Box
+                          sx={{
+                            position: "relative",
+                            zIndex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 0.5,
+                            textAlign: "center",
+                          }}
+                        >
+                          <SectorIconIdle optionId={option.id}>
+                            <Box sx={{ lineHeight: 0, "& svg": { fontSize: "clamp(1.75rem, 3dvh, 2.25rem)" } }}>
+                              {sectorOptionIcon(option.id)}
+                            </Box>
+                          </SectorIconIdle>
                           <Typography sx={{ fontSize: "clamp(0.95rem, 1.8dvh, 1.15rem)", fontWeight: 700, lineHeight: 1.25 }}>
                             {option.label}
                           </Typography>

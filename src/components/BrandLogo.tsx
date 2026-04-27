@@ -1,13 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { kioskLogoEnter, kioskLogoFloat } from "../animations/kioskKeyframes";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
+import { mediaNoReducedMotion, mediaReducedMotion } from "../theme/motion";
 
 type BrandLogoProps = {
   prominence?: "hero" | "standard";
+  /** Attract hero: one-shot fade/slide in + subtle floating idle on the lockup. */
+  brandMotion?: "attract";
 };
 
-export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
+export function BrandLogo({ prominence = "standard", brandMotion }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
 
@@ -38,20 +42,57 @@ export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
     );
   }
 
+  const imgSx = {
+    display: "block",
+    margin: "0 auto",
+    width: prominence === "hero" ? heroW : standardW,
+    maxWidth: "100%",
+    height: "auto",
+    objectFit: "contain" as const,
+    filter: prominence === "standard" ? "drop-shadow(0 2px 12px rgba(0,0,0,0.5))" : "none",
+  };
+
+  if (brandMotion === "attract") {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          [mediaNoReducedMotion]: {
+            animation: `${kioskLogoEnter} 0.85s cubic-bezier(0.22, 1, 0.36, 1) both`,
+          },
+          [mediaReducedMotion]: { animation: "none" },
+        }}
+      >
+        <Box
+          sx={{
+            display: "inline-block",
+            [mediaNoReducedMotion]: {
+              animation: `${kioskLogoFloat} 5.5s ease-in-out infinite`,
+              animationDelay: "0.75s",
+            },
+            [mediaReducedMotion]: { animation: "none" },
+          }}
+        >
+          <Box
+            component="img"
+            src={MEDIA_ASSETS.logo}
+            alt="Uruguay Lamb"
+            sx={imgSx}
+            onError={() => setAssetMissing(true)}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="img"
       src={MEDIA_ASSETS.logo}
       alt="Uruguay Lamb"
-      sx={{
-        display: "block",
-        margin: "0 auto",
-        width: prominence === "hero" ? heroW : standardW,
-        maxWidth: "100%",
-        height: "auto",
-        objectFit: "contain",
-        filter: prominence === "standard" ? "drop-shadow(0 2px 12px rgba(0,0,0,0.5))" : "none",
-      }}
+      sx={imgSx}
       onError={() => setAssetMissing(true)}
     />
   );
