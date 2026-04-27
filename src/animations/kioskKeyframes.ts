@@ -96,6 +96,55 @@ export const kioskScoreReveal = keyframes`
   to { opacity: 1; transform: scale(1); }
 `;
 
+/** Score card — noticeable “pop” settle (all bands; tune duration in consumer). */
+export const kioskScorePop = keyframes`
+  0% { opacity: 0; transform: scale(0.88); }
+  65% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+`;
+
+/** Result screen root — first paint sequence anchor. */
+export const kioskResultPageEnter = keyframes`
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+`;
+
+/** Reduced motion — single fade for whole result stack. */
+export const kioskResultPageEnterReduced = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+/** Medium band headline — clearer lift + scale than generic reveal. */
+export const kioskResultHeadlineMedium = keyframes`
+  0% { opacity: 0; transform: translateY(18px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+`;
+
+/** Low band headline — perceptible but sober (no “punishment” bounce). */
+export const kioskResultHeadlineLow = keyframes`
+  0% { opacity: 0; transform: translateY(14px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+`;
+
+/** Performance pill — quick fade up. */
+export const kioskResultBadgeEnter = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+/** Supporting copy — light fade. */
+export const kioskResultSupportingEnter = keyframes`
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+/** Primary CTA block — one-shot before idle glow loops. */
+export const kioskResultCtaEnter = keyframes`
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 /** High score headline — restrained celebratory bounce. */
 export const kioskHeadlineCelebrate = keyframes`
   0% { opacity: 0; transform: translateY(16px) scale(0.96); }
@@ -110,10 +159,22 @@ export const kioskResultHeroZoom = keyframes`
   to { opacity: 1; transform: scale(1); }
 `;
 
+/** Result hero — more visible zoom-in (medium / high). */
+export const kioskResultHeroZoomStrong = keyframes`
+  from { opacity: 0; transform: scale(1.1); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
 /** Primary result CTA — gold pulse (intensity tuned per score band in sx). */
 export const kioskResultCtaPulse = keyframes`
   0%, 100% { box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 0 0 rgba(205,153,65,0); }
   50% { box-shadow: 0 12px 36px rgba(0,0,0,0.48), 0 0 36px rgba(205,153,65,0.45); }
+`;
+
+/** Medium score — clearly visible gold halo on CTA (between soft and high). */
+export const kioskResultCtaPulseMedium = keyframes`
+  0%, 100% { box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 0 0 rgba(205,153,65,0); }
+  50% { box-shadow: 0 12px 34px rgba(0,0,0,0.46), 0 0 32px rgba(205,153,65,0.36); }
 `;
 
 /** Medium score — calmer gold breathing on CTA. */
@@ -134,11 +195,25 @@ export const kioskSecondaryIdlePulse = keyframes`
   50% { border-color: rgba(205,153,65,0.72); }
 `;
 
-/** Gold confetti / particles — vertical drift. */
+/** Gold confetti / particles — vertical drift (high band). */
 export const kioskParticleDrift = keyframes`
   0% { transform: translateY(0) translateX(0); opacity: 0; }
-  8% { opacity: 0.55; }
+  8% { opacity: 0.58; }
   100% { transform: translateY(-100vh) translateX(12px); opacity: 0; }
+`;
+
+/** Particles — medium band, softer peaks. */
+export const kioskParticleDriftMedium = keyframes`
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.34; }
+  100% { transform: translateY(-100vh) translateX(10px); opacity: 0; }
+`;
+
+/** Particles — low band, minimal. */
+export const kioskParticleDriftSubtle = keyframes`
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  12% { opacity: 0.22; }
+  100% { transform: translateY(-100vh) translateX(8px); opacity: 0; }
 `;
 
 /** Sector idle: importador — vertical float. */

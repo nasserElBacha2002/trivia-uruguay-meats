@@ -4,11 +4,19 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
   kioskHeadlineCelebrate,
+  kioskResultBadgeEnter,
+  kioskResultCtaEnter,
   kioskResultCtaPulse,
+  kioskResultCtaPulseMedium,
   kioskResultCtaPulseSoft,
-  kioskResultCtaPulseSubtle,
+  kioskResultHeadlineLow,
+  kioskResultHeadlineMedium,
   kioskResultHeroZoom,
-  kioskScoreReveal,
+  kioskResultHeroZoomStrong,
+  kioskResultPageEnter,
+  kioskResultPageEnterReduced,
+  kioskResultSupportingEnter,
+  kioskScorePop,
   kioskSecondaryIdlePulse,
 } from "../animations/kioskKeyframes";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
@@ -22,7 +30,27 @@ import { useSessionStore } from "../features/session/useSessionStore";
 import { BRAND_GOLD } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
-function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => void }) {
+/** Delays (ms) for staggered reveal — hero → headline → score → CTA. */
+const RESULT_T = {
+  pageMs: 760,
+  badgeMs: 60,
+  heroMs: 100,
+  headlineMs: 220,
+  supportingMs: 300,
+  scoreCardMs: 400,
+  ctaEnterMs: 520,
+  ctaPulseAfterMs: 1080,
+} as const;
+
+type ResultHeroBandProps = {
+  failed: boolean;
+  onFail: () => void;
+  reduceMotion: boolean;
+  heroDelayMs: number;
+  strongZoom: boolean;
+};
+
+function ResultHeroBand({ failed, onFail, reduceMotion, heroDelayMs, strongZoom }: ResultHeroBandProps) {
   if (failed) {
     return (
       <Box
@@ -37,6 +65,8 @@ function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => voi
       />
     );
   }
+  const heroKf = strongZoom ? kioskResultHeroZoomStrong : kioskResultHeroZoom;
+  const heroDurationSec = strongZoom ? 1.05 : 0.88;
   return (
     <Box
       component="img"
@@ -49,10 +79,18 @@ function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => voi
         objectFit: "cover",
         objectPosition: "center",
         display: "block",
-        [mediaNoReducedMotion]: {
-          animation: `${kioskResultHeroZoom} 0.9s cubic-bezier(0.22, 1, 0.36, 1) both`,
-        },
-        [mediaReducedMotion]: { animation: "none" },
+        ...(reduceMotion
+          ? {
+              animation: `${kioskResultPageEnterReduced} 0.22s ease-out both`,
+              animationDelay: `${heroDelayMs}ms`,
+            }
+          : {
+              [mediaNoReducedMotion]: {
+                animation: `${heroKf} ${heroDurationSec}s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                animationDelay: `${heroDelayMs}ms`,
+              },
+              [mediaReducedMotion]: { animation: "none" },
+            }),
       }}
     />
   );
@@ -76,6 +114,12 @@ function ResultFramePageContent() {
   const quizContent = getQuizContent(state.language);
   const total = quizContent.totalQuestions;
 
+  /**
+   * Visual band vs score / total (default trivia = 6 questions).
+   * - high: score >= 5
+   * - medium: score >= 3
+   * - low: score 0–2
+   */
   const scoreBand = useMemo(
     (): "high" | "medium" | "low" => (score >= 5 ? "high" : score >= 3 ? "medium" : "low"),
     [score],
@@ -103,6 +147,28 @@ function ResultFramePageContent() {
 
   const onHeroFail = () => setHeroFailed(true);
 
+  const strongHeroZoom = scoreBand !== "low";
+  const headlineKf =
+    scoreBand === "high" ? kioskHeadlineCelebrate : scoreBand === "medium" ? kioskResultHeadlineMedium : kioskResultHeadlineLow;
+  const headlineDurationMs = scoreBand === "high" ? 980 : scoreBand === "medium" ? 840 : 720;
+  const scorePopDurationMs = scoreBand === "high" ? 880 : scoreBand === "medium" ? 820 : 760;
+
+  const ctaPulseKf =
+    scoreBand === "high"
+      ? kioskResultCtaPulse
+      : scoreBand === "medium"
+        ? kioskResultCtaPulseMedium
+        : kioskResultCtaPulseSoft;
+
+  const stackEnter = prefersReducedMotion
+    ? { animation: `${kioskResultPageEnterReduced} 0.28s ease-out both` }
+    : {
+        [mediaNoReducedMotion]: {
+          animation: `${kioskResultPageEnter} ${RESULT_T.pageMs}ms cubic-bezier(0.22, 1, 0.36, 1) both`,
+        },
+        [mediaReducedMotion]: { animation: "none" },
+      };
+
   return (
     <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, bgcolor: "#000", color: "text.primary" }}>
       <KioskScreen header={<KioskHeader logoSize="standard" />}>
@@ -118,6 +184,7 @@ function ResultFramePageContent() {
             py: 1.5,
             alignItems: "center",
             overflow: "hidden",
+            ...stackEnter,
           }}
         >
           {syncFailed ? (
@@ -141,10 +208,24 @@ function ResultFramePageContent() {
               border: "1px solid rgba(205,153,65,0.22)",
             }}
           >
-            <ResultHeroBand failed={heroFailed} onFail={onHeroFail} />
-            {scoreBand === "high" && !heroFailed ? (
+            <ResultHeroBand
+              failed={heroFailed}
+              onFail={onHeroFail}
+              reduceMotion={prefersReducedMotion}
+              heroDelayMs={RESULT_T.heroMs}
+              strongZoom={strongHeroZoom}
+            />
+            {!heroFailed ? (
               <Box sx={{ position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}>
-                <GoldParticles />
+                {scoreBand === "high" ? (
+                  <GoldParticles count={15} drift="full" durationBase={5.4} opacityMax={1} intensity={1} />
+                ) : null}
+                {scoreBand === "medium" ? (
+                  <GoldParticles count={8} drift="medium" durationBase={6.1} opacityMax={0.9} intensity={0.9} />
+                ) : null}
+                {scoreBand === "low" ? (
+                  <GoldParticles count={3} drift="subtle" durationBase={6.5} opacityMax={0.72} intensity={0.85} />
+                ) : null}
               </Box>
             ) : null}
             <Box
@@ -168,6 +249,18 @@ function ResultFramePageContent() {
                 bgcolor: "rgba(24,24,24,0.95)",
                 border: `1px solid rgba(205,153,65,0.35)`,
                 mb: 1.5,
+                ...(prefersReducedMotion
+                  ? {
+                      animation: `${kioskResultPageEnterReduced} 0.22s ease-out both`,
+                      animationDelay: `${RESULT_T.badgeMs}ms`,
+                    }
+                  : {
+                      [mediaNoReducedMotion]: {
+                        animation: `${kioskResultBadgeEnter} 0.55s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                        animationDelay: `${RESULT_T.badgeMs}ms`,
+                      },
+                      [mediaReducedMotion]: { animation: "none" },
+                    }),
               }}
             >
               <Typography sx={{ fontSize: "clamp(0.85rem, 1.5dvh, 1rem)", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
@@ -183,13 +276,18 @@ function ResultFramePageContent() {
                 fontWeight: 900,
                 letterSpacing: "-0.03em",
                 mb: 2,
-                [mediaNoReducedMotion]:
-                  scoreBand === "high"
-                    ? { animation: `${kioskHeadlineCelebrate} 0.95s cubic-bezier(0.22, 1, 0.36, 1) both` }
-                    : scoreBand === "medium"
-                      ? { animation: `${kioskScoreReveal} 0.7s cubic-bezier(0.22, 1, 0.36, 1) both` }
-                      : { animation: `${kioskScoreReveal} 0.55s ease-out both` },
-                [mediaReducedMotion]: { animation: "none" },
+                ...(prefersReducedMotion
+                  ? {
+                      animation: `${kioskResultPageEnterReduced} 0.24s ease-out both`,
+                      animationDelay: `${RESULT_T.headlineMs}ms`,
+                    }
+                  : {
+                      [mediaNoReducedMotion]: {
+                        animation: `${headlineKf} ${headlineDurationMs}ms cubic-bezier(0.22, 1, 0.36, 1) both`,
+                        animationDelay: `${RESULT_T.headlineMs}ms`,
+                      },
+                      [mediaReducedMotion]: { animation: "none" },
+                    }),
               }}
             >
               {headline}
@@ -205,11 +303,18 @@ function ResultFramePageContent() {
                   border: `1px solid rgba(205,153,65,0.32)`,
                   textAlign: "center",
                   minWidth: "min(280px, 80vw)",
-                  [mediaNoReducedMotion]: {
-                    animation: `${kioskScoreReveal} 0.65s cubic-bezier(0.22, 1, 0.36, 1) both`,
-                    animationDelay: "0.1s",
-                  },
-                  [mediaReducedMotion]: { animation: "none" },
+                  ...(prefersReducedMotion
+                    ? {
+                        animation: `${kioskResultPageEnterReduced} 0.24s ease-out both`,
+                        animationDelay: `${RESULT_T.scoreCardMs}ms`,
+                      }
+                    : {
+                        [mediaNoReducedMotion]: {
+                          animation: `${kioskScorePop} ${scorePopDurationMs}ms cubic-bezier(0.22, 1, 0.36, 1) both`,
+                          animationDelay: `${RESULT_T.scoreCardMs}ms`,
+                        },
+                        [mediaReducedMotion]: { animation: "none" },
+                      }),
                 }}
               >
                 <Typography sx={{ fontSize: "clamp(0.85rem, 1.4dvh, 1rem)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", mb: 1 }}>
@@ -237,6 +342,18 @@ function ResultFramePageContent() {
                   color: BRAND_GOLD,
                   textAlign: "center",
                   maxWidth: 560,
+                  ...(prefersReducedMotion
+                    ? {
+                        animation: `${kioskResultPageEnterReduced} 0.22s ease-out both`,
+                        animationDelay: `${RESULT_T.supportingMs}ms`,
+                      }
+                    : {
+                        [mediaNoReducedMotion]: {
+                          animation: `${kioskResultSupportingEnter} 0.62s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                          animationDelay: `${RESULT_T.supportingMs}ms`,
+                        },
+                        [mediaReducedMotion]: { animation: "none" },
+                      }),
                 }}
               >
                 {supporting}
@@ -262,21 +379,20 @@ function ResultFramePageContent() {
                       color: "#0a0a0a",
                       gap: 1,
                       "&:hover": { bgcolor: "#d4a855" },
-                      [mediaNoReducedMotion]:
-                        scoreBand === "high"
-                          ? {
-                              animation: `${kioskResultCtaPulse} 1.65s ease-in-out infinite`,
-                              animationDelay: "0.35s",
-                            }
-                          : scoreBand === "medium"
-                            ? {
-                                animation: `${kioskResultCtaPulseSoft} 2.35s ease-in-out infinite`,
-                                animationDelay: "0.25s",
-                              }
-                            : {
-                                animation: `${kioskResultCtaPulseSubtle} 3.2s ease-in-out infinite`,
-                              },
-                      [mediaReducedMotion]: { animation: "none" },
+                      ...(prefersReducedMotion
+                        ? {
+                            animation: `${kioskResultPageEnterReduced} 0.26s ease-out both`,
+                            animationDelay: `${RESULT_T.ctaEnterMs}ms`,
+                          }
+                        : {
+                            [mediaNoReducedMotion]: {
+                              animation: `${kioskResultCtaEnter} 0.58s cubic-bezier(0.22, 1, 0.36, 1) ${RESULT_T.ctaEnterMs}ms both, ${ctaPulseKf} ${
+                                scoreBand === "high" ? 1.65 : scoreBand === "medium" ? 1.95 : 2.35
+                              }s ease-in-out infinite`,
+                              animationDelay: `0ms, ${RESULT_T.ctaPulseAfterMs}ms`,
+                            },
+                            [mediaReducedMotion]: { animation: "none" },
+                          }),
                     }}
                   >
                     {t("resultPrimaryCta")}
@@ -299,10 +415,15 @@ function ResultFramePageContent() {
                       color: "common.white",
                       textTransform: "none",
                       transition: `transform ${motion.durationFast}ms ${motion.easingOut}, border-color ${motion.duration}ms ease, background-color ${motion.duration}ms ease`,
-                      [mediaNoReducedMotion]: {
-                        animation: `${kioskSecondaryIdlePulse} 3.6s ease-in-out infinite`,
-                      },
-                      [mediaReducedMotion]: { animation: "none" },
+                      ...(!prefersReducedMotion
+                        ? {
+                            [mediaNoReducedMotion]: {
+                              animation: `${kioskSecondaryIdlePulse} 3.6s ease-in-out infinite`,
+                              animationDelay: `${RESULT_T.ctaPulseAfterMs + 120}ms`,
+                            },
+                            [mediaReducedMotion]: { animation: "none" },
+                          }
+                        : { animation: "none" }),
                       "&:active": { transform: "scale(0.985)" },
                       "&:hover": {
                         borderWidth: 2,
