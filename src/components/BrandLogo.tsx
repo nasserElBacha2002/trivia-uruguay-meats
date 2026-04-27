@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 
 type BrandLogoProps = {
-  /** Ancho máximo referencial (px) en `standard` en desktop; ignorado en `hero`. */
+  /** Ancho máximo referencial (px) en `standard` (pantallas internas); ignorado en `hero`. */
   size?: number;
-  /** `hero`: placa inicial (grande). `standard`: pantallas internas (más compacto). */
+  /** `hero`: placa inicial (280–420px). `standard`: 140–180px, centrado con el contenedor. */
   prominence?: "hero" | "standard";
 };
 
-export function BrandLogo({ size = 152, prominence = "standard" }: BrandLogoProps) {
+export function BrandLogo({ size = 160, prominence = "standard" }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
 
@@ -18,7 +18,7 @@ export function BrandLogo({ size = 152, prominence = "standard" }: BrandLogoProp
     return (
       <Box
         sx={{
-          maxWidth: prominence === "hero" ? 440 : Math.max(size, 120),
+          maxWidth: prominence === "hero" ? 420 : Math.max(size, 120),
           border: "1px dashed rgba(205, 153, 65, 0.65)",
           borderRadius: 1.5,
           display: "flex",
@@ -43,15 +43,15 @@ export function BrandLogo({ size = 152, prominence = "standard" }: BrandLogoProp
       alt="Uruguay Lamb"
       sx={{
         display: "block",
+        mx: "auto",
         width:
           prominence === "hero"
-            ? { xs: "min(88vw, 360px)", sm: "min(72vw, 400px)", md: 440 }
-            : { xs: "clamp(120px, 36vw, 200px)", sm: "clamp(132px, 26vw, 176px)", md: size },
+            ? "clamp(280px, 42vw, 420px)"
+            : { xs: "clamp(140px, 36vw, 180px)", sm: "clamp(148px, 28vw, 176px)", md: size },
         maxWidth: "100%",
         height: "auto",
         objectFit: "contain",
-        objectPosition: "left center",
-        filter: prominence === "standard" ? "drop-shadow(0 2px 14px rgba(0,0,0,0.55))" : "none",
+        filter: prominence === "standard" ? "drop-shadow(0 2px 12px rgba(0,0,0,0.5))" : "none",
       }}
       onError={() => setAssetMissing(true)}
     />

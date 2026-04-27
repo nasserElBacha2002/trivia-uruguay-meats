@@ -1,6 +1,8 @@
 import { keyframes } from "@emotion/react";
 import { Box, Button, ButtonBase, LinearProgress, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { BrandLogo } from "../components/BrandLogo";
+import { KioskLayout } from "../components/layout/KioskLayout";
 import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
 import { BRAND_GOLD } from "../theme/appTheme";
@@ -64,57 +66,37 @@ export function QuizFramePage() {
   const lastIndexSpansRow = options.length === 3;
   const quizSheenEnabled = !feedbackState.isVisible && !isAnswerPersistencePending;
 
+  const quizHeader = (
+    <Stack alignItems="center" spacing={0.75} sx={{ width: "100%", maxWidth: 560, px: 0.5 }}>
+      <BrandLogo prominence="standard" />
+      <LinearProgress
+        variant="determinate"
+        value={progressValue}
+        sx={{
+          width: "100%",
+          height: 4,
+          borderRadius: 99,
+          bgcolor: "rgba(229,226,225,0.12)",
+          "& .MuiLinearProgress-bar": {
+            background: `linear-gradient(90deg, ${BRAND_GOLD} 0%, rgba(232, 200, 130, 0.95) 100%)`,
+          },
+        }}
+      />
+    </Stack>
+  );
+
   return (
-    <Box
-      sx={{
-        position: "relative",
-        height: "100%",
-        width: "100%",
-        minHeight: 0,
-        overflow: "hidden",
-      }}
-    >
+    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, overflow: "hidden" }}>
       <KioskRightOcclusion zIndex={0} />
 
-      <Box
-        sx={{
-          position: "relative",
-          zIndex: 1,
-          height: "100%",
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          px: { xs: 2, md: 4, lg: 6 },
-          py: { xs: 1.5, md: 2 },
-        }}
+      <KioskLayout
+        header={quizHeader}
+        rootSx={{ position: "relative", zIndex: 1, height: "100%", maxHeight: "100%" }}
+        contentSx={{ justifyContent: "flex-start", py: 0.5 }}
       >
         <Box
           sx={{
-            width: "100%",
-            maxWidth: 960,
-            mx: "auto",
-            flexShrink: 0,
-            mb: { xs: 2, md: 2.5 },
-          }}
-        >
-          <LinearProgress
-            variant="determinate"
-            value={progressValue}
-            sx={{
-              height: 4,
-              borderRadius: 99,
-              mb: 2,
-              bgcolor: "rgba(229,226,225,0.12)",
-              "& .MuiLinearProgress-bar": {
-                background: `linear-gradient(90deg, ${BRAND_GOLD} 0%, rgba(232, 200, 130, 0.95) 100%)`,
-              },
-            }}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            flex: 1,
+            flex: "1 1 0%",
             minHeight: 0,
             width: "100%",
             maxWidth: 1040,
@@ -122,15 +104,17 @@ export function QuizFramePage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "stretch",
+            overflow: "hidden",
+            px: { xs: 1.25, sm: 2 },
           }}
         >
-          <Box sx={{ flexShrink: 0, textAlign: "center", px: { xs: 0, md: 2 } }}>
+          <Box sx={{ flexShrink: 0, textAlign: "center", px: { xs: 0, sm: 1 } }}>
             <Typography
               component="p"
               sx={{
-                mb: { xs: 1.25, md: 1.75 },
-                fontSize: "0.78rem",
-                letterSpacing: "0.2em",
+                mb: 0.75,
+                fontSize: "0.7rem",
+                letterSpacing: "0.18em",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 opacity: 0.62,
@@ -145,7 +129,7 @@ export function QuizFramePage() {
               sx={{
                 mx: "auto",
                 maxWidth: "min(920px, 100%)",
-                fontSize: { xs: "clamp(1.55rem, 4.4vw, 2.5rem)", md: "clamp(1.95rem, 2.9vw, 3rem)" },
+                fontSize: "clamp(1.2rem, 3.4vw, 1.85rem)",
                 lineHeight: 1.12,
                 fontWeight: 800,
                 letterSpacing: "-0.02em",
@@ -157,23 +141,21 @@ export function QuizFramePage() {
 
           <Box
             sx={{
-              flex: 1,
+              flex: "1 1 0%",
               minHeight: 0,
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
-              py: { xs: 2, md: 2.5 },
+              py: { xs: 1, sm: 1.25 },
             }}
           >
             <Box
               sx={{
-                flex: 1,
+                flex: "1 1 0%",
                 minHeight: 0,
-                overflowY: "auto",
-                overflowX: "hidden",
+                overflow: "hidden",
                 display: "flex",
                 flexDirection: "column",
-                WebkitOverflowScrolling: "touch",
               }}
             >
               {answerPersistError ? (
@@ -217,23 +199,26 @@ export function QuizFramePage() {
               ) : null}
               <Box
                 sx={{
-                  flex: feedbackState.isVisible ? "0 0 auto" : "1 1 0",
+                  flex: feedbackState.isVisible ? "0 1 auto" : "1 1 0%",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: feedbackState.isVisible ? "flex-start" : "center",
-                  minHeight: feedbackState.isVisible ? "auto" : { xs: "min(52vh, 420px)", md: "min(48vh, 480px)" },
+                  minHeight: 0,
+                  maxHeight: feedbackState.isVisible ? "48%" : "none",
+                  overflow: "hidden",
                 }}
               >
                 <Box
                   key={currentQuestion.id}
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
-                    gap: { xs: 1.15, md: 1.5 },
+                    gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+                    gap: { xs: 0.85, sm: 1 },
                     width: "100%",
                     maxWidth: 920,
                     mx: "auto",
                     alignContent: "center",
+                    minHeight: 0,
                   }}
                 >
                   {options.map((option: QuizQuestionOption, index: number) => {
@@ -265,8 +250,8 @@ export function QuizFramePage() {
                           alignItems: "stretch",
                           textAlign: "left",
                           borderRadius: 2.5,
-                          p: { xs: 2, md: 2.5 },
-                          minHeight: { xs: 112, md: 124 },
+                          p: { xs: 1.35, sm: 1.65 },
+                          minHeight: { xs: "clamp(68px, 9vh, 92px)", sm: "clamp(72px, 8.5vh, 96px)" },
                           border: "1px solid rgba(205,153,65,0.28)",
                           backgroundColor: "rgba(255,255,255,0.06)",
                           backdropFilter: "blur(14px)",
@@ -452,30 +437,36 @@ export function QuizFramePage() {
               {feedbackState.isVisible ? (
                 <Box
                   sx={{
-                    flexShrink: 0,
+                    flex: "0 0 auto",
                     width: "100%",
                     maxWidth: 920,
                     mx: "auto",
-                    mt: { xs: 2.5, md: 3 },
-                    mb: { xs: 1.5, md: 2 },
-                    p: { xs: 2, md: 2.25 },
+                    mt: 1,
+                    mb: 0.5,
+                    p: { xs: 1.35, sm: 1.5 },
                     borderRadius: 2.5,
                     border: "1px solid",
                     borderColor: feedbackState.isCorrect ? "rgba(129,199,132,0.5)" : "rgba(239,128,128,0.5)",
                     backgroundColor: feedbackState.isCorrect ? "rgba(32, 72, 40, 0.35)" : "rgba(72, 28, 28, 0.38)",
                     backdropFilter: "blur(10px)",
+                    minHeight: 0,
+                    overflow: "hidden",
                   }}
                 >
-                  <Typography sx={{ fontSize: { xs: "1.42rem", md: "1.55rem" }, fontWeight: 800, color: "text.primary" }}>
+                  <Typography sx={{ fontSize: "clamp(1.05rem, 2.8vw, 1.28rem)", fontWeight: 800, color: "text.primary" }}>
                     {feedbackState.isCorrect ? t("answerCorrectLabel") : t("answerIncorrectLabel")}
                   </Typography>
                   {feedbackState.message ? (
                     <Typography
                       sx={{
-                        mt: 1.5,
-                        fontSize: { xs: "1.08rem", md: "1.16rem" },
-                        lineHeight: 1.5,
+                        mt: 1,
+                        fontSize: "clamp(0.88rem, 2.2vw, 1rem)",
+                        lineHeight: 1.42,
                         color: "rgba(247,242,234,0.92)",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 4,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
                       }}
                     >
                       {feedbackState.message}
@@ -488,10 +479,10 @@ export function QuizFramePage() {
                       disableElevation
                       onClick={continueToNext}
                       sx={{
-                        mt: 2,
-                        minHeight: 52,
+                        mt: 1.25,
+                        minHeight: 64,
                         textTransform: "uppercase",
-                        letterSpacing: "0.12em",
+                        letterSpacing: "0.1em",
                         fontWeight: 800,
                         borderRadius: 2,
                         backgroundImage: "none",
@@ -547,7 +538,7 @@ export function QuizFramePage() {
             </Typography>
           </Box>
         </Box>
-      </Box>
+      </KioskLayout>
     </Box>
   );
 }

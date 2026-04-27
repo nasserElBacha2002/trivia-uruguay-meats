@@ -4,7 +4,9 @@ import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { BrandLogo } from "../components/BrandLogo";
 import { sectorOptionIcon } from "../components/icons/sectorOptionIcon";
+import { KioskLayout } from "../components/layout/KioskLayout";
 import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content";
@@ -123,7 +125,7 @@ export function FormPage() {
   };
 
   const buysToggleSx = {
-    minHeight: 48,
+    minHeight: 64,
     borderRadius: "10px",
     border: "1px solid rgba(229,226,225,0.14)",
     background: "linear-gradient(140deg, rgba(205,153,65,0.1) 0%, rgba(22,22,22,0.78) 100%)",
@@ -168,7 +170,7 @@ export function FormPage() {
   } as const;
 
   return (
-    <Box sx={{ position: "relative", height: "100%", width: "100%", overflow: "hidden" }}>
+    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, overflow: "hidden" }}>
       <KioskRightOcclusion zIndex={0} />
       <Box
         component="form"
@@ -179,59 +181,71 @@ export function FormPage() {
           height: "100%",
           minHeight: 0,
           overflow: "hidden",
-          px: { xs: 1, md: 2.5 },
-          py: { xs: 0.85, md: 1 },
-          display: "grid",
-          gridTemplateRows: "auto minmax(0, 1fr) auto",
-          rowGap: { xs: 0.65, md: 0.85 },
-          alignContent: "stretch",
         }}
       >
-        <Stack spacing={0.35} sx={{ minWidth: 0, maxWidth: 960, width: "100%", mx: "auto" }}>
-          <Typography
-            sx={{
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              fontSize: "0.65rem",
-              opacity: 0.55,
-              fontWeight: 700,
-            }}
-          >
-            {t("formEyebrow")}
-          </Typography>
-          <Typography sx={{ fontSize: { xs: "1.55rem", md: "2.1rem" }, lineHeight: 1.08, fontWeight: 700 }}>
-            {t("formTitle")}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: { xs: "0.8rem", md: "0.88rem" },
-              opacity: 0.72,
-              maxWidth: 720,
-              lineHeight: 1.35,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {t("formIntro")}
-          </Typography>
-        </Stack>
-
-        <Box
-          sx={{
-            minHeight: 0,
-            minWidth: 0,
-            overflow: "hidden",
-            width: "100%",
-            maxWidth: 960,
-            mx: "auto",
-            display: "grid",
-            gridTemplateRows: "auto auto minmax(0, 1fr)",
-            alignContent: "start",
-            gap: { xs: 0.75, md: 0.95 },
-          }}
+        <KioskLayout
+          header={<BrandLogo prominence="standard" />}
+          rootSx={{ height: "100%", maxHeight: "100%" }}
+          contentSx={{ justifyContent: "flex-start", pt: 0.25, pb: 0.5 }}
         >
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 960,
+              mx: "auto",
+              flex: "1 1 0%",
+              minHeight: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "stretch",
+              overflow: "hidden",
+              px: { xs: 0.5, sm: 1 },
+            }}
+          >
+            <Stack spacing={0.25} sx={{ minWidth: 0, width: "100%", flexShrink: 0, mb: 0.5 }}>
+              <Typography
+                sx={{
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  fontSize: "0.6rem",
+                  opacity: 0.55,
+                  fontWeight: 700,
+                }}
+              >
+                {t("formEyebrow")}
+              </Typography>
+              <Typography sx={{ fontSize: "clamp(1.2rem, 3.2vw, 1.65rem)", lineHeight: 1.08, fontWeight: 700 }}>
+                {t("formTitle")}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "clamp(0.72rem, 1.8vw, 0.82rem)",
+                  opacity: 0.72,
+                  maxWidth: 720,
+                  lineHeight: 1.3,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {t("formIntro")}
+              </Typography>
+            </Stack>
+
+            <Box
+              sx={{
+                minHeight: 0,
+                minWidth: 0,
+                overflow: "hidden",
+                width: "100%",
+                flex: "1 1 0%",
+                display: "grid",
+                gridTemplateRows: "auto auto minmax(0, 1fr)",
+                alignContent: "start",
+                gap: { xs: 0.45, sm: 0.55 },
+              }}
+            >
           <Box
             sx={{
               display: "grid",
@@ -332,7 +346,7 @@ export function FormPage() {
                       display: "grid",
                       gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
                       gridTemplateRows: "repeat(2, minmax(0, 1fr))",
-                      gap: 0.65,
+                      gap: 0.5,
                       alignContent: "stretch",
                       justifyContent: "stretch",
                     }}
@@ -366,7 +380,7 @@ export function FormPage() {
                           </Box>
                           <Typography
                             sx={{
-                              fontSize: "0.68rem",
+                              fontSize: "0.62rem",
                               fontWeight: 700,
                               textAlign: "center",
                               lineHeight: 1.15,
@@ -376,7 +390,7 @@ export function FormPage() {
                               width: "100%",
                               overflow: "hidden",
                               display: "-webkit-box",
-                              WebkitLineClamp: 2,
+                              WebkitLineClamp: 3,
                               WebkitBoxOrient: "vertical",
                               wordBreak: "break-word",
                             }}
@@ -394,57 +408,59 @@ export function FormPage() {
               )}
             />
           ) : null}
-        </Box>
+            </Box>
 
-        {errors.root?.message ? (
-          <Typography
-            role="alert"
-            sx={{
-              color: "#ffb4ab",
-              fontSize: "0.88rem",
-              maxWidth: 960,
-              width: "100%",
-              mx: "auto",
-              px: 0.5,
-            }}
-          >
-            {errors.root.message}
-          </Typography>
-        ) : null}
+            {errors.root?.message ? (
+              <Typography
+                role="alert"
+                sx={{
+                  color: "#ffb4ab",
+                  fontSize: "0.78rem",
+                  width: "100%",
+                  flexShrink: 0,
+                  px: 0.25,
+                  py: 0.25,
+                }}
+              >
+                {errors.root.message}
+              </Typography>
+            ) : null}
 
-        <Paper
-          elevation={0}
-          sx={{
-            minWidth: 0,
-            maxWidth: 960,
-            width: "100%",
-            mx: "auto",
-            borderRadius: 2.5,
-            p: { xs: 1, md: 1.15 },
-            border: "1px solid rgba(229,226,225,0.12)",
-            bgcolor: "rgba(12,12,12,0.72)",
-          }}
-        >
-          <Button
-            variant="contained"
-            type="submit"
-            disableElevation
-            disabled={!isValid || isSubmitting}
-            fullWidth
-            sx={{
-              minHeight: 52,
-              fontSize: { xs: "1rem", md: "1.08rem" },
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              fontWeight: 800,
-              borderRadius: 2,
-              backgroundImage: "none",
-              bgcolor: "primary.main",
-            }}
-          >
-            {t("continueLabel")}
-          </Button>
-        </Paper>
+            <Paper
+              elevation={0}
+              sx={{
+                minWidth: 0,
+                width: "100%",
+                flexShrink: 0,
+                mt: 0.5,
+                borderRadius: 2.5,
+                p: { xs: 0.75, sm: 0.85 },
+                border: "1px solid rgba(229,226,225,0.12)",
+                bgcolor: "rgba(12,12,12,0.72)",
+              }}
+            >
+              <Button
+                variant="contained"
+                type="submit"
+                disableElevation
+                disabled={!isValid || isSubmitting}
+                fullWidth
+                sx={{
+                  minHeight: 64,
+                  fontSize: "clamp(0.92rem, 2.2vw, 1.02rem)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  fontWeight: 800,
+                  borderRadius: 2,
+                  backgroundImage: "none",
+                  bgcolor: "primary.main",
+                }}
+              >
+                {t("continueLabel")}
+              </Button>
+            </Paper>
+          </Box>
+        </KioskLayout>
       </Box>
     </Box>
   );

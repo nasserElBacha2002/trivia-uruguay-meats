@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { BrandLogo } from "../components/BrandLogo";
+import { KioskFooterBrand, KioskLayout } from "../components/layout/KioskLayout";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
@@ -21,7 +22,6 @@ const attractCtaExit = keyframes`
   to { opacity: 0; transform: translateY(4px) scale(0.98); }
 `;
 
-/** Muy sutil: “soft attention” ~2px en ~3s, sin caricatura */
 const attractCtaIdle = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
@@ -55,16 +55,55 @@ export function AttractPage() {
     resetSession();
   }, [resetSession, shouldResetSession]);
 
+  const attractFooter = (
+    <Stack
+      direction="row"
+      flexWrap="wrap"
+      alignItems="center"
+      justifyContent="center"
+      spacing={1.5}
+      sx={{ width: "100%", maxHeight: "100%", overflow: "hidden", rowGap: 0.5, columnGap: 1.5 }}
+    >
+      <Stack direction="row" spacing={0.75} alignItems="center">
+        <Typography sx={{ fontSize: "1.25rem", lineHeight: 1, color: BRAND_GOLD }} aria-hidden>
+          ✓
+        </Typography>
+        <Box>
+          <Typography sx={{ fontSize: "0.58rem", letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, opacity: 0.6, color: "common.white" }}>
+            {t("attractBadgeCertLabel")}
+          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.02em", lineHeight: 1.2, color: "common.white" }}>
+            {t("attractBadgeCertTitle")}
+          </Typography>
+        </Box>
+      </Stack>
+      <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.22)", display: { xs: "none", sm: "block" }, height: 28 }} />
+      <Stack direction="row" spacing={0.75} alignItems="center">
+        <Typography sx={{ fontSize: "1.25rem", lineHeight: 1, color: BRAND_GOLD }} aria-hidden>
+          ★
+        </Typography>
+        <Box>
+          <Typography sx={{ fontSize: "0.58rem", letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, opacity: 0.6, color: "common.white" }}>
+            {t("attractBadgePadraoLabel")}
+          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.02em", lineHeight: 1.2, color: "common.white" }}>
+            {t("attractBadgePadraoTitle")}
+          </Typography>
+        </Box>
+      </Stack>
+      <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.22)", display: { xs: "none", sm: "block" }, height: 28 }} />
+      <KioskFooterBrand />
+    </Stack>
+  );
+
   return (
     <Box
       sx={{
-        position: "absolute",
-        inset: 0,
+        position: "relative",
         height: "100%",
         width: "100%",
+        minHeight: 0,
         overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
         color: "common.white",
       }}
     >
@@ -80,8 +119,6 @@ export function AttractPage() {
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            transform: "scale(1.05)",
-            transformOrigin: "center",
             pointerEvents: "none",
           }}
         />
@@ -102,9 +139,9 @@ export function AttractPage() {
           position: "absolute",
           inset: 0,
           pointerEvents: "none",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-          background: "linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.82) 100%)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          background: "linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.78) 100%)",
         }}
       />
 
@@ -113,71 +150,64 @@ export function AttractPage() {
           position: "absolute",
           inset: 0,
           pointerEvents: "none",
-          background: `linear-gradient(180deg, rgba(205, 153, 65, 0.06) 0%, rgba(0, 0, 0, 0.75) 100%)`,
+          background: "linear-gradient(180deg, rgba(205, 153, 65, 0.05) 0%, rgba(0, 0, 0, 0.72) 100%)",
         }}
       />
 
-      <Stack
-        component="main"
-        flex={1}
-        minHeight={0}
-        alignItems="center"
-        justifyContent="center"
-        px={{ xs: 2.5, md: 5 }}
-        pt={{ xs: 10, md: 12 }}
-        sx={{
+      <KioskLayout
+        rootSx={{
+          bgcolor: "transparent",
           position: "relative",
-          zIndex: 10,
-          textAlign: "center",
-          paddingBottom: { xs: "clamp(10rem, 18vh, 14rem)", md: "clamp(8rem, 12vh, 11rem)" },
+          zIndex: 2,
+          height: "100%",
+          maxHeight: "100%",
         }}
+        header={<BrandLogo prominence="hero" />}
+        footer={attractFooter}
       >
-        <Box sx={{ maxWidth: 1100, width: "100%" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              mb: { xs: 3, md: 4 },
-              [mediaNoReducedMotion]: {
-                animation: `${attractCtaEnter} ${motion.durationSlow}ms ${motion.easing} both`,
-              },
-            }}
-          >
-            <BrandLogo prominence="hero" />
-          </Box>
-
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 960,
+            mx: "auto",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: "1 1 0%",
+            minHeight: 0,
+            overflow: "hidden",
+            py: 1,
+          }}
+        >
           <Typography
             component="h1"
             sx={{
               fontWeight: 900,
-              letterSpacing: { xs: "-0.035em", md: "-0.045em" },
-              lineHeight: 1.02,
-              fontSize: { xs: "3.1rem", sm: "4.2rem", md: "5.2rem", lg: "5.75rem" },
-              textShadow: "0 22px 56px rgba(0,0,0,0.55)",
-              mb: { xs: 3.5, md: 5 },
+              letterSpacing: "-0.03em",
+              lineHeight: 1.05,
+              fontSize: "clamp(1.85rem, 5.2vw, 3.25rem)",
+              textShadow: "0 18px 40px rgba(0,0,0,0.55)",
+              mb: 1.5,
             }}
           >
-            O Sabor da{" "}
-            <Box component="span" sx={{ color: "secondary.main" }}>
-              Excelência
-            </Box>
-            :
+            O Sabor da <Box component="span" sx={{ color: "secondary.main" }}>Excelência</Box>:
             <br />
-            <Box component="span" sx={{ opacity: 0.96, fontWeight: 900 }}>
-              Uruguay Lamb
-            </Box>
+            <Box component="span" sx={{ opacity: 0.96, fontWeight: 900 }}>Uruguay Lamb</Box>
           </Typography>
 
           <Typography
             sx={{
-              maxWidth: 920,
+              maxWidth: 720,
               mx: "auto",
               fontWeight: 500,
-              fontSize: { xs: "1.12rem", md: "1.35rem" },
-              lineHeight: 1.45,
-              color: "rgba(229,226,225,0.88)",
+              fontSize: "clamp(0.95rem, 2.4vw, 1.2rem)",
+              lineHeight: 1.4,
+              color: "rgba(247,242,234,0.9)",
               letterSpacing: "0.02em",
-              mb: { xs: 6, md: 9 },
+              mb: 2,
+              flexShrink: 0,
             }}
           >
             {quizContent.subtitle}
@@ -187,32 +217,20 @@ export function AttractPage() {
             sx={{
               display: "flex",
               justifyContent: "center",
+              flexShrink: 0,
               [mediaNoReducedMotion]: {
                 animation: `${attractCtaEnter} ${motion.durationSlow}ms ${motion.easing} both`,
-                animationDelay: "80ms",
+                animationDelay: "60ms",
               },
-              [mediaReducedMotion]: { opacity: 1 },
-              ...(ctaExiting
-                ? {
-                    [mediaNoReducedMotion]: {
-                      animation: `${attractCtaExit} 200ms ${motion.easingOut} forwards`,
-                    },
-                  }
-                : {}),
+              ...(ctaExiting ? { [mediaNoReducedMotion]: { animation: `${attractCtaExit} 200ms ${motion.easingOut} forwards` } } : {}),
             }}
           >
             <Box
               sx={{
                 display: "inline-flex",
-                justifyContent: "center",
                 ...(ctaExiting
                   ? { [mediaNoReducedMotion]: { animation: "none" } }
-                  : {
-                      [mediaNoReducedMotion]: {
-                        animation: `${attractCtaIdle} 3.1s ease-in-out infinite`,
-                        animationDelay: "0.72s",
-                      },
-                    }),
+                  : { [mediaNoReducedMotion]: { animation: `${attractCtaIdle} 3.1s ease-in-out infinite`, animationDelay: "0.6s" } }),
               }}
             >
               <Button
@@ -235,184 +253,41 @@ export function AttractPage() {
                   }, 200);
                 }}
                 sx={{
-                position: "relative",
-                overflow: "hidden",
-                minWidth: { xs: 300, md: 440 },
-                minHeight: { xs: 84, md: 90 },
-                px: { xs: 5, md: 8 },
-                borderRadius: "10px",
-                bgcolor: BRAND_GOLD,
-                color: "#0a0a0a",
-                backgroundImage: "none",
-                fontSize: { xs: "1.25rem", md: "1.55rem" },
-                fontWeight: 900,
-                letterSpacing: { xs: "0.2em", md: "0.26em" },
-                textTransform: "uppercase",
-                border: "1px solid rgba(0, 0, 0, 0.12)",
-                boxShadow: "0 18px 48px rgba(0,0,0,0.45)",
-                transitionProperty: "transform, box-shadow, border-color, filter, background-color",
-                transitionDuration: `${motion.duration}ms`,
-                transitionTimingFunction: motion.easingOut,
-                [mediaReducedMotion]: {
-                  transitionDuration: "0.01ms",
-                },
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  inset: 0,
-                  left: "-40%",
-                  width: "45%",
-                  background: "linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%)",
-                  transform: "skewX(-18deg) translateX(-160%)",
-                  opacity: 0,
-                  pointerEvents: "none",
-                },
-                "@media (hover: hover) and (pointer: fine)": {
-                  "&:hover": {
-                    bgcolor: "#d4a855",
-                    borderColor: "rgba(0, 0, 0, 0.18)",
-                    filter: "brightness(1.03)",
-                    boxShadow: `0 22px 56px rgba(0,0,0,0.5), 0 0 0 1px rgba(205,153,65,0.45)`,
-                    transform: { xs: "translateY(-1px)", md: "translateY(-2px)" },
+                  position: "relative",
+                  overflow: "hidden",
+                  minWidth: 280,
+                  minHeight: 64,
+                  px: 5,
+                  borderRadius: "10px",
+                  bgcolor: BRAND_GOLD,
+                  color: "#0a0a0a",
+                  backgroundImage: "none",
+                  fontSize: "clamp(1rem, 2.6vw, 1.25rem)",
+                  fontWeight: 900,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  border: "1px solid rgba(0, 0, 0, 0.12)",
+                  boxShadow: "0 14px 36px rgba(0,0,0,0.45)",
+                  transitionProperty: "transform, box-shadow, border-color, filter, background-color",
+                  transitionDuration: `${motion.duration}ms`,
+                  transitionTimingFunction: motion.easingOut,
+                  [mediaReducedMotion]: { transitionDuration: "0.01ms" },
+                  "&:active": {
+                    transform: "scale(0.98)",
+                    boxShadow: "0 10px 28px rgba(0,0,0,0.4)",
                   },
-                  [mediaNoReducedMotion]: {
-                    "&:hover::before": {
-                      opacity: 1,
-                      transform: "skewX(-18deg) translateX(380%)",
-                      transition: "transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease",
-                    },
+                  "&.Mui-focusVisible": {
+                    outline: "none",
+                    boxShadow: `0 0 0 3px rgba(0, 0, 0, 0.9), 0 0 0 6px ${BRAND_GOLD}`,
                   },
-                },
-                "&:active": {
-                  transform: "scale(0.98) translateY(0)",
-                  boxShadow: "0 12px 32px rgba(0,0,0,0.4)",
-                  transitionDuration: `${motion.durationFast}ms`,
-                },
-                "&.Mui-focusVisible": {
-                  outline: "none",
-                  boxShadow: `0 0 0 3px rgba(0, 0, 0, 0.9), 0 0 0 6px ${BRAND_GOLD}, 0 18px 48px rgba(0,0,0,0.45)`,
-                },
-              }}
+                }}
               >
                 {quizContent.ctaLabel}
               </Button>
             </Box>
           </Box>
         </Box>
-      </Stack>
-
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        alignItems={{ xs: "flex-start", sm: "stretch" }}
-        spacing={{ xs: 2, sm: 3 }}
-        sx={{
-          position: "absolute",
-          left: { xs: 22, md: 38 },
-          bottom: { xs: 20, md: 26 },
-          zIndex: 20,
-          maxWidth: { xs: "92vw", md: "none" },
-        }}
-      >
-        <Stack direction="row" spacing={1.25} alignItems="flex-start">
-          <Typography sx={{ fontSize: "2rem", lineHeight: 1, color: "secondary.main" }} aria-hidden>
-            ✓
-          </Typography>
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "0.68rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                fontWeight: 800,
-                opacity: 0.55,
-                color: "common.white",
-              }}
-            >
-              {t("attractBadgeCertLabel")}
-            </Typography>
-            <Typography sx={{ fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.02em", mt: 0.35 }}>
-              {t("attractBadgeCertTitle")}
-            </Typography>
-          </Box>
-        </Stack>
-
-        <Divider
-          orientation="horizontal"
-          sx={{
-            display: { xs: "block", sm: "none" },
-            width: "100%",
-            maxWidth: 280,
-            borderColor: "rgba(255,255,255,0.22)",
-          }}
-        />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{
-            display: { xs: "none", sm: "block" },
-            borderColor: "rgba(255,255,255,0.22)",
-            alignSelf: "stretch",
-          }}
-        />
-
-        <Stack direction="row" spacing={1.25} alignItems="flex-start">
-          <Typography sx={{ fontSize: "2rem", lineHeight: 1, color: "secondary.main" }} aria-hidden>
-            ★
-          </Typography>
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "0.68rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                fontWeight: 800,
-                opacity: 0.55,
-                color: "common.white",
-              }}
-            >
-              {t("attractBadgePadraoLabel")}
-            </Typography>
-            <Typography sx={{ fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.02em", mt: 0.35 }}>
-              {t("attractBadgePadraoTitle")}
-            </Typography>
-          </Box>
-        </Stack>
-
-        <Divider
-          orientation="horizontal"
-          sx={{
-            display: { xs: "block", sm: "none" },
-            width: "100%",
-            maxWidth: 280,
-            borderColor: "rgba(255,255,255,0.22)",
-          }}
-        />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{
-            display: { xs: "none", sm: "block" },
-            borderColor: "rgba(255,255,255,0.22)",
-            alignSelf: "stretch",
-          }}
-        />
-
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Box sx={{ width: 28, height: 4, bgcolor: "secondary.main", borderRadius: 999 }} />
-          <Typography
-            sx={{
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              opacity: 0.48,
-              fontWeight: 800,
-              fontSize: "0.68rem",
-              whiteSpace: { sm: "nowrap" },
-            }}
-          >
-            {t("attractBrandMark")}
-          </Typography>
-        </Stack>
-      </Stack>
+      </KioskLayout>
     </Box>
   );
 }
