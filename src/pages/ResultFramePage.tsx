@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Collapse, Stack, Typography, useMediaQuery } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +10,7 @@ import { getQuizContent } from "../content/quizContent";
 import { useCompleteQuizSession } from "../features/result/useCompleteQuizSession";
 import { useSessionStore } from "../features/session/useSessionStore";
 import { BRAND_GOLD } from "../theme/appTheme";
+import { motion } from "../theme/motion";
 
 function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => void }) {
   if (failed) {
@@ -60,9 +52,11 @@ export function ResultFramePage() {
 function ResultFramePageContent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const collapseMs = prefersReducedMotion ? 0 : motion.durationSlow;
   const { state, resetSession } = useSessionStore();
   const [heroFailed, setHeroFailed] = useState(false);
-  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
+  const [isClaimingPrize, setIsClaimingPrize] = useState(false);
 
   const score = state.score;
   const quizContent = getQuizContent(state.language);
@@ -91,32 +85,12 @@ function ResultFramePageContent() {
     navigate(ROUTES.attract);
   };
 
+  const beginClaimFlow = () => setIsClaimingPrize(true);
+
   const onHeroFail = () => setHeroFailed(true);
 
   return (
     <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, bgcolor: "#000", color: "text.primary" }}>
-      <Dialog open={claimDialogOpen} onClose={() => setClaimDialogOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>{t("resultClaimDialogTitle")}</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mb: 1.5, opacity: 0.9 }}>{t("resultClaimDialogIntro")}</Typography>
-          <Typography sx={{ lineHeight: 1.5, opacity: 0.88 }}>{t("resultClaimDialogBody")}</Typography>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1, flexWrap: "wrap" }}>
-          <Button type="button" onClick={() => setClaimDialogOpen(false)}>
-            {t("resultClaimDialogClose")}
-          </Button>
-          <Button
-            type="button"
-            variant="contained"
-            disableElevation
-            onClick={goToAttract}
-            sx={{ bgcolor: BRAND_GOLD, color: "#0a0a0a", "&:hover": { bgcolor: "#d4a855" } }}
-          >
-            {t("resultClaimDialogFinish")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       <KioskScreen header={<KioskHeader logoSize="standard" />}>
         <Stack
           spacing={2}
@@ -129,7 +103,7 @@ function ResultFramePageContent() {
             px: 2,
             py: 1.5,
             alignItems: "center",
-            overflow: "auto",
+            overflow: "hidden",
           }}
         >
           {syncFailed ? (
@@ -237,54 +211,129 @@ function ResultFramePageContent() {
               </Typography>
             </Stack>
 
-            <Stack spacing={1.5} sx={{ width: "100%", maxWidth: 560, mx: "auto" }}>
-              <Button
-                type="button"
-                variant="contained"
-                disableElevation
-                onClick={() => setClaimDialogOpen(true)}
-                sx={{
-                  minHeight: "clamp(72px, 6dvh, 96px)",
-                  fontSize: "clamp(1.1rem, 2dvh, 1.35rem)",
-                  fontWeight: 900,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  borderRadius: 2,
-                  bgcolor: BRAND_GOLD,
-                  color: "#0a0a0a",
-                  gap: 1,
-                  "&:hover": { bgcolor: "#d4a855" },
-                }}
-              >
-                {t("resultPrimaryCta")}
-                <Box component="span" aria-hidden sx={{ fontSize: "1.35rem" }}>
-                  🎉
-                </Box>
-              </Button>
+            <Box sx={{ width: "100%", maxWidth: 560, mx: "auto" }}>
+              <Collapse in={!isClaimingPrize} timeout={collapseMs} collapsedSize={0}>
+                <Stack spacing={1.5} sx={{ width: "100%" }}>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    disableElevation
+                    onClick={beginClaimFlow}
+                    sx={{
+                      minHeight: "clamp(72px, 6dvh, 96px)",
+                      fontSize: "clamp(1.1rem, 2dvh, 1.35rem)",
+                      fontWeight: 900,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      borderRadius: 2,
+                      bgcolor: BRAND_GOLD,
+                      color: "#0a0a0a",
+                      gap: 1,
+                      "&:hover": { bgcolor: "#d4a855" },
+                    }}
+                  >
+                    {t("resultPrimaryCta")}
+                    <Box component="span" aria-hidden sx={{ fontSize: "1.35rem" }}>
+                      🎉
+                    </Box>
+                  </Button>
 
-              <Button
-                type="button"
-                variant="outlined"
-                onClick={goToAttract}
-                sx={{
-                  minHeight: "clamp(72px, 6dvh, 96px)",
-                  fontSize: "clamp(1.05rem, 1.9dvh, 1.25rem)",
-                  fontWeight: 700,
-                  borderRadius: 2,
-                  borderWidth: 2,
-                  borderColor: "rgba(205,153,65,0.45)",
-                  color: "common.white",
-                  textTransform: "none",
-                  "&:hover": {
-                    borderWidth: 2,
-                    borderColor: "rgba(205,153,65,0.65)",
-                    bgcolor: "rgba(205,153,65,0.1)",
-                  },
-                }}
-              >
-                {t("resultSecondaryCta")}
-              </Button>
-            </Stack>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    onClick={goToAttract}
+                    sx={{
+                      minHeight: "clamp(72px, 6dvh, 96px)",
+                      fontSize: "clamp(1.05rem, 1.9dvh, 1.25rem)",
+                      fontWeight: 700,
+                      borderRadius: 2,
+                      borderWidth: 2,
+                      borderColor: "rgba(205,153,65,0.45)",
+                      color: "common.white",
+                      textTransform: "none",
+                      "&:hover": {
+                        borderWidth: 2,
+                        borderColor: "rgba(205,153,65,0.65)",
+                        bgcolor: "rgba(205,153,65,0.1)",
+                      },
+                    }}
+                  >
+                    {t("resultSecondaryCta")}
+                  </Button>
+                </Stack>
+              </Collapse>
+
+              <Collapse in={isClaimingPrize} timeout={collapseMs} collapsedSize={0}>
+                <Box
+                  role="region"
+                  aria-label={t("resultClaimInlineTitle")}
+                  sx={{
+                    width: "100%",
+                    p: { xs: 2.5, sm: 3.5 },
+                    borderRadius: 2.5,
+                    bgcolor: "rgba(12, 12, 12, 0.96)",
+                    border: "1px solid rgba(205,153,65,0.28)",
+                  }}
+                >
+                  <Typography
+                    component="h2"
+                    sx={{
+                      fontSize: "clamp(1.25rem, 2.4dvh, 1.6rem)",
+                      fontWeight: 900,
+                      letterSpacing: "-0.02em",
+                      mb: 1.5,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("resultClaimInlineTitle")}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "clamp(1rem, 1.8dvh, 1.2rem)",
+                      lineHeight: 1.5,
+                      fontWeight: 600,
+                      color: "rgba(255,255,255,0.92)",
+                      textAlign: "center",
+                      mb: 1.5,
+                    }}
+                  >
+                    {t("resultClaimInlineBody")}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "clamp(0.9rem, 1.5dvh, 1.05rem)",
+                      lineHeight: 1.45,
+                      fontWeight: 500,
+                      color: "rgba(255,255,255,0.72)",
+                      textAlign: "center",
+                      mb: 2.5,
+                    }}
+                  >
+                    {t("resultClaimInlineNote")}
+                  </Typography>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    disableElevation
+                    onClick={goToAttract}
+                    fullWidth
+                    sx={{
+                      minHeight: "clamp(72px, 6dvh, 96px)",
+                      fontSize: "clamp(1.05rem, 2dvh, 1.3rem)",
+                      fontWeight: 900,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      borderRadius: 2,
+                      bgcolor: BRAND_GOLD,
+                      color: "#0a0a0a",
+                      "&:hover": { bgcolor: "#d4a855" },
+                    }}
+                  >
+                    {t("resultFinishCta")}
+                  </Button>
+                </Box>
+              </Collapse>
+            </Box>
           </Box>
         </Stack>
       </KioskScreen>

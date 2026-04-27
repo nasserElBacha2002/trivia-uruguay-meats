@@ -4,6 +4,7 @@ import { ROUTES } from "../config/routes";
 import { useKioskGuards } from "../hooks/useKioskGuards";
 import { useInactivityReset } from "../hooks/useInactivityReset";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
+import { ResetControl } from "./ResetControl";
 
 export function KioskShell() {
   useKioskGuards();
@@ -37,6 +38,7 @@ export function KioskShell() {
             }),
       }}
     >
+      <ResetControl />
       <Box
         sx={{
           flex: "1 1 0%",

@@ -12,6 +12,8 @@ export type KioskHeaderProps = {
 
 export function KioskHeader({ logoSize = "standard", progress }: KioskHeaderProps) {
   const showProgress = typeof progress === "number" && !Number.isNaN(progress);
+  const headerMax =
+    logoSize === "hero" ? "min(760px, 92vw)" : "min(520px, 88vw)";
 
   return (
     <Stack
@@ -20,17 +22,17 @@ export function KioskHeader({ logoSize = "standard", progress }: KioskHeaderProp
       spacing={1.25}
       sx={{
         width: "100%",
-        maxWidth: "min(860px, 86vw)",
+        maxWidth: headerMax,
         mx: "auto",
-        height: "100%",
-        minHeight: 0,
         py: 1,
         boxSizing: "border-box",
+        overflow: "visible",
+        flexShrink: 0,
       }}
     >
       <BrandLogo prominence={logoSize === "hero" ? "hero" : "standard"} />
       {showProgress ? (
-        <Box sx={{ width: "100%", maxWidth: "min(760px, 82vw)" }}>
+        <Box sx={{ width: "100%", maxWidth: "min(720px, 90vw)" }}>
           <LinearProgress
             variant="determinate"
             value={progress}

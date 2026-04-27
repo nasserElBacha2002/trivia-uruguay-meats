@@ -11,8 +11,8 @@ export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
 
-  const heroW = "clamp(340px, 42vw, 560px)";
-  const standardW = "clamp(220px, 24vw, 340px)";
+  const heroW = "clamp(420px, 46vw, 680px)";
+  const standardW = "clamp(300px, 30vw, 460px)";
 
   if (assetMissing) {
     return (
@@ -28,7 +28,7 @@ export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
           px: 2,
           py: 1.25,
           bgcolor: "rgba(205, 153, 65, 0.08)",
-          mx: "auto",
+          margin: "0 auto",
         }}
       >
         <Typography variant="caption" sx={{ color: "primary.main", fontWeight: 800, textAlign: "center", letterSpacing: "0.12em" }}>
@@ -45,7 +45,7 @@ export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
       alt="Uruguay Lamb"
       sx={{
         display: "block",
-        mx: "auto",
+        margin: "0 auto",
         width: prominence === "hero" ? heroW : standardW,
         maxWidth: "100%",
         height: "auto",

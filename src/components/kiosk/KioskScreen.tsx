@@ -16,8 +16,8 @@ export type KioskScreenProps = {
 };
 
 const gridRows: Record<KioskScreenVariant, string> = {
-  default: "minmax(140px, 16dvh) minmax(0, 1fr) minmax(72px, 8dvh)",
-  hero: "minmax(160px, 20dvh) minmax(0, 1fr) minmax(72px, 8dvh)",
+  default: "minmax(180px, 18dvh) minmax(0, 1fr) minmax(72px, 8dvh)",
+  hero: "minmax(240px, 24dvh) minmax(0, 1fr) minmax(72px, 8dvh)",
 };
 
 /**
@@ -50,7 +50,7 @@ export function KioskScreen({ variant = "default", header, footer, children, roo
         sx={{
           gridArea: "khead",
           minHeight: 0,
-          overflow: "hidden",
+          overflow: "visible",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
