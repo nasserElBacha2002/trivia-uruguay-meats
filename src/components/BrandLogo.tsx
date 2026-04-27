@@ -1,12 +1,16 @@
 import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
 
 type BrandLogoProps = {
+  /** Ancho máximo referencial (px) en `standard` en desktop; ignorado en `hero`. */
   size?: number;
+  /** `hero`: placa inicial (grande). `standard`: pantallas internas (más compacto). */
+  prominence?: "hero" | "standard";
 };
 
-export function BrandLogo({ size = 120 }: BrandLogoProps) {
+export function BrandLogo({ size = 152, prominence = "standard" }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
 
@@ -14,21 +18,18 @@ export function BrandLogo({ size = 120 }: BrandLogoProps) {
     return (
       <Box
         sx={{
-          width: size,
-          height: size * 0.32,
-          border: "1px dashed rgba(255,184,28,0.7)",
+          maxWidth: prominence === "hero" ? 440 : Math.max(size, 120),
+          border: "1px dashed rgba(205, 153, 65, 0.65)",
           borderRadius: 1.5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          px: 1,
-          bgcolor: "rgba(0,47,108,0.25)",
+          px: 2,
+          py: 1.25,
+          bgcolor: "rgba(205, 153, 65, 0.08)",
         }}
       >
-        <Typography
-          variant="caption"
-          sx={{ color: "secondary.main", fontWeight: 700, textAlign: "center" }}
-        >
+        <Typography variant="caption" sx={{ color: "primary.main", fontWeight: 800, textAlign: "center", letterSpacing: "0.12em" }}>
           {t("missingLogoLabel")}
         </Typography>
       </Box>
@@ -38,18 +39,21 @@ export function BrandLogo({ size = 120 }: BrandLogoProps) {
   return (
     <Box
       component="img"
-      src="/assets/uruguay-meats-logo.svg"
-      alt="Uruguay Meats"
+      src={MEDIA_ASSETS.logo}
+      alt="Uruguay Lamb"
       sx={{
-        width: size,
-        height: size * 0.32,
-        objectFit: "contain",
         display: "block",
+        width:
+          prominence === "hero"
+            ? { xs: "min(88vw, 360px)", sm: "min(72vw, 400px)", md: 440 }
+            : { xs: "clamp(120px, 36vw, 200px)", sm: "clamp(132px, 26vw, 176px)", md: size },
+        maxWidth: "100%",
+        height: "auto",
+        objectFit: "contain",
+        objectPosition: "left center",
+        filter: prominence === "standard" ? "drop-shadow(0 2px 14px rgba(0,0,0,0.55))" : "none",
       }}
-      onError={(event) => {
-        event.currentTarget.style.display = "none";
-        setAssetMissing(true);
-      }}
+      onError={() => setAssetMissing(true)}
     />
   );
 }

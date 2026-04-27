@@ -3,6 +3,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import { ROUTES } from "../config/routes";
 import { useKioskGuards } from "../hooks/useKioskGuards";
 import { useInactivityReset } from "../hooks/useInactivityReset";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
+import { BRAND_GOLD } from "../theme/appTheme";
 import { BrandLogo } from "./BrandLogo";
 
 export function KioskShell() {
@@ -30,36 +32,53 @@ export function KioskShell() {
         color: "text.primary",
         overflow: "hidden",
         background: isAttract
-          ? "#001b44"
-          : "radial-gradient(circle at 10% 8%, rgba(0,47,108,0.6) 0%, rgba(0,27,68,0.94) 34%), radial-gradient(circle at 84% 88%, rgba(255,184,28,0.16) 0%, rgba(0,27,68,0.96) 38%), #001b44",
+          ? "#000000"
+          : `radial-gradient(circle at 12% 10%, rgba(205,153,65,0.12) 0%, transparent 42%), radial-gradient(circle at 88% 92%, rgba(205,153,65,0.08) 0%, #000000 45%), #000000`,
       }}
     >
+      {!isAttract ? (
+        <Box
+          aria-hidden
+          sx={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            backgroundImage: `url(${MEDIA_ASSETS.kioskAmbient})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.12,
+          }}
+        />
+      ) : null}
+
       {!isAttract ? (
         <Box
           sx={{
             position: "absolute",
             inset: 0,
+            zIndex: 1,
             pointerEvents: "none",
             "&::before, &::after": {
               content: '""',
               position: "absolute",
               borderRadius: "50%",
               filter: "blur(42px)",
-              opacity: 0.3,
+              opacity: 0.22,
             },
             "&::before": {
               width: { xs: 260, md: 420 },
               height: { xs: 260, md: 420 },
               top: { xs: -90, md: -120 },
               right: { xs: -80, md: -100 },
-              background: "rgba(255,184,28,0.45)",
+              background: "rgba(205,153,65,0.35)",
             },
             "&::after": {
               width: { xs: 280, md: 500 },
               height: { xs: 280, md: 500 },
               bottom: { xs: -130, md: -170 },
               left: { xs: -110, md: -160 },
-              background: "rgba(31,101,199,0.5)",
+              background: "rgba(40,40,40,0.85)",
             },
           }}
         />
@@ -73,16 +92,16 @@ export function KioskShell() {
           right: 0,
           height: 7,
           zIndex: 50,
-          bgcolor: "rgba(255,255,255,0.16)",
+          bgcolor: "rgba(255,255,255,0.1)",
         }}
       >
         <Box
           sx={{
             height: "100%",
             width: threadWidth,
-            bgcolor: "secondary.main",
+            bgcolor: BRAND_GOLD,
             transition: "width 240ms ease",
-            boxShadow: "0 0 24px rgba(255,184,28,0.7)",
+            boxShadow: `0 0 24px rgba(205, 153, 65, 0.55)`,
           }}
         />
       </Box>
@@ -91,15 +110,16 @@ export function KioskShell() {
         <Box
           sx={{
             position: "fixed",
-            top: { xs: 28, md: 38 },
-            left: { xs: 22, md: 38 },
+            top: { xs: 22, md: 28 },
+            left: { xs: 16, md: 28 },
             zIndex: 30,
             display: "flex",
             alignItems: "center",
             gap: 1.5,
+            maxWidth: { xs: "min(88vw, 220px)", md: "min(42vw, 280px)" },
           }}
         >
-          <BrandLogo size={148} />
+          <BrandLogo size={168} prominence="standard" />
         </Box>
       ) : null}
 
@@ -107,7 +127,7 @@ export function KioskShell() {
         sx={{
           position: "relative",
           zIndex: 10,
-          pt: isAttract ? 0 : { xs: 12, md: 16 },
+          pt: isAttract ? 0 : { xs: 13, md: 16 },
           px: isAttract ? 0 : { xs: 2.5, md: 5.5, lg: 8 },
           pb: isAttract ? 0 : { xs: 3, md: 4 },
           height: "100%",
@@ -139,12 +159,19 @@ export function KioskShell() {
             pointerEvents: "none",
           }}
         >
-          <Box sx={{ width: 28, height: 4, bgcolor: "secondary.main", borderRadius: 999 }} />
+          <Box sx={{ width: 28, height: 4, bgcolor: BRAND_GOLD, borderRadius: 999 }} />
           <Typography
             variant="caption"
-            sx={{ letterSpacing: "0.2em", textTransform: "uppercase", opacity: 0.5, fontWeight: 700 }}
+            sx={{
+              letterSpacing: "0.24em",
+              textTransform: "uppercase",
+              opacity: 0.72,
+              fontWeight: 800,
+              fontSize: "0.7rem",
+              color: "text.primary",
+            }}
           >
-            Uruguay Meats
+            URUGUAY LAMB
           </Typography>
         </Box>
       ) : null}

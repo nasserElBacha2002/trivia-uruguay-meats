@@ -157,7 +157,7 @@
         }
       ],
       "correctOptionId": "q3_o3",
-      "feedback": null
+      "feedback": "The 'Uruguayan Lamb from the Boutique de Carnes do Mundo' campaign promotes the quality and origin of Uruguayan lamb as a premium product for the Brazilian market."
     },
     {
       "id": "q4",
@@ -228,5 +228,5 @@
     "medium": "You are on the right track. It's time to try Uruguayan lamb from the Boutique of meats of the world.",
     "low": "You'll get it right next time. You still need to learn more about Uruguayan lamb from the Boutique of meats of the world."
   },
-  "closingMessage": "Uruguayan lamb, from the Boutique of meats of the world."
+  "closingMessage": "Uruguayan lamb from the Boutique de Carnes do Mundo."
 }

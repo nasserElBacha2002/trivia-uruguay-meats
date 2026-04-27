@@ -102,29 +102,6 @@ export function LanguagePage() {
             variant="en"
           />
         </Stack>
-
-        <Box
-          sx={{
-            px: { xs: 1, md: 2 },
-            pt: { xs: 1, md: 0 },
-            pb: { xs: 0.5, md: 0 },
-          }}
-        >
-          <Stack direction="row" alignItems="center" spacing={1.25}>
-            <Box sx={{ width: 32, height: 4, bgcolor: "secondary.main", borderRadius: 999 }} />
-            <Typography
-              sx={{
-                fontSize: "0.72rem",
-                letterSpacing: "0.22em",
-                opacity: 0.42,
-                textTransform: "uppercase",
-                fontWeight: 700,
-              }}
-            >
-              {t("languageFooterStrip")}
-            </Typography>
-          </Stack>
-        </Box>
       </Stack>
     </Box>
   );
@@ -142,8 +119,8 @@ type LanguageChoiceCardProps = {
 function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant }: LanguageChoiceCardProps) {
   const glass =
     variant === "pt"
-      ? "linear-gradient(155deg, rgba(0,47,108,0.82) 0%, rgba(0,27,68,0.88) 100%)"
-      : "linear-gradient(155deg, rgba(0,47,108,0.55) 0%, rgba(22,22,22,0.82) 100%)";
+      ? "linear-gradient(155deg, rgba(205,153,65,0.18) 0%, rgba(10,10,10,0.92) 100%)"
+      : "linear-gradient(155deg, rgba(205,153,65,0.1) 0%, rgba(18,18,18,0.88) 100%)";
 
   return (
     <ButtonBase
@@ -167,9 +144,9 @@ function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant
         "&:hover": {
           background:
             variant === "pt"
-              ? "linear-gradient(155deg, rgba(0,47,108,0.95) 0%, rgba(0,27,68,0.92) 100%)"
-              : "linear-gradient(155deg, rgba(0,47,108,0.72) 0%, rgba(22,22,22,0.88) 100%)",
-          borderColor: "rgba(255,184,28,0.35)",
+              ? "linear-gradient(155deg, rgba(205,153,65,0.26) 0%, rgba(8,8,8,0.95) 100%)"
+              : "linear-gradient(155deg, rgba(205,153,65,0.16) 0%, rgba(18,18,18,0.92) 100%)",
+          borderColor: "rgba(205,153,65,0.4)",
         },
         "&:active": { transform: "scale(0.985)" },
       }}

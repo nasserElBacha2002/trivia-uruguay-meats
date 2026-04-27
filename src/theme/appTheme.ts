@@ -3,44 +3,47 @@ import { createTheme } from "@mui/material";
 declare module "@mui/material/styles" {
   interface Palette {
     brand: {
-      blue: string;
-      yellow: string;
-      gray: string;
+      gold: string;
+      goldMuted: string;
+      surface: string;
     };
   }
 
   interface PaletteOptions {
     brand?: {
-      blue: string;
-      yellow: string;
-      gray: string;
+      gold: string;
+      goldMuted: string;
+      surface: string;
     };
   }
 }
+
+/** Campaign accent — PANTONE 7407 C / client spec */
+export const BRAND_GOLD = "#CD9941";
 
 export const appTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#002F6C",
-      contrastText: "#E5E2E1",
+      main: BRAND_GOLD,
+      contrastText: "#0a0a0a",
     },
     secondary: {
-      main: "#FFB81C",
-      contrastText: "#002F6C",
+      main: BRAND_GOLD,
+      contrastText: "#0a0a0a",
     },
     text: {
-      primary: "#E5E2E1",
-      secondary: "#AEADB3",
+      primary: "#F7F2EA",
+      secondary: "rgba(247, 242, 234, 0.72)",
     },
     background: {
-      default: "#131313",
-      paper: "#1C1B1B",
+      default: "#000000",
+      paper: "#121212",
     },
     brand: {
-      blue: "#002F6C",
-      yellow: "#FFB81C",
-      gray: "#AEADB3",
+      gold: BRAND_GOLD,
+      goldMuted: "rgba(205, 153, 65, 0.55)",
+      surface: "#141414",
     },
   },
   typography: {
@@ -68,7 +71,11 @@ export const appTheme = createTheme({
           letterSpacing: "0.01em",
         },
         contained: {
-          background: "linear-gradient(135deg, #002F6C 0%, #0F4A99 100%)",
+          background: `linear-gradient(135deg, ${BRAND_GOLD} 0%, #b88735 100%)`,
+          color: "#0a0a0a",
+          "&:hover": {
+            background: `linear-gradient(135deg, #d4a855 0%, ${BRAND_GOLD} 100%)`,
+          },
         },
         outlined: {
           borderColor: "rgba(229, 226, 225, 0.36)",

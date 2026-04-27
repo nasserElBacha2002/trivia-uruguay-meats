@@ -22,7 +22,7 @@ const compactFieldSx = {
     minHeight: 52,
     borderRadius: 2,
     fontSize: "0.95rem",
-    background: "linear-gradient(140deg, rgba(0,47,108,0.5) 0%, rgba(22,22,22,0.78) 100%)",
+    background: "linear-gradient(140deg, rgba(205,153,65,0.12) 0%, rgba(22,22,22,0.78) 100%)",
   },
   "& .MuiOutlinedInput-input": {
     py: 1.1,
@@ -126,14 +126,14 @@ export function FormPage() {
     minHeight: 48,
     borderRadius: "10px",
     border: "1px solid rgba(229,226,225,0.14)",
-    background: "linear-gradient(140deg, rgba(0,47,108,0.45) 0%, rgba(22,22,22,0.78) 100%)",
+    background: "linear-gradient(140deg, rgba(205,153,65,0.1) 0%, rgba(22,22,22,0.78) 100%)",
     textTransform: "none",
     fontWeight: 700,
     fontSize: "0.95rem",
     color: "text.primary",
     py: 0.5,
     "&.Mui-selected": {
-      background: "linear-gradient(145deg, rgba(0,47,108,0.95) 0%, rgba(18,86,186,0.92) 100%)",
+      background: "linear-gradient(145deg, rgba(205,153,65,0.22) 0%, rgba(12,12,12,0.94) 100%)",
       borderColor: "secondary.main",
       color: "common.white",
     },
@@ -152,7 +152,7 @@ export function FormPage() {
     px: 0.4,
     py: 0.45,
     border: "1px solid rgba(229,226,225,0.12)",
-    background: "linear-gradient(160deg, rgba(0,47,108,0.38) 0%, rgba(20,20,20,0.82) 100%)",
+    background: "linear-gradient(160deg, rgba(205,153,65,0.1) 0%, rgba(20,20,20,0.82) 100%)",
     textTransform: "none",
     flexDirection: "column",
     gap: 0.25,
@@ -160,7 +160,7 @@ export function FormPage() {
     alignItems: "center",
     overflow: "hidden",
     "&.Mui-selected": {
-      background: "linear-gradient(145deg, rgba(0,47,108,0.96) 0%, rgba(18,86,186,0.92) 100%)",
+      background: "linear-gradient(145deg, rgba(205,153,65,0.2) 0%, rgba(10,10,10,0.94) 100%)",
       borderColor: "secondary.main",
       color: "common.white",
       boxShadow: "0 6px 18px rgba(0,0,0,0.3)",
@@ -422,7 +422,7 @@ export function FormPage() {
             borderRadius: 2.5,
             p: { xs: 1, md: 1.15 },
             border: "1px solid rgba(229,226,225,0.12)",
-            bgcolor: "rgba(0,27,68,0.5)",
+            bgcolor: "rgba(12,12,12,0.72)",
           }}
         >
           <Button

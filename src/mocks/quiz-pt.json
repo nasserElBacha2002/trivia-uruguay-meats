@@ -157,7 +157,7 @@
         }
       ],
       "correctOptionId": "q3_o3",
-      "feedback": null
+      "feedback": "A campanha 'Cordeiro Uruguaio da Boutique de Carnes do Mundo' promove a qualidade e a origem do cordeiro do Uruguai como um produto premium para o mercado brasileiro."
     },
     {
       "id": "q4",
@@ -228,5 +228,5 @@
     "medium": "Você está no caminho certo. É hora de experimentar o cordeiro uruguaio da Boutique de carnes do mundo.",
     "low": "Na próxima você acerta. Ainda falta conhecer mais sobre o cordeiro uruguaio da Boutique de carnes do mundo."
   },
-  "closingMessage": "Cordeiro uruguaio, da Boutique de carnes do mundo."
+  "closingMessage": "Cordeiro uruguaio da Boutique de Carnes do Mundo."
 }

@@ -11,14 +11,12 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useCompleteQuizSession } from "../features/result/useCompleteQuizSession";
 import { useSessionStore } from "../features/session/useSessionStore";
-
-/** Editorial meat hero (aligned with AttractPage visual language). */
-const RESULT_EDITORIAL_IMAGE =
-  "https://images.unsplash.com/photo-1595467458427-524719c85365?auto=format&fit=crop&w=2400&q=85";
+import { BRAND_GOLD } from "../theme/appTheme";
 
 function EditorialHeroImage({
   failed,
@@ -34,7 +32,7 @@ function EditorialHeroImage({
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(145deg, rgba(0,47,108,0.55) 0%, rgba(0,27,68,0.92) 45%, rgba(255,184,28,0.12) 100%)",
+            "linear-gradient(145deg, rgba(0,0,0,0.75) 0%, rgba(12,12,12,0.95) 50%, rgba(205,153,65,0.1) 100%)",
         }}
       />
     );
@@ -42,7 +40,7 @@ function EditorialHeroImage({
   return (
     <Box
       component="img"
-      src={RESULT_EDITORIAL_IMAGE}
+      src={MEDIA_ASSETS.resultHero}
       alt=""
       onError={onFail}
       sx={{
@@ -105,7 +103,7 @@ function ResultFramePageContent() {
         width: "100%",
         minHeight: 0,
         overflow: "hidden",
-        bgcolor: "#001b44",
+        bgcolor: "#000000",
         color: "text.primary",
         display: "flex",
         flexDirection: "column",
@@ -121,7 +119,13 @@ function ResultFramePageContent() {
           <Button type="button" onClick={() => setClaimDialogOpen(false)}>
             {t("resultClaimDialogClose")}
           </Button>
-          <Button type="button" variant="contained" disableElevation onClick={goToAttract} sx={{ bgcolor: "secondary.main", color: "primary.main" }}>
+          <Button
+            type="button"
+            variant="contained"
+            disableElevation
+            onClick={goToAttract}
+            sx={{ bgcolor: BRAND_GOLD, color: "#0a0a0a", "&:hover": { bgcolor: "#d4a855" } }}
+          >
             {t("resultClaimDialogFinish")}
           </Button>
         </DialogActions>
@@ -144,7 +148,7 @@ function ResultFramePageContent() {
           sx={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(180deg, transparent 35%, rgba(0,27,68,0.9) 100%)",
+            background: "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.92) 100%)",
             pointerEvents: "none",
           }}
         />
@@ -161,13 +165,13 @@ function ResultFramePageContent() {
             zIndex: 0,
           }}
         >
-          <Box sx={{ position: "relative", bgcolor: "#001b44", overflow: "hidden" }}>
+          <Box sx={{ position: "relative", bgcolor: "#000000", overflow: "hidden" }}>
             <Box
               sx={{
                 position: "absolute",
                 inset: 0,
-                background: "radial-gradient(circle at 18% 28%, rgba(0,47,108,0.85) 0%, transparent 55%)",
-                opacity: 0.9,
+                background: "radial-gradient(circle at 18% 28%, rgba(205,153,65,0.12) 0%, transparent 55%)",
+                opacity: 1,
               }}
             />
           </Box>
@@ -183,7 +187,7 @@ function ResultFramePageContent() {
               sx={{
                 position: "absolute",
                 inset: 0,
-                background: "linear-gradient(200deg, rgba(0,27,68,0.1) 0%, rgba(0,27,68,0.45) 100%)",
+                background: "linear-gradient(200deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.55) 100%)",
                 pointerEvents: "none",
               }}
             />
@@ -218,8 +222,8 @@ function ResultFramePageContent() {
                 sx={{
                   p: 1.5,
                   borderRadius: 2,
-                  border: "1px solid rgba(255,184,28,0.35)",
-                  bgcolor: "rgba(0,47,108,0.55)",
+                  border: `1px solid rgba(205,153,65,0.4)`,
+                  bgcolor: "rgba(20,20,20,0.92)",
                 }}
               >
                 <Typography sx={{ flex: 1, fontSize: "0.9rem" }}>{t("resultCompleteSyncError")}</Typography>
@@ -243,32 +247,6 @@ function ResultFramePageContent() {
               maxWidth: { md: "min(56vw, 720px)", lg: 760 },
             }}
           >
-            <Typography
-              sx={{
-                mb: 0.75,
-                fontSize: "0.68rem",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                fontWeight: 700,
-                opacity: 0.5,
-              }}
-            >
-              {t("resultEyebrow")}
-            </Typography>
-
-            <Typography
-              sx={{
-                mb: 0.5,
-                fontSize: "0.65rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                fontWeight: 700,
-                opacity: 0.45,
-              }}
-            >
-              {t("resultMainMessageLabel")}
-            </Typography>
-
             <Box
               sx={{
                 display: "inline-flex",
@@ -277,8 +255,8 @@ function ResultFramePageContent() {
                 py: 0.65,
                 mb: { xs: 2, md: 2.5 },
                 borderRadius: 1.5,
-                bgcolor: "rgba(0,47,108,0.88)",
-                border: "1px solid rgba(121, 153, 220, 0.38)",
+                bgcolor: "rgba(24,24,24,0.95)",
+                border: `1px solid rgba(205,153,65,0.35)`,
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
               }}
@@ -289,7 +267,7 @@ function ResultFramePageContent() {
                   fontWeight: 800,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "rgba(186, 206, 245, 0.95)",
+                  color: "rgba(247,242,234,0.88)",
                 }}
               >
                 {t("resultBandLabel")}: {t(scoreLabelKey)}
@@ -299,7 +277,7 @@ function ResultFramePageContent() {
             <Typography
               component="h1"
               sx={{
-                fontSize: { xs: "clamp(1.65rem, 5vw, 2.4rem)", md: "clamp(2.1rem, 2.8vw, 3.15rem)" },
+                fontSize: { xs: "clamp(1.85rem, 5.2vw, 2.55rem)", md: "clamp(2.25rem, 2.9vw, 3.35rem)" },
                 lineHeight: 1.05,
                 fontWeight: 900,
                 letterSpacing: "-0.03em",
@@ -323,10 +301,10 @@ function ResultFramePageContent() {
                   alignSelf: { xs: "center", sm: "flex-start" },
                   p: { xs: 2.5, md: 3 },
                   borderRadius: 2.5,
-                  bgcolor: "rgba(0, 47, 108, 0.88)",
+                  bgcolor: "rgba(18, 18, 18, 0.94)",
                   backdropFilter: "blur(40px)",
                   WebkitBackdropFilter: "blur(40px)",
-                  border: "1px solid rgba(121, 153, 220, 0.28)",
+                  border: `1px solid rgba(205,153,65,0.32)`,
                   boxShadow: "0 24px 48px rgba(0,0,0,0.35)",
                   textAlign: "center",
                 }}
@@ -337,7 +315,7 @@ function ResultFramePageContent() {
                     fontWeight: 800,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    color: "rgba(186, 206, 245, 0.92)",
+                    color: "rgba(247,242,234,0.88)",
                     mb: 1.25,
                   }}
                 >
@@ -356,8 +334,8 @@ function ResultFramePageContent() {
                       fontSize: { xs: "3.75rem", md: "4.5rem" },
                       fontWeight: 900,
                       lineHeight: 1,
-                      color: "secondary.main",
-                      textShadow: "0 0 22px rgba(255,184,28,0.35)",
+                      color: BRAND_GOLD,
+                      textShadow: "0 0 22px rgba(205,153,65,0.35)",
                     }}
                   >
                     /
@@ -374,23 +352,12 @@ function ResultFramePageContent() {
               <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <Typography
                   sx={{
-                    fontSize: "0.65rem",
-                    letterSpacing: "0.18em",
-                    textTransform: "uppercase",
-                    fontWeight: 700,
-                    opacity: 0.5,
-                    mb: 0.75,
-                  }}
-                >
-                  {t("resultClosingLabel")}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: { xs: "1rem", md: "1.125rem" },
-                    lineHeight: 1.55,
-                    fontWeight: 500,
-                    color: "rgba(186, 206, 245, 0.88)",
-                    maxWidth: 420,
+                    fontSize: { xs: "1.28rem", md: "1.48rem" },
+                    lineHeight: 1.45,
+                    fontWeight: 600,
+                    color: BRAND_GOLD,
+                    maxWidth: 520,
+                    letterSpacing: "0.01em",
                   }}
                 >
                   {supporting}
@@ -409,8 +376,8 @@ function ResultFramePageContent() {
                   px: { xs: 3, md: 5 },
                   py: 1.5,
                   borderRadius: 2,
-                  bgcolor: "secondary.main",
-                  color: "primary.main",
+                  bgcolor: BRAND_GOLD,
+                  color: "#0a0a0a",
                   fontSize: { xs: "1rem", md: "1.08rem" },
                   fontWeight: 900,
                   letterSpacing: "0.04em",
@@ -418,7 +385,7 @@ function ResultFramePageContent() {
                   boxShadow: "0 14px 36px rgba(0,0,0,0.32)",
                   gap: 1.25,
                   "&:hover": {
-                    bgcolor: "secondary.light",
+                    bgcolor: "#d4a855",
                     boxShadow: "0 18px 44px rgba(0,0,0,0.38)",
                   },
                 }}
@@ -438,9 +405,9 @@ function ResultFramePageContent() {
                   px: { xs: 3, md: 4.5 },
                   borderRadius: 2,
                   borderWidth: 2,
-                  borderColor: "rgba(121, 153, 220, 0.45)",
+                  borderColor: "rgba(205,153,65,0.45)",
                   color: "common.white",
-                  bgcolor: "rgba(0, 27, 68, 0.45)",
+                  bgcolor: "rgba(255,255,255,0.04)",
                   fontSize: { xs: "0.95rem", md: "1.02rem" },
                   fontWeight: 700,
                   textTransform: "none",
@@ -448,32 +415,14 @@ function ResultFramePageContent() {
                   WebkitBackdropFilter: "blur(8px)",
                   "&:hover": {
                     borderWidth: 2,
-                    borderColor: "rgba(186, 206, 245, 0.55)",
-                    bgcolor: "rgba(0, 47, 108, 0.55)",
+                    borderColor: "rgba(205,153,65,0.65)",
+                    bgcolor: "rgba(205,153,65,0.1)",
                   },
                 }}
               >
                 {t("resultSecondaryCta")}
               </Button>
             </Stack>
-          </Box>
-
-          <Box
-            sx={{
-              flexShrink: 0,
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              px: { xs: 2.5, sm: 4, md: 8, lg: 10 },
-              pb: { xs: 2, md: 2.5 },
-              pt: { xs: 1, md: 0 },
-              opacity: 0.45,
-            }}
-          >
-            <Box sx={{ width: 48, height: 1, bgcolor: "common.white", borderRadius: 1 }} />
-            <Typography sx={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase" }}>
-              {t("languageFooterStrip")}
-            </Typography>
           </Box>
         </Box>
       </Box>

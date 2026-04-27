@@ -29,7 +29,7 @@ export function KioskRightOcclusion({ zIndex = 0 }: KioskRightOcclusionProps) {
           width: { xs: "58%", sm: "48%", md: "40%", lg: "36%" },
           height: "100%",
           background:
-            "linear-gradient(270deg, rgba(0,27,68,0.92) 0%, rgba(0,27,68,0.55) 42%, rgba(0,27,68,0) 100%)",
+            "linear-gradient(270deg, rgba(12,12,12,0.94) 0%, rgba(12,12,12,0.5) 42%, rgba(0,0,0,0) 100%)",
         }}
       />
       <Box
@@ -41,7 +41,7 @@ export function KioskRightOcclusion({ zIndex = 0 }: KioskRightOcclusionProps) {
           height: { xs: "72%", md: "118%" },
           borderRadius: 3,
           background:
-            "linear-gradient(200deg, rgba(0,47,108,0.55) 0%, rgba(0,27,68,0.78) 45%, rgba(255,184,28,0.07) 100%)",
+            "linear-gradient(200deg, rgba(205,153,65,0.14) 0%, rgba(8,8,8,0.82) 45%, rgba(205,153,65,0.06) 100%)",
           opacity: 0.92,
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",

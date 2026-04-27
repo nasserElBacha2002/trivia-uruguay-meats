@@ -4,9 +4,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { BrandLogo } from "../components/BrandLogo";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
+import { BRAND_GOLD } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 const attractCtaEnter = keyframes`
@@ -24,9 +26,6 @@ const attractCtaIdle = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
 `;
-
-const ATTRACT_HERO_IMAGE =
-  "https://images.unsplash.com/photo-1595467458427-524719c85365?auto=format&fit=crop&w=2400&q=85";
 
 export function AttractPage() {
   const { t, i18n } = useTranslation();
@@ -72,7 +71,7 @@ export function AttractPage() {
       {!heroImageFailed ? (
         <Box
           component="img"
-          src={ATTRACT_HERO_IMAGE}
+          src={MEDIA_ASSETS.attractHero}
           alt=""
           onError={() => setHeroImageFailed(true)}
           sx={{
@@ -93,7 +92,7 @@ export function AttractPage() {
             inset: 0,
             pointerEvents: "none",
             background:
-              "radial-gradient(circle at 18% 22%, rgba(0,47,108,0.75) 0%, rgba(0,27,68,0.96) 55%), radial-gradient(circle at 88% 78%, rgba(255,184,28,0.12) 0%, rgba(0,27,68,0.98) 45%), #001b44",
+              "radial-gradient(circle at 18% 22%, rgba(20,20,20,0.92) 0%, rgba(0,0,0,0.98) 55%), radial-gradient(circle at 88% 78%, rgba(205,153,65,0.14) 0%, rgba(0,0,0,0.98) 45%), #000000",
           }}
         />
       )}
@@ -105,7 +104,7 @@ export function AttractPage() {
           pointerEvents: "none",
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
-          background: "linear-gradient(180deg, rgba(0, 27, 68, 0.4) 0%, rgba(0, 47, 108, 0.85) 100%)",
+          background: "linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.82) 100%)",
         }}
       />
 
@@ -114,22 +113,9 @@ export function AttractPage() {
           position: "absolute",
           inset: 0,
           pointerEvents: "none",
-          background: "linear-gradient(180deg, rgba(0, 27, 68, 0.08) 0%, rgba(0, 27, 68, 0.72) 100%)",
+          background: `linear-gradient(180deg, rgba(205, 153, 65, 0.06) 0%, rgba(0, 0, 0, 0.75) 100%)`,
         }}
       />
-
-      <Box
-        sx={{
-          position: "absolute",
-          top: { xs: 40, md: 48 },
-          left: { xs: 22, md: 38 },
-          zIndex: 20,
-        }}
-      >
-        <Box sx={{ filter: "brightness(0) invert(1)", height: 48, display: "flex", alignItems: "center" }}>
-          <BrandLogo size={150} />
-        </Box>
-      </Box>
 
       <Stack
         component="main"
@@ -147,6 +133,19 @@ export function AttractPage() {
         }}
       >
         <Box sx={{ maxWidth: 1100, width: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mb: { xs: 3, md: 4 },
+              [mediaNoReducedMotion]: {
+                animation: `${attractCtaEnter} ${motion.durationSlow}ms ${motion.easing} both`,
+              },
+            }}
+          >
+            <BrandLogo prominence="hero" />
+          </Box>
+
           <Typography
             component="h1"
             sx={{
@@ -242,15 +241,15 @@ export function AttractPage() {
                 minHeight: { xs: 84, md: 90 },
                 px: { xs: 5, md: 8 },
                 borderRadius: "10px",
-                bgcolor: "secondary.main",
-                color: "#001b44",
+                bgcolor: BRAND_GOLD,
+                color: "#0a0a0a",
                 backgroundImage: "none",
                 fontSize: { xs: "1.25rem", md: "1.55rem" },
                 fontWeight: 900,
                 letterSpacing: { xs: "0.2em", md: "0.26em" },
                 textTransform: "uppercase",
-                border: "1px solid rgba(0, 27, 68, 0.12)",
-                boxShadow: "0 18px 48px rgba(0,27,68,0.38)",
+                border: "1px solid rgba(0, 0, 0, 0.12)",
+                boxShadow: "0 18px 48px rgba(0,0,0,0.45)",
                 transitionProperty: "transform, box-shadow, border-color, filter, background-color",
                 transitionDuration: `${motion.duration}ms`,
                 transitionTimingFunction: motion.easingOut,
@@ -270,10 +269,10 @@ export function AttractPage() {
                 },
                 "@media (hover: hover) and (pointer: fine)": {
                   "&:hover": {
-                    bgcolor: "#ffc84a",
-                    borderColor: "rgba(0, 47, 108, 0.22)",
+                    bgcolor: "#d4a855",
+                    borderColor: "rgba(0, 0, 0, 0.18)",
                     filter: "brightness(1.03)",
-                    boxShadow: "0 22px 56px rgba(0,27,68,0.45), 0 0 0 1px rgba(255,184,28,0.35)",
+                    boxShadow: `0 22px 56px rgba(0,0,0,0.5), 0 0 0 1px rgba(205,153,65,0.45)`,
                     transform: { xs: "translateY(-1px)", md: "translateY(-2px)" },
                   },
                   [mediaNoReducedMotion]: {
@@ -286,13 +285,12 @@ export function AttractPage() {
                 },
                 "&:active": {
                   transform: "scale(0.98) translateY(0)",
-                  boxShadow: "0 12px 32px rgba(0,27,68,0.36)",
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.4)",
                   transitionDuration: `${motion.durationFast}ms`,
                 },
                 "&.Mui-focusVisible": {
                   outline: "none",
-                  boxShadow:
-                    "0 0 0 3px rgba(0, 27, 68, 0.95), 0 0 0 6px rgba(255, 184, 28, 0.85), 0 18px 48px rgba(0,27,68,0.4)",
+                  boxShadow: `0 0 0 3px rgba(0, 0, 0, 0.9), 0 0 0 6px ${BRAND_GOLD}, 0 18px 48px rgba(0,0,0,0.45)`,
                 },
               }}
               >
