@@ -4,21 +4,25 @@ import { useTranslation } from "react-i18next";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 
 type BrandLogoProps = {
-  /** Ancho máximo referencial (px) en `standard` (pantallas internas); ignorado en `hero`. */
+  /** Reservado para compatibilidad; el ancho real viene de `clamp()` por `prominence`. */
   size?: number;
-  /** `hero`: placa inicial (280–420px). `standard`: 140–180px, centrado con el contenedor. */
+  /** `hero`: pantalla inicial. `standard`: pantallas internas. */
   prominence?: "hero" | "standard";
 };
 
-export function BrandLogo({ size = 160, prominence = "standard" }: BrandLogoProps) {
+export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
+
+  const heroW = "clamp(320px, min(52vw, 88dvw), 520px)";
+  const standardW = "clamp(190px, min(30vw, 55dvw), 260px)";
 
   if (assetMissing) {
     return (
       <Box
         sx={{
-          maxWidth: prominence === "hero" ? 420 : Math.max(size, 120),
+          width: prominence === "hero" ? heroW : standardW,
+          maxWidth: "100%",
           border: "1px dashed rgba(205, 153, 65, 0.65)",
           borderRadius: 1.5,
           display: "flex",
@@ -27,6 +31,7 @@ export function BrandLogo({ size = 160, prominence = "standard" }: BrandLogoProp
           px: 2,
           py: 1.25,
           bgcolor: "rgba(205, 153, 65, 0.08)",
+          mx: "auto",
         }}
       >
         <Typography variant="caption" sx={{ color: "primary.main", fontWeight: 800, textAlign: "center", letterSpacing: "0.12em" }}>
@@ -44,10 +49,7 @@ export function BrandLogo({ size = 160, prominence = "standard" }: BrandLogoProp
       sx={{
         display: "block",
         mx: "auto",
-        width:
-          prominence === "hero"
-            ? "clamp(280px, 42vw, 420px)"
-            : { xs: "clamp(140px, 36vw, 180px)", sm: "clamp(148px, 28vw, 176px)", md: size },
+        width: prominence === "hero" ? heroW : standardW,
         maxWidth: "100%",
         height: "auto",
         objectFit: "contain",

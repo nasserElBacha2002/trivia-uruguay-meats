@@ -4,30 +4,20 @@ import { ROUTES } from "../config/routes";
 import { useKioskGuards } from "../hooks/useKioskGuards";
 import { useInactivityReset } from "../hooks/useInactivityReset";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
-import { BRAND_GOLD } from "../theme/appTheme";
 
 export function KioskShell() {
   useKioskGuards();
   useInactivityReset();
   const location = useLocation();
-
-  const progressByRoute: Record<string, string> = {
-    [ROUTES.attract]: "12%",
-    [ROUTES.language]: "25%",
-    [ROUTES.form]: "44%",
-    [ROUTES.quiz]: "72%",
-    [ROUTES.result]: "100%",
-  };
-
-  const threadWidth = progressByRoute[location.pathname] ?? "12%";
   const isAttract = location.pathname === ROUTES.attract;
 
   return (
     <Box
       sx={{
+        minHeight: "100vh",
         height: "100dvh",
         maxHeight: "100vh",
-        width: "100vw",
+        width: "100%",
         maxWidth: "100%",
         position: "relative",
         color: "text.primary",
@@ -56,27 +46,6 @@ export function KioskShell() {
           }}
         />
       ) : null}
-
-      <Box
-        sx={{
-          position: "relative",
-          zIndex: 50,
-          flexShrink: 0,
-          height: 7,
-          width: "100%",
-          bgcolor: "rgba(255,255,255,0.1)",
-        }}
-      >
-        <Box
-          sx={{
-            height: "100%",
-            width: threadWidth,
-            bgcolor: BRAND_GOLD,
-            transition: "width 240ms ease",
-            boxShadow: `0 0 20px rgba(205, 153, 65, 0.45)`,
-          }}
-        />
-      </Box>
 
       <Box
         sx={{

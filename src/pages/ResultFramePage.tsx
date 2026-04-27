@@ -130,7 +130,7 @@ function ResultFramePageContent() {
       <KioskLayout
         header={<BrandLogo prominence="standard" />}
         rootSx={{ height: "100%", maxHeight: "100%" }}
-        contentSx={{ justifyContent: "flex-start", py: 0.5 }}
+        contentSx={{ justifyContent: "flex-start", py: 0.5, pb: 1 }}
       >
         <Box
           sx={{
@@ -144,6 +144,7 @@ function ResultFramePageContent() {
             alignItems: "stretch",
             overflow: "hidden",
             px: { xs: 1.25, sm: 2 },
+            pb: 0.5,
           }}
         >
           {syncFailed ? (
@@ -174,8 +175,8 @@ function ResultFramePageContent() {
               maxWidth: 560,
               mx: "auto",
               flexShrink: 0,
-              height: "clamp(120px, 30vh, 320px)",
-              maxHeight: "32vh",
+              height: "clamp(150px, 22vh, 320px)",
+              maxHeight: "min(32vh, 320px)",
               borderRadius: 2,
               overflow: "hidden",
               border: "1px solid rgba(205,153,65,0.22)",
@@ -193,11 +194,11 @@ function ResultFramePageContent() {
           </Box>
 
           <Stack
-            spacing={{ xs: 1.25, sm: 1.5 }}
+            spacing={{ xs: 1, sm: 1.15 }}
             sx={{
               flex: "1 1 0%",
               minHeight: 0,
-              mt: 1,
+              mt: 0.75,
               width: "100%",
               justifyContent: "center",
               overflow: "hidden",
@@ -232,12 +233,16 @@ function ResultFramePageContent() {
             <Typography
               component="h1"
               sx={{
-                fontSize: "clamp(1.35rem, 4vw, 2.1rem)",
+                fontSize: "clamp(1.2rem, min(3.6vw, 4.5dvh), 1.95rem)",
                 lineHeight: 1.08,
                 fontWeight: 900,
                 letterSpacing: "-0.03em",
                 textAlign: "center",
                 flexShrink: 0,
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
               }}
             >
               {headline}
@@ -298,11 +303,15 @@ function ResultFramePageContent() {
               <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Typography
                   sx={{
-                    fontSize: "clamp(0.95rem, 2.6vw, 1.2rem)",
-                    lineHeight: 1.42,
+                    fontSize: "clamp(0.88rem, min(2.4vw, 3.2dvh), 1.1rem)",
+                    lineHeight: 1.38,
                     fontWeight: 600,
                     color: BRAND_GOLD,
                     textAlign: "center",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 5,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
                   }}
                 >
                   {supporting}
@@ -310,7 +319,7 @@ function ResultFramePageContent() {
               </Box>
             </Stack>
 
-            <Stack spacing={1.25} sx={{ width: "100%", maxWidth: 520, mx: "auto", alignItems: "stretch", flexShrink: 0, pt: 0.5 }}>
+            <Stack spacing={1} sx={{ width: "100%", maxWidth: 520, mx: "auto", alignItems: "stretch", flexShrink: 0, pt: 0.35, pb: 0.25 }}>
               <Button
                 type="button"
                 variant="contained"

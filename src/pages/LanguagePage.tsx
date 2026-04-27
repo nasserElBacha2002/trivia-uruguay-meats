@@ -27,6 +27,7 @@ export function LanguagePage() {
       <KioskLayout
         header={<BrandLogo prominence="standard" />}
         rootSx={{ position: "relative", zIndex: 1, height: "100%", maxHeight: "100%" }}
+        contentSx={{ justifyContent: "flex-start", pt: 0.5, pb: 0.5 }}
       >
         <Box
           sx={{
@@ -38,7 +39,7 @@ export function LanguagePage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             overflow: "hidden",
           }}
         >
@@ -76,7 +77,7 @@ export function LanguagePage() {
             direction={{ xs: "column", sm: "row" }}
             spacing={{ xs: 1.5, sm: 2 }}
             sx={{
-              flex: "1 1 0%",
+              flex: "1 1 auto",
               minHeight: 0,
               width: "100%",
               maxWidth: 1100,
@@ -84,6 +85,7 @@ export function LanguagePage() {
               alignItems: "stretch",
               justifyContent: "center",
               overflow: "hidden",
+              maxHeight: { sm: "min(52dvh, 520px)" },
             }}
           >
             <LanguageChoiceCard
@@ -130,8 +132,8 @@ function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant
       sx={{
         position: "relative",
         flex: { xs: "1 1 auto", sm: "1 1 0%" },
-        minHeight: { xs: 200, sm: 0 },
-        maxHeight: { sm: "100%" },
+        minHeight: { xs: "min(44dvh, 320px)", sm: "min(36dvh, 280px)" },
+        maxHeight: { xs: "min(48dvh, 380px)", sm: "min(40dvh, 320px)" },
         borderRadius: 3,
         overflow: "hidden",
         textAlign: "left",

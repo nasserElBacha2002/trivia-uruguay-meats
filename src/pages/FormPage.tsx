@@ -318,7 +318,7 @@ export function FormPage() {
                   sx={{
                     minHeight: 0,
                     minWidth: 0,
-                    overflow: "hidden",
+                    overflow: "visible",
                     display: "flex",
                     flexDirection: "column",
                   }}
@@ -345,9 +345,9 @@ export function FormPage() {
                       width: "100%",
                       display: "grid",
                       gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gridTemplateRows: "repeat(2, minmax(0, 1fr))",
-                      gap: 0.5,
-                      alignContent: "stretch",
+                      gridTemplateRows: "repeat(2, auto)",
+                      gap: 0.45,
+                      alignContent: "start",
                       justifyContent: "stretch",
                     }}
                   >
@@ -380,19 +380,15 @@ export function FormPage() {
                           </Box>
                           <Typography
                             sx={{
-                              fontSize: "0.62rem",
+                              fontSize: "clamp(0.58rem, min(1.6vw, 2.2dvh), 0.72rem)",
                               fontWeight: 700,
                               textAlign: "center",
-                              lineHeight: 1.15,
-                              px: 0.15,
-                              minHeight: 0,
+                              lineHeight: 1.2,
+                              px: 0.2,
                               minWidth: 0,
                               width: "100%",
-                              overflow: "hidden",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: "vertical",
                               wordBreak: "break-word",
+                              hyphens: "auto",
                             }}
                           >
                             {option.label}
