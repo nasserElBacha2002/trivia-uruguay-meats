@@ -1,11 +1,29 @@
+import { keyframes } from "@emotion/react";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { BrandLogo } from "../components/BrandLogo";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
+import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
+
+const attractCtaEnter = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const attractCtaExit = keyframes`
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(4px) scale(0.98); }
+`;
+
+/** Muy sutil: “soft attention” ~2px en ~3s, sin caricatura */
+const attractCtaIdle = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+`;
 
 const ATTRACT_HERO_IMAGE =
   "https://images.unsplash.com/photo-1595467458427-524719c85365?auto=format&fit=crop&w=2400&q=85";
@@ -16,6 +34,8 @@ export function AttractPage() {
   const { state, resetSession, enterLanguage } = useSessionStore();
   const quizContent = getQuizContent("pt");
   const [heroImageFailed, setHeroImageFailed] = useState(false);
+  const [ctaExiting, setCtaExiting] = useState(false);
+  const ctaExitStarted = useRef(false);
 
   const shouldResetSession =
     state.currentStep !== "attract" ||
@@ -164,16 +184,60 @@ export function AttractPage() {
             {quizContent.subtitle}
           </Typography>
 
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button
-              size="large"
-              variant="contained"
-              disableElevation
-              onClick={() => {
-                enterLanguage();
-                navigate(ROUTES.language);
-              }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              [mediaNoReducedMotion]: {
+                animation: `${attractCtaEnter} ${motion.durationSlow}ms ${motion.easing} both`,
+                animationDelay: "80ms",
+              },
+              [mediaReducedMotion]: { opacity: 1 },
+              ...(ctaExiting
+                ? {
+                    [mediaNoReducedMotion]: {
+                      animation: `${attractCtaExit} 200ms ${motion.easingOut} forwards`,
+                    },
+                  }
+                : {}),
+            }}
+          >
+            <Box
               sx={{
+                display: "inline-flex",
+                justifyContent: "center",
+                ...(ctaExiting
+                  ? { [mediaNoReducedMotion]: { animation: "none" } }
+                  : {
+                      [mediaNoReducedMotion]: {
+                        animation: `${attractCtaIdle} 3.1s ease-in-out infinite`,
+                        animationDelay: "0.72s",
+                      },
+                    }),
+              }}
+            >
+              <Button
+                size="large"
+                variant="contained"
+                disableElevation
+                onClick={() => {
+                  if (ctaExitStarted.current) return;
+                  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                  if (reducedMotion) {
+                    enterLanguage();
+                    navigate(ROUTES.language);
+                    return;
+                  }
+                  ctaExitStarted.current = true;
+                  setCtaExiting(true);
+                  window.setTimeout(() => {
+                    enterLanguage();
+                    navigate(ROUTES.language);
+                  }, 200);
+                }}
+                sx={{
+                position: "relative",
+                overflow: "hidden",
                 minWidth: { xs: 300, md: 440 },
                 minHeight: { xs: 84, md: 90 },
                 px: { xs: 5, md: 8 },
@@ -185,19 +249,56 @@ export function AttractPage() {
                 fontWeight: 900,
                 letterSpacing: { xs: "0.2em", md: "0.26em" },
                 textTransform: "uppercase",
-                boxShadow: "0 20px 60px rgba(0,27,68,0.4)",
-                "&:hover": {
-                  bgcolor: "secondary.main",
-                  filter: "brightness(1.06)",
-                  boxShadow: "0 22px 64px rgba(0,27,68,0.48)",
+                border: "1px solid rgba(0, 27, 68, 0.12)",
+                boxShadow: "0 18px 48px rgba(0,27,68,0.38)",
+                transitionProperty: "transform, box-shadow, border-color, filter, background-color",
+                transitionDuration: `${motion.duration}ms`,
+                transitionTimingFunction: motion.easingOut,
+                [mediaReducedMotion]: {
+                  transitionDuration: "0.01ms",
+                },
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  inset: 0,
+                  left: "-40%",
+                  width: "45%",
+                  background: "linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%)",
+                  transform: "skewX(-18deg) translateX(-160%)",
+                  opacity: 0,
+                  pointerEvents: "none",
+                },
+                "@media (hover: hover) and (pointer: fine)": {
+                  "&:hover": {
+                    bgcolor: "#ffc84a",
+                    borderColor: "rgba(0, 47, 108, 0.22)",
+                    filter: "brightness(1.03)",
+                    boxShadow: "0 22px 56px rgba(0,27,68,0.45), 0 0 0 1px rgba(255,184,28,0.35)",
+                    transform: { xs: "translateY(-1px)", md: "translateY(-2px)" },
+                  },
+                  [mediaNoReducedMotion]: {
+                    "&:hover::before": {
+                      opacity: 1,
+                      transform: "skewX(-18deg) translateX(380%)",
+                      transition: "transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease",
+                    },
+                  },
                 },
                 "&:active": {
-                  transform: "scale(0.98)",
+                  transform: "scale(0.98) translateY(0)",
+                  boxShadow: "0 12px 32px rgba(0,27,68,0.36)",
+                  transitionDuration: `${motion.durationFast}ms`,
+                },
+                "&.Mui-focusVisible": {
+                  outline: "none",
+                  boxShadow:
+                    "0 0 0 3px rgba(0, 27, 68, 0.95), 0 0 0 6px rgba(255, 184, 28, 0.85), 0 18px 48px rgba(0,27,68,0.4)",
                 },
               }}
-            >
-              {quizContent.ctaLabel}
-            </Button>
+              >
+                {quizContent.ctaLabel}
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Stack>

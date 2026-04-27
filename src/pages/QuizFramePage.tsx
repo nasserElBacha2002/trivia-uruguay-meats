@@ -1,13 +1,48 @@
-import { Box, Button, ButtonBase, LinearProgress, Stack, Typography } from "@mui/material";
+import { keyframes } from "@emotion/react";
+import { Box, Button, ButtonBase, LinearProgress, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
 import type { QuizQuestionOption } from "../types/quizContent";
+import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 const OPTION_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+const quizOptionEnter = keyframes`
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const quizFeedbackIconIn = keyframes`
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
+/** Reflejo plateado muy tenue; tramo corto + larga pausa (no “loading”) */
+const quizOptionSheen = keyframes`
+  0%, 14% {
+    opacity: 0;
+    transform: skewX(-10deg) translateX(-58%);
+  }
+  16% {
+    opacity: 0.42;
+  }
+  27% {
+    opacity: 0.38;
+    transform: skewX(-10deg) translateX(122%);
+  }
+  32%, 100% {
+    opacity: 0;
+    transform: skewX(-10deg) translateX(122%);
+  }
+`;
+
+const finePointerHover = "@media (hover: hover) and (pointer: fine)";
+
 export function QuizFramePage() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const compactStagger = useMediaQuery(theme.breakpoints.down("md"));
   const {
     currentQuestion,
     currentQuestionIndex,
@@ -26,6 +61,7 @@ export function QuizFramePage() {
 
   const options = currentQuestion.options;
   const lastIndexSpansRow = options.length === 3;
+  const quizSheenEnabled = !feedbackState.isVisible && !isAnswerPersistencePending;
 
   return (
     <Box
@@ -165,6 +201,7 @@ export function QuizFramePage() {
               />
             ) : null}
             <Box
+              key={currentQuestion.id}
               sx={{
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
@@ -185,6 +222,10 @@ export function QuizFramePage() {
                   isSelected &&
                   selectedOptionId !== currentQuestion.correctOptionId;
                 const spanFullRow = lastIndexSpansRow && index === options.length - 1;
+                const awaitingFeedback = isSelected && !feedbackState.isVisible;
+                const dimPeer =
+                  feedbackState.isVisible && !showCorrect && !showIncorrect && !isSelected;
+                const staggerMs = index * (compactStagger ? 40 : 48);
 
                 return (
                   <ButtonBase
@@ -193,6 +234,8 @@ export function QuizFramePage() {
                     disabled={feedbackState.isVisible || isAnswerPersistencePending}
                     onClick={() => void answerWithOption(option.id)}
                     sx={{
+                      position: "relative",
+                      overflow: "hidden",
                       gridColumn: spanFullRow ? { xs: "auto", md: "1 / -1" } : "auto",
                       justifyContent: "flex-start",
                       alignItems: "stretch",
@@ -205,36 +248,149 @@ export function QuizFramePage() {
                       backdropFilter: "blur(14px)",
                       WebkitBackdropFilter: "blur(14px)",
                       color: "text.primary",
-                      transition:
-                        "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
                       outline: "none",
-                      boxShadow: isSelected && !feedbackState.isVisible ? "inset 0 0 0 1px rgba(255,184,28,0.45)" : "none",
+                      willChange: "transform, opacity",
+                      transitionProperty: "background-color, border-color, box-shadow, transform, opacity, filter",
+                      transitionDuration: `${motion.duration}ms`,
+                      transitionTimingFunction: motion.easingOut,
+                      [mediaReducedMotion]: {
+                        transitionDuration: "0.01ms",
+                        willChange: "auto",
+                      },
+                      [mediaNoReducedMotion]: {
+                        animation: `${quizOptionEnter} ${motion.durationSlow}ms ${motion.easing} both`,
+                        animationDelay: `${staggerMs}ms`,
+                      },
+                      boxShadow:
+                        awaitingFeedback || (isSelected && isAnswerPersistencePending)
+                          ? "0 0 0 2px rgba(255,184,28,0.5), inset 0 0 0 1px rgba(255,184,28,0.28), 0 10px 28px rgba(0,0,0,0.22)"
+                          : "0 1px 0 rgba(255,255,255,0.04) inset",
+                      ...(awaitingFeedback || (isSelected && isAnswerPersistencePending)
+                        ? {
+                            borderColor: "rgba(255,184,28,0.55)",
+                            backgroundColor: "rgba(0,47,108,0.52)",
+                          }
+                        : {}),
                       ...(showCorrect && {
-                        borderColor: "rgba(129,199,132,0.75)",
-                        backgroundColor: "rgba(46,125,50,0.22)",
-                        boxShadow: "inset 0 0 0 1px rgba(129,199,132,0.5)",
+                        borderColor: "rgba(124, 168, 132, 0.88)",
+                        backgroundColor: "rgba(38, 78, 48, 0.35)",
+                        boxShadow:
+                          "inset 0 0 0 1px rgba(140, 188, 148, 0.55), 0 12px 32px rgba(0, 24, 12, 0.35)",
                       }),
                       ...(showIncorrect && {
-                        borderColor: "rgba(239,83,80,0.65)",
-                        backgroundColor: "rgba(183,28,28,0.2)",
-                        boxShadow: "inset 0 0 0 1px rgba(239,83,80,0.45)",
+                        borderColor: "rgba(196, 112, 112, 0.82)",
+                        backgroundColor: "rgba(88, 32, 32, 0.32)",
+                        boxShadow:
+                          "inset 0 0 0 1px rgba(210, 130, 130, 0.5), 0 12px 28px rgba(40, 8, 8, 0.28)",
                       }),
-                      "&:hover:not(.Mui-disabled)": {
-                        backgroundColor: "rgba(0,47,108,0.55)",
-                        borderColor: "rgba(31,101,199,0.85)",
-                        boxShadow: "0 0 0 1px rgba(255,184,28,0.35), 0 12px 36px rgba(0,0,0,0.28)",
-                        transform: "translateY(-1px)",
-                        "& .quiz-option-letter": {
-                          color: "secondary.main",
-                          textShadow: "0 0 18px rgba(255,184,28,0.35)",
+                      ...(dimPeer && {
+                        opacity: 0.42,
+                        filter: "saturate(0.75)",
+                        transform: "scale(0.995)",
+                      }),
+                      [finePointerHover]: {
+                        "&:hover:not(.Mui-disabled)": {
+                          backgroundColor: "rgba(0,47,108,0.58)",
+                          borderColor: "rgba(0, 47, 108, 0.95)",
+                          boxShadow:
+                            "0 0 0 1px rgba(255,184,28,0.38), 0 14px 36px rgba(0,0,0,0.3)",
+                          transform: { xs: "translateY(-1px)", md: "translateY(-2px)" },
+                          "& .quiz-option-letter": {
+                            color: "secondary.main",
+                            textShadow: "0 0 18px rgba(255,184,28,0.35)",
+                          },
                         },
                       },
-                      "&.Mui-focusVisible": {
-                        boxShadow: "0 0 0 2px rgba(255,184,28,0.65)",
+                      "&:active:not(.Mui-disabled)": {
+                        transform: "scale(0.985) translateY(0)",
+                        transitionDuration: `${motion.durationFast}ms`,
                       },
+                      "&.Mui-focusVisible": {
+                        zIndex: 2,
+                        boxShadow:
+                          "0 0 0 2px rgba(255,184,28,0.85), 0 0 0 5px rgba(0, 47, 108, 0.95), 0 12px 32px rgba(0,0,0,0.28)",
+                      },
+                      "&&.Mui-disabled": {
+                        cursor: "not-allowed",
+                        ...(dimPeer
+                          ? {
+                              opacity: 0.42,
+                              filter: "saturate(0.75)",
+                              WebkitTextFillColor: "unset",
+                            }
+                          : {
+                              opacity: 1,
+                              filter: "none",
+                              WebkitTextFillColor: "unset",
+                            }),
+                      },
+                      ...(quizSheenEnabled
+                        ? {
+                            "&::after": {
+                              content: '""',
+                              position: "absolute",
+                              inset: 0,
+                              top: "-2px",
+                              bottom: "-2px",
+                              left: "-35%",
+                              width: "42%",
+                              zIndex: 0,
+                              pointerEvents: "none",
+                              background:
+                                "linear-gradient(102deg, transparent 0%, rgba(230, 234, 238, 0.035) 38%, rgba(255, 255, 255, 0.075) 50%, rgba(218, 224, 230, 0.04) 62%, transparent 100%)",
+                              [mediaNoReducedMotion]: {
+                                animation: `${quizOptionSheen} 12s cubic-bezier(0.45, 0, 0.25, 1) infinite`,
+                                animationDelay: `${0.45 + index * 1.35}s`,
+                              },
+                              [mediaReducedMotion]: {
+                                display: "none",
+                              },
+                            },
+                          }
+                        : {}),
                     }}
                   >
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1, width: "100%" }}>
+                    {(showCorrect || showIncorrect) && (
+                      <Box
+                        aria-hidden
+                        sx={{
+                          position: "absolute",
+                          top: { xs: 10, md: 12 },
+                          right: { xs: 10, md: 14 },
+                          zIndex: 4,
+                          width: { xs: 30, md: 32 },
+                          height: { xs: 30, md: 32 },
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: { xs: "1rem", md: "1.05rem" },
+                          fontWeight: 800,
+                          lineHeight: 1,
+                          color: showCorrect ? "rgba(232, 245, 234, 0.98)" : "rgba(255, 218, 218, 0.96)",
+                          bgcolor: showCorrect ? "rgba(52, 96, 62, 0.62)" : "rgba(112, 44, 44, 0.58)",
+                          border: "1px solid",
+                          borderColor: showCorrect ? "rgba(150, 198, 160, 0.55)" : "rgba(210, 140, 140, 0.5)",
+                          [mediaNoReducedMotion]: {
+                            animation: `${quizFeedbackIconIn} ${motion.duration}ms ${motion.easing} both`,
+                          },
+                        }}
+                      >
+                        {showCorrect ? "✓" : "✕"}
+                      </Box>
+                    )}
+                    <Box
+                      sx={{
+                        position: "relative",
+                        zIndex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        gap: 1,
+                        width: "100%",
+                        pr: 4,
+                      }}
+                    >
                       <Typography
                         className="quiz-option-letter"
                         component="span"
@@ -243,8 +399,12 @@ export function QuizFramePage() {
                           fontWeight: 800,
                           lineHeight: 1,
                           letterSpacing: "0.04em",
-                          color: showCorrect ? "secondary.main" : showIncorrect ? "error.light" : "rgba(255,255,255,0.88)",
-                          transition: "color 180ms ease, text-shadow 180ms ease",
+                          color: showCorrect
+                            ? "rgba(230, 248, 232, 0.98)"
+                            : showIncorrect
+                              ? "rgba(255, 200, 200, 0.95)"
+                              : "rgba(255,255,255,0.88)",
+                          transition: `color ${motion.durationFast}ms ${motion.easingOut}, text-shadow ${motion.durationFast}ms ${motion.easingOut}`,
                         }}
                       >
                         {letter}
@@ -254,7 +414,7 @@ export function QuizFramePage() {
                           fontSize: { xs: "0.95rem", md: "1.05rem" },
                           fontWeight: 700,
                           lineHeight: 1.35,
-                          color: "rgba(245,245,245,0.92)",
+                          color: "rgba(245,245,245,0.94)",
                           pr: 1,
                         }}
                       >
