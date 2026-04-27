@@ -2,10 +2,9 @@ import { Box, ButtonBase, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { BrandLogo } from "../components/BrandLogo";
 import { StitchGlobeIcon, StitchLanguageIcon } from "../components/icons/LanguageScreenIcons";
-import { KioskLayout } from "../components/layout/KioskLayout";
-import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
+import { KioskHeader } from "../components/kiosk/KioskHeader";
+import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { ROUTES } from "../config/routes";
 import { useSessionStore } from "../features/session/useSessionStore";
 
@@ -21,93 +20,67 @@ export function LanguagePage() {
   };
 
   return (
-    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, overflow: "hidden" }}>
-      <KioskRightOcclusion zIndex={0} />
-
-      <KioskLayout
-        header={<BrandLogo prominence="standard" />}
-        rootSx={{ position: "relative", zIndex: 1, height: "100%", maxHeight: "100%" }}
-        contentSx={{ justifyContent: "flex-start", pt: 0.5, pb: 0.5 }}
+    <KioskScreen header={<KioskHeader logoSize="standard" />}>
+      <Stack
+        spacing={2}
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          width: "100%",
+          maxWidth: "min(760px, 88vw)",
+          mx: "auto",
+          px: 2,
+          py: 1,
+          alignItems: "center",
+          overflow: "hidden",
+        }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: 1040,
-            mx: "auto",
-            flex: "1 1 0%",
-            minHeight: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            overflow: "hidden",
-          }}
-        >
+        <Box component="header" sx={{ textAlign: "center", flexShrink: 0 }}>
           <Typography
             component="h1"
             sx={{
               fontWeight: 700,
-              fontSize: "clamp(1.65rem, 4.8vw, 2.85rem)",
-              lineHeight: 1.06,
+              fontSize: "clamp(1.85rem, 3.5dvh, 2.75rem)",
+              lineHeight: 1.08,
               letterSpacing: "-0.03em",
-              textAlign: "center",
-              flexShrink: 0,
-              mb: 1.25,
             }}
           >
             {t("languageHeroPrimary")}
-            <br />
-            <Box
-              component="span"
-              sx={{
-                display: "inline-block",
-                mt: 0.5,
-                fontWeight: 400,
-                fontSize: "clamp(0.95rem, 2.6vw, 1.45rem)",
-                lineHeight: 1.15,
-                opacity: 0.42,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {t("languageHeroSecondary")}
-            </Box>
           </Typography>
-
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1.5, sm: 2 }}
+          <Typography
             sx={{
-              flex: "1 1 auto",
-              minHeight: 0,
-              width: "100%",
-              maxWidth: 1100,
-              mx: "auto",
-              alignItems: "stretch",
-              justifyContent: "center",
-              overflow: "hidden",
-              maxHeight: { sm: "min(52dvh, 520px)" },
+              mt: 0.75,
+              fontWeight: 400,
+              fontSize: "clamp(1.1rem, 2.2dvh, 1.5rem)",
+              lineHeight: 1.2,
+              opacity: 0.45,
+              letterSpacing: "-0.02em",
             }}
           >
-            <LanguageChoiceCard
-              icon={<StitchGlobeIcon />}
-              watermark="PT"
-              title={t("languagePt")}
-              subtitle={t("languagePtSubtitle")}
-              onClick={() => void selectLanguage("pt")}
-              variant="pt"
-            />
-            <LanguageChoiceCard
-              icon={<StitchLanguageIcon />}
-              watermark="EN"
-              title={t("languageEn")}
-              subtitle={t("languageEnSubtitle")}
-              onClick={() => void selectLanguage("en")}
-              variant="en"
-            />
-          </Stack>
+            {t("languageHeroSecondary")}
+          </Typography>
         </Box>
-      </KioskLayout>
-    </Box>
+
+        <Stack spacing={1.75} sx={{ width: "100%", flex: 1, minHeight: 0, justifyContent: "center" }}>
+          <LanguageChoiceCard
+            icon={<StitchGlobeIcon />}
+            watermark="PT"
+            title={t("languagePt")}
+            subtitle={t("languagePtSubtitle")}
+            onClick={() => void selectLanguage("pt")}
+            variant="pt"
+          />
+          <LanguageChoiceCard
+            icon={<StitchLanguageIcon />}
+            watermark="EN"
+            title={t("languageEn")}
+            subtitle={t("languageEnSubtitle")}
+            onClick={() => void selectLanguage("en")}
+            variant="en"
+          />
+        </Stack>
+      </Stack>
+    </KioskScreen>
   );
 }
 
@@ -123,48 +96,46 @@ type LanguageChoiceCardProps = {
 function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant }: LanguageChoiceCardProps) {
   const glass =
     variant === "pt"
-      ? "linear-gradient(155deg, rgba(205,153,65,0.18) 0%, rgba(10,10,10,0.92) 100%)"
-      : "linear-gradient(155deg, rgba(205,153,65,0.1) 0%, rgba(18,18,18,0.88) 100%)";
+      ? "linear-gradient(155deg, rgba(205,153,65,0.2) 0%, rgba(10,10,10,0.92) 100%)"
+      : "linear-gradient(155deg, rgba(205,153,65,0.12) 0%, rgba(18,18,18,0.9) 100%)";
 
   return (
     <ButtonBase
       onClick={onClick}
       sx={{
         position: "relative",
-        flex: { xs: "1 1 auto", sm: "1 1 0%" },
-        minHeight: { xs: "min(44dvh, 320px)", sm: "min(36dvh, 280px)" },
-        maxHeight: { xs: "min(48dvh, 380px)", sm: "min(40dvh, 320px)" },
+        width: "100%",
+        maxWidth: "min(760px, 88vw)",
+        mx: "auto",
+        minHeight: "clamp(220px, 20dvh, 320px)",
+        maxHeight: "clamp(240px, 22dvh, 340px)",
         borderRadius: 3,
         overflow: "hidden",
         textAlign: "left",
         alignItems: "stretch",
-        px: { xs: 2, sm: 2.5 },
-        py: { xs: 2, sm: 2.25 },
-        border: "1px solid rgba(255,255,255,0.08)",
+        px: 3,
+        py: 2.5,
+        border: "1px solid rgba(255,255,255,0.1)",
         background: glass,
-        backdropFilter: "blur(40px)",
-        WebkitBackdropFilter: "blur(40px)",
-        boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
-        transition: "transform 160ms ease, background 200ms ease, border-color 200ms ease",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        boxShadow: "0 20px 50px rgba(0,0,0,0.4)",
+        transition: "transform 160ms ease, border-color 200ms ease",
         "&:hover": {
-          background:
-            variant === "pt"
-              ? "linear-gradient(155deg, rgba(205,153,65,0.26) 0%, rgba(8,8,8,0.95) 100%)"
-              : "linear-gradient(155deg, rgba(205,153,65,0.16) 0%, rgba(18,18,18,0.92) 100%)",
-          borderColor: "rgba(205,153,65,0.4)",
+          borderColor: "rgba(205,153,65,0.45)",
         },
-        "&:active": { transform: "scale(0.985)" },
+        "&:active": { transform: "scale(0.99)" },
       }}
     >
       <Typography
         sx={{
           position: "absolute",
-          right: -4,
-          bottom: -8,
-          fontSize: "clamp(3.5rem, 14vw, 5.5rem)",
+          right: 4,
+          bottom: -6,
+          fontSize: "clamp(4rem, 12dvh, 7rem)",
           fontWeight: 900,
           lineHeight: 1,
-          opacity: 0.12,
+          opacity: 0.1,
           letterSpacing: "-0.04em",
           userSelect: "none",
           pointerEvents: "none",
@@ -173,20 +144,32 @@ function LanguageChoiceCard({ icon, watermark, title, subtitle, onClick, variant
         {watermark}
       </Typography>
 
-      <Stack sx={{ position: "relative", zIndex: 1, height: "100%", width: "100%", minHeight: 0 }}>
-        <Box sx={{ mb: "auto", "& svg": { fontSize: "clamp(2rem, 6vw, 2.75rem)" } }}>{icon}</Box>
-        <Box sx={{ mt: "auto", pr: { xs: 4, sm: 5 } }}>
-          <Typography sx={{ fontSize: "clamp(1.35rem, 3.8vw, 1.95rem)", fontWeight: 700, lineHeight: 1.12 }}>
-            {title}
-          </Typography>
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ position: "relative", zIndex: 1, width: "100%" }}>
+        <Box
+          sx={{
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "& svg": {
+              fontSize: "clamp(44px, 4dvh, 72px)",
+              width: "clamp(44px, 4dvh, 72px)",
+              height: "clamp(44px, 4dvh, 72px)",
+            },
+          }}
+        >
+          {icon}
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography sx={{ fontSize: "clamp(1.8rem, 3dvh, 2.6rem)", fontWeight: 800, lineHeight: 1.1 }}>{title}</Typography>
           <Typography
             sx={{
-              mt: 0.75,
-              fontSize: "clamp(0.88rem, 2.2vw, 1.05rem)",
+              mt: 1,
+              fontSize: "clamp(1.05rem, 2dvh, 1.35rem)",
               fontWeight: 500,
-              lineHeight: 1.32,
-              opacity: 0.78,
-              color: "rgba(229,226,225,0.92)",
+              lineHeight: 1.35,
+              opacity: 0.82,
+              color: "rgba(247,242,234,0.95)",
             }}
           >
             {subtitle}

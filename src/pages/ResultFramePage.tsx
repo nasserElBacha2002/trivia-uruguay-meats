@@ -11,8 +11,8 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { BrandLogo } from "../components/BrandLogo";
-import { KioskLayout } from "../components/layout/KioskLayout";
+import { KioskHeader } from "../components/kiosk/KioskHeader";
+import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
@@ -27,7 +27,7 @@ function ResultHeroBand({ failed, onFail }: { failed: boolean; onFail: () => voi
         sx={{
           width: "100%",
           height: "100%",
-          minHeight: 120,
+          minHeight: 160,
           borderRadius: 2,
           background:
             "linear-gradient(145deg, rgba(0,0,0,0.75) 0%, rgba(12,12,12,0.95) 50%, rgba(205,153,65,0.1) 100%)",
@@ -94,17 +94,7 @@ function ResultFramePageContent() {
   const onHeroFail = () => setHeroFailed(true);
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        height: "100%",
-        width: "100%",
-        minHeight: 0,
-        overflow: "hidden",
-        bgcolor: "#000000",
-        color: "text.primary",
-      }}
-    >
+    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, bgcolor: "#000", color: "text.primary" }}>
       <Dialog open={claimDialogOpen} onClose={() => setClaimDialogOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ fontWeight: 800 }}>{t("resultClaimDialogTitle")}</DialogTitle>
         <DialogContent>
@@ -127,42 +117,25 @@ function ResultFramePageContent() {
         </DialogActions>
       </Dialog>
 
-      <KioskLayout
-        header={<BrandLogo prominence="standard" />}
-        rootSx={{ height: "100%", maxHeight: "100%" }}
-        contentSx={{ justifyContent: "flex-start", py: 0.5, pb: 1 }}
-      >
-        <Box
+      <KioskScreen header={<KioskHeader logoSize="standard" />}>
+        <Stack
+          spacing={2}
           sx={{
-            width: "100%",
-            maxWidth: 720,
-            mx: "auto",
-            flex: "1 1 0%",
+            flex: 1,
             minHeight: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-            overflow: "hidden",
-            px: { xs: 1.25, sm: 2 },
-            pb: 0.5,
+            width: "100%",
+            maxWidth: "min(900px, 88vw)",
+            mx: "auto",
+            px: 2,
+            py: 1.5,
+            alignItems: "center",
+            overflow: "auto",
           }}
         >
           {syncFailed ? (
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={1}
-              alignItems={{ xs: "stretch", sm: "center" }}
-              sx={{
-                flexShrink: 0,
-                mb: 1,
-                p: 1.25,
-                borderRadius: 2,
-                border: `1px solid rgba(205,153,65,0.4)`,
-                bgcolor: "rgba(20,20,20,0.92)",
-              }}
-            >
-              <Typography sx={{ flex: 1, fontSize: "0.88rem" }}>{t("resultCompleteSyncError")}</Typography>
-              <Button type="button" variant="outlined" size="small" onClick={retryComplete} sx={{ flexShrink: 0 }}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="center" sx={{ width: "100%", p: 1.5, borderRadius: 2, border: `1px solid rgba(205,153,65,0.4)`, bgcolor: "rgba(20,20,20,0.92)" }}>
+              <Typography sx={{ flex: 1, fontSize: "1.05rem" }}>{t("resultCompleteSyncError")}</Typography>
+              <Button type="button" variant="outlined" onClick={retryComplete}>
                 {t("resultCompleteRetry")}
               </Button>
             </Stack>
@@ -172,11 +145,9 @@ function ResultFramePageContent() {
             sx={{
               position: "relative",
               width: "100%",
-              maxWidth: 560,
-              mx: "auto",
+              maxWidth: "min(760px, 88vw)",
+              height: "clamp(220px, 24dvh, 420px)",
               flexShrink: 0,
-              height: "clamp(150px, 22vh, 320px)",
-              maxHeight: "min(32vh, 320px)",
               borderRadius: 2,
               overflow: "hidden",
               border: "1px solid rgba(205,153,65,0.22)",
@@ -188,44 +159,24 @@ function ResultFramePageContent() {
                 position: "absolute",
                 inset: 0,
                 pointerEvents: "none",
-                background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55) 100%)",
+                background: "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.5) 100%)",
               }}
             />
           </Box>
 
-          <Stack
-            spacing={{ xs: 1, sm: 1.15 }}
-            sx={{
-              flex: "1 1 0%",
-              minHeight: 0,
-              mt: 0.75,
-              width: "100%",
-              justifyContent: "center",
-              overflow: "hidden",
-            }}
-          >
+          <Box sx={{ px: 0.5, width: "100%", textAlign: "center" }}>
             <Box
               sx={{
                 display: "inline-flex",
-                alignSelf: "center",
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 1.5,
+                px: 2,
+                py: 0.75,
+                borderRadius: 2,
                 bgcolor: "rgba(24,24,24,0.95)",
                 border: `1px solid rgba(205,153,65,0.35)`,
-                flexShrink: 0,
+                mb: 1.5,
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "0.68rem",
-                  fontWeight: 800,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: "rgba(247,242,234,0.88)",
-                  textAlign: "center",
-                }}
-              >
+              <Typography sx={{ fontSize: "clamp(0.85rem, 1.5dvh, 1rem)", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
                 {t("resultBandLabel")}: {t(scoreLabelKey)}
               </Typography>
             </Box>
@@ -233,115 +184,80 @@ function ResultFramePageContent() {
             <Typography
               component="h1"
               sx={{
-                fontSize: "clamp(1.2rem, min(3.6vw, 4.5dvh), 1.95rem)",
-                lineHeight: 1.08,
+                fontSize: "clamp(2rem, 4dvh, 3.4rem)",
+                lineHeight: 1.06,
                 fontWeight: 900,
                 letterSpacing: "-0.03em",
-                textAlign: "center",
-                flexShrink: 0,
-                display: "-webkit-box",
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                mb: 2,
               }}
             >
               {headline}
             </Typography>
 
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1.25, sm: 2 }}
-              alignItems="stretch"
-              sx={{ flexShrink: 0, width: "100%" }}
-            >
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2.5} alignItems="center" justifyContent="center" sx={{ mb: 2, width: "100%" }}>
               <Box
                 sx={{
-                  flexShrink: 0,
-                  width: { xs: "100%", sm: 200 },
-                  maxWidth: { xs: 280, sm: "none" },
-                  alignSelf: { xs: "center", sm: "flex-start" },
-                  p: { xs: 1.75, sm: 2 },
+                  px: 3,
+                  py: 2,
                   borderRadius: 2.5,
                   bgcolor: "rgba(18, 18, 18, 0.94)",
                   border: `1px solid rgba(205,153,65,0.32)`,
                   textAlign: "center",
+                  minWidth: "min(280px, 80vw)",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: "0.65rem",
-                    fontWeight: 800,
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "rgba(247,242,234,0.88)",
-                    mb: 0.75,
-                  }}
-                >
+                <Typography sx={{ fontSize: "clamp(0.85rem, 1.4dvh, 1rem)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", mb: 1 }}>
                   {t("resultScoreLabel")}
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.15 }}>
-                  <Typography component="span" sx={{ fontSize: "clamp(2.5rem, 8vw, 3.5rem)", fontWeight: 900, lineHeight: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.2 }}>
+                  <Typography component="span" sx={{ fontSize: "clamp(4rem, 8dvh, 7rem)", fontWeight: 900, lineHeight: 1 }}>
                     {score}
                   </Typography>
-                  <Typography
-                    component="span"
-                    sx={{
-                      fontSize: "clamp(2.5rem, 8vw, 3.5rem)",
-                      fontWeight: 900,
-                      lineHeight: 1,
-                      color: BRAND_GOLD,
-                    }}
-                  >
+                  <Typography component="span" sx={{ fontSize: "clamp(4rem, 8dvh, 7rem)", fontWeight: 900, lineHeight: 1, color: BRAND_GOLD }}>
                     /
                   </Typography>
-                  <Typography component="span" sx={{ fontSize: "clamp(1.5rem, 5vw, 2.1rem)", fontWeight: 800, lineHeight: 1, opacity: 0.92 }}>
+                  <Typography component="span" sx={{ fontSize: "clamp(2.5rem, 5dvh, 4rem)", fontWeight: 800, lineHeight: 1, opacity: 0.92 }}>
                     {total}
                   </Typography>
                 </Box>
               </Box>
 
-              <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Typography
-                  sx={{
-                    fontSize: "clamp(0.88rem, min(2.4vw, 3.2dvh), 1.1rem)",
-                    lineHeight: 1.38,
-                    fontWeight: 600,
-                    color: BRAND_GOLD,
-                    textAlign: "center",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 5,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {supporting}
-                </Typography>
-              </Box>
+              <Typography
+                sx={{
+                  flex: 1,
+                  fontSize: "clamp(1.2rem, 2.2dvh, 1.65rem)",
+                  lineHeight: 1.45,
+                  fontWeight: 600,
+                  color: BRAND_GOLD,
+                  textAlign: "center",
+                  maxWidth: 560,
+                }}
+              >
+                {supporting}
+              </Typography>
             </Stack>
 
-            <Stack spacing={1} sx={{ width: "100%", maxWidth: 520, mx: "auto", alignItems: "stretch", flexShrink: 0, pt: 0.35, pb: 0.25 }}>
+            <Stack spacing={1.5} sx={{ width: "100%", maxWidth: 560, mx: "auto" }}>
               <Button
                 type="button"
                 variant="contained"
                 disableElevation
                 onClick={() => setClaimDialogOpen(true)}
                 sx={{
-                  minHeight: 64,
-                  px: 3,
-                  py: 1.25,
+                  minHeight: "clamp(72px, 6dvh, 96px)",
+                  fontSize: "clamp(1.1rem, 2dvh, 1.35rem)",
+                  fontWeight: 900,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
                   borderRadius: 2,
                   bgcolor: BRAND_GOLD,
                   color: "#0a0a0a",
-                  fontSize: "clamp(0.92rem, 2.2vw, 1rem)",
-                  fontWeight: 900,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
                   gap: 1,
                   "&:hover": { bgcolor: "#d4a855" },
                 }}
               >
                 {t("resultPrimaryCta")}
-                <Box component="span" aria-hidden sx={{ fontSize: "1.2rem", lineHeight: 1 }}>
+                <Box component="span" aria-hidden sx={{ fontSize: "1.35rem" }}>
                   🎉
                 </Box>
               </Button>
@@ -351,15 +267,13 @@ function ResultFramePageContent() {
                 variant="outlined"
                 onClick={goToAttract}
                 sx={{
-                  minHeight: 64,
-                  px: 3,
+                  minHeight: "clamp(72px, 6dvh, 96px)",
+                  fontSize: "clamp(1.05rem, 1.9dvh, 1.25rem)",
+                  fontWeight: 700,
                   borderRadius: 2,
                   borderWidth: 2,
                   borderColor: "rgba(205,153,65,0.45)",
                   color: "common.white",
-                  bgcolor: "rgba(255,255,255,0.04)",
-                  fontSize: "clamp(0.88rem, 2vw, 0.98rem)",
-                  fontWeight: 700,
                   textTransform: "none",
                   "&:hover": {
                     borderWidth: 2,
@@ -371,9 +285,9 @@ function ResultFramePageContent() {
                 {t("resultSecondaryCta")}
               </Button>
             </Stack>
-          </Stack>
-        </Box>
-      </KioskLayout>
+          </Box>
+        </Stack>
+      </KioskScreen>
     </Box>
   );
 }

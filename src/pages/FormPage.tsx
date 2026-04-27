@@ -4,10 +4,9 @@ import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { BrandLogo } from "../components/BrandLogo";
 import { sectorOptionIcon } from "../components/icons/sectorOptionIcon";
-import { KioskLayout } from "../components/layout/KioskLayout";
-import { KioskRightOcclusion } from "../components/layout/KioskRightOcclusion";
+import { KioskHeader } from "../components/kiosk/KioskHeader";
+import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content";
 import { createLeadSchema, leadDefaultValues, type LeadSchema } from "../features/lead/leadSchema";
@@ -19,26 +18,25 @@ import { useSessionStore } from "../features/session/useSessionStore";
 import { createParticipantSession } from "../services/triviaApi";
 import type { QuizDataCollectionField, QuizFieldOption } from "../types/quizContent";
 
-const compactFieldSx = {
+const fieldRootSx = {
   "& .MuiInputBase-root": {
-    minHeight: 52,
+    minHeight: "clamp(64px, 6dvh, 88px)",
     borderRadius: 2,
-    fontSize: "0.95rem",
+    fontSize: "clamp(1.05rem, 2dvh, 1.2rem)",
     background: "linear-gradient(140deg, rgba(205,153,65,0.12) 0%, rgba(22,22,22,0.78) 100%)",
   },
   "& .MuiOutlinedInput-input": {
-    py: 1.1,
-    px: 1.25,
+    py: 1.5,
+    px: 1.5,
   },
   "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(229,226,225,0.14)",
+    borderColor: "rgba(229,226,225,0.16)",
   },
   "& .MuiFormHelperText-root": {
     ml: 0,
-    mt: 0.35,
-    fontSize: "0.72rem",
-    minHeight: 18,
-    lineHeight: 1.2,
+    mt: 0.5,
+    fontSize: "0.85rem",
+    lineHeight: 1.25,
   },
 } as const;
 
@@ -94,22 +92,20 @@ export function FormPage() {
     }
   };
 
+  const labelSx = {
+    mb: 0.6,
+    fontSize: "clamp(0.8rem, 1.5dvh, 0.95rem)",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase" as const,
+    fontWeight: 700,
+    opacity: 0.72,
+  };
+
   const renderTextBlock = (field: QuizDataCollectionField | undefined, regKey: "name" | "email" | "country") => {
     if (!field) return null;
     return (
       <Box>
-        <Typography
-          sx={{
-            mb: 0.45,
-            fontSize: "0.68rem",
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            fontWeight: 700,
-            opacity: 0.68,
-          }}
-        >
-          {field.label}
-        </Typography>
+        <Typography sx={labelSx}>{field.label}</Typography>
         <TextField
           fullWidth
           placeholder={field.label}
@@ -118,140 +114,82 @@ export function FormPage() {
           error={Boolean(errors[regKey])}
           helperText={errors[regKey]?.message as string}
           InputLabelProps={{ shrink: false }}
-          sx={compactFieldSx}
+          sx={fieldRootSx}
         />
       </Box>
     );
   };
 
   const buysToggleSx = {
-    minHeight: 64,
-    borderRadius: "10px",
+    minHeight: "clamp(64px, 6dvh, 88px)",
+    borderRadius: "12px",
     border: "1px solid rgba(229,226,225,0.14)",
     background: "linear-gradient(140deg, rgba(205,153,65,0.1) 0%, rgba(22,22,22,0.78) 100%)",
-    textTransform: "none",
+    textTransform: "none" as const,
     fontWeight: 700,
-    fontSize: "0.95rem",
+    fontSize: "clamp(1.05rem, 2dvh, 1.25rem)",
     color: "text.primary",
-    py: 0.5,
+    py: 1,
     "&.Mui-selected": {
-      background: "linear-gradient(145deg, rgba(205,153,65,0.22) 0%, rgba(12,12,12,0.94) 100%)",
+      background: "linear-gradient(145deg, rgba(205,153,65,0.24) 0%, rgba(12,12,12,0.94) 100%)",
       borderColor: "secondary.main",
       color: "common.white",
     },
-  } as const;
+  };
 
   const sectorToggleSx = {
     minWidth: 0,
-    minHeight: 0,
-    height: "100%",
-    maxHeight: "100%",
     width: "100%",
-    boxSizing: "border-box",
-    alignSelf: "stretch",
-    justifySelf: "stretch",
+    minHeight: "clamp(88px, 9dvh, 120px)",
     borderRadius: 2,
-    px: 0.4,
-    py: 0.45,
+    px: 1,
+    py: 1,
     border: "1px solid rgba(229,226,225,0.12)",
     background: "linear-gradient(160deg, rgba(205,153,65,0.1) 0%, rgba(20,20,20,0.82) 100%)",
-    textTransform: "none",
-    flexDirection: "column",
-    gap: 0.25,
+    textTransform: "none" as const,
+    flexDirection: "column" as const,
+    gap: 0.5,
     justifyContent: "center",
     alignItems: "center",
-    overflow: "hidden",
     "&.Mui-selected": {
-      background: "linear-gradient(145deg, rgba(205,153,65,0.2) 0%, rgba(10,10,10,0.94) 100%)",
+      background: "linear-gradient(145deg, rgba(205,153,65,0.22) 0%, rgba(10,10,10,0.94) 100%)",
       borderColor: "secondary.main",
       color: "common.white",
       boxShadow: "0 6px 18px rgba(0,0,0,0.3)",
     },
-  } as const;
+  };
 
   return (
-    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, overflow: "hidden" }}>
-      <KioskRightOcclusion zIndex={0} />
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          position: "relative",
-          zIndex: 1,
-          height: "100%",
-          minHeight: 0,
-          overflow: "hidden",
-        }}
-      >
-        <KioskLayout
-          header={<BrandLogo prominence="standard" />}
-          rootSx={{ height: "100%", maxHeight: "100%" }}
-          contentSx={{ justifyContent: "flex-start", pt: 0.25, pb: 0.5 }}
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ height: "100%", minHeight: 0 }}>
+      <KioskScreen header={<KioskHeader logoSize="standard" />}>
+        <Stack
+          spacing={1.25}
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            width: "100%",
+            maxWidth: "min(900px, 88vw)",
+            mx: "auto",
+            px: 2,
+            py: 1,
+            overflow: "auto",
+          }}
         >
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: 960,
-              mx: "auto",
-              flex: "1 1 0%",
-              minHeight: 0,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "stretch",
-              overflow: "hidden",
-              px: { xs: 0.5, sm: 1 },
-            }}
-          >
-            <Stack spacing={0.25} sx={{ minWidth: 0, width: "100%", flexShrink: 0, mb: 0.5 }}>
-              <Typography
-                sx={{
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  fontSize: "0.6rem",
-                  opacity: 0.55,
-                  fontWeight: 700,
-                }}
-              >
-                {t("formEyebrow")}
-              </Typography>
-              <Typography sx={{ fontSize: "clamp(1.2rem, 3.2vw, 1.65rem)", lineHeight: 1.08, fontWeight: 700 }}>
-                {t("formTitle")}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "clamp(0.72rem, 1.8vw, 0.82rem)",
-                  opacity: 0.72,
-                  maxWidth: 720,
-                  lineHeight: 1.3,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {t("formIntro")}
-              </Typography>
-            </Stack>
+          <Stack spacing={0.75} sx={{ flexShrink: 0 }}>
+            <Typography sx={{ ...labelSx, mb: 0 }}>{t("formEyebrow")}</Typography>
+            <Typography sx={{ fontSize: "clamp(1.5rem, 3dvh, 2.1rem)", lineHeight: 1.1, fontWeight: 800 }}>
+              {t("formTitle")}
+            </Typography>
+            <Typography sx={{ fontSize: "clamp(1rem, 1.8dvh, 1.2rem)", opacity: 0.78, lineHeight: 1.4, maxWidth: 820 }}>
+              {t("formIntro")}
+            </Typography>
+          </Stack>
 
-            <Box
-              sx={{
-                minHeight: 0,
-                minWidth: 0,
-                overflow: "hidden",
-                width: "100%",
-                flex: "1 1 0%",
-                display: "grid",
-                gridTemplateRows: "auto auto minmax(0, 1fr)",
-                alignContent: "start",
-                gap: { xs: 0.45, sm: 0.55 },
-              }}
-            >
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: { xs: 0.85, md: 1 },
-              minHeight: 0,
+              gap: 1.25,
             }}
           >
             {renderTextBlock(nameField, "name")}
@@ -266,26 +204,9 @@ export function FormPage() {
               name="buysUruguayMeat"
               control={control}
               render={({ field: rhfField }) => (
-                <Box sx={{ minHeight: 0 }}>
-                  <Typography
-                    sx={{
-                      mb: 0.4,
-                      fontSize: "0.68rem",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      fontWeight: 700,
-                      opacity: 0.68,
-                    }}
-                  >
-                    {buysField.label}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                      gap: 0.75,
-                    }}
-                  >
+                <Box>
+                  <Typography sx={labelSx}>{buysField.label}</Typography>
+                  <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 1 }}>
                     {(buysField.options ?? []).map((option: QuizFieldOption) => (
                       <ToggleButton
                         key={option.id}
@@ -301,9 +222,7 @@ export function FormPage() {
                       </ToggleButton>
                     ))}
                   </Box>
-                  <Typography sx={{ mt: 0.3, color: "#ffb4ab", fontSize: "0.72rem", minHeight: 18 }}>
-                    {errors.buysUruguayMeat?.message}
-                  </Typography>
+                  <Typography sx={{ mt: 0.5, color: "#ffb4ab", fontSize: "0.9rem" }}>{errors.buysUruguayMeat?.message}</Typography>
                 </Box>
               )}
             />
@@ -314,41 +233,15 @@ export function FormPage() {
               name="sectorId"
               control={control}
               render={({ field: rhfField }) => (
-                <Box
-                  sx={{
-                    minHeight: 0,
-                    minWidth: 0,
-                    overflow: "visible",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      mb: 0.4,
-                      fontSize: "0.68rem",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      fontWeight: 700,
-                      opacity: 0.68,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {sectorField.label}
-                  </Typography>
+                <Box>
+                  <Typography sx={labelSx}>{sectorField.label}</Typography>
                   <Box
                     role="radiogroup"
                     aria-label={sectorField.label}
                     sx={{
-                      flex: 1,
-                      minHeight: 0,
-                      width: "100%",
                       display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gridTemplateRows: "repeat(2, auto)",
-                      gap: 0.45,
-                      alignContent: "start",
-                      justifyContent: "stretch",
+                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                      gap: 1,
                     }}
                   >
                     {(sectorField.options ?? []).map((option: QuizFieldOption) => (
@@ -362,102 +255,61 @@ export function FormPage() {
                         }}
                         sx={sectorToggleSx}
                       >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: 0.2,
-                            minHeight: 0,
-                            minWidth: 0,
-                            width: "100%",
-                            flex: 1,
-                          }}
-                        >
-                          <Box sx={{ flexShrink: 0, lineHeight: 0, "& svg": { fontSize: "1.35rem" } }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5, textAlign: "center" }}>
+                          <Box sx={{ lineHeight: 0, "& svg": { fontSize: "clamp(1.75rem, 3dvh, 2.25rem)" } }}>
                             {sectorOptionIcon(option.id)}
                           </Box>
-                          <Typography
-                            sx={{
-                              fontSize: "clamp(0.58rem, min(1.6vw, 2.2dvh), 0.72rem)",
-                              fontWeight: 700,
-                              textAlign: "center",
-                              lineHeight: 1.2,
-                              px: 0.2,
-                              minWidth: 0,
-                              width: "100%",
-                              wordBreak: "break-word",
-                              hyphens: "auto",
-                            }}
-                          >
+                          <Typography sx={{ fontSize: "clamp(0.95rem, 1.8dvh, 1.15rem)", fontWeight: 700, lineHeight: 1.25 }}>
                             {option.label}
                           </Typography>
                         </Box>
                       </ToggleButton>
                     ))}
                   </Box>
-                  <Typography sx={{ mt: 0.3, color: "#ffb4ab", fontSize: "0.72rem", minHeight: 18, flexShrink: 0 }}>
-                    {errors.sectorId?.message}
-                  </Typography>
+                  <Typography sx={{ mt: 0.5, color: "#ffb4ab", fontSize: "0.9rem" }}>{errors.sectorId?.message}</Typography>
                 </Box>
               )}
             />
           ) : null}
-            </Box>
 
-            {errors.root?.message ? (
-              <Typography
-                role="alert"
-                sx={{
-                  color: "#ffb4ab",
-                  fontSize: "0.78rem",
-                  width: "100%",
-                  flexShrink: 0,
-                  px: 0.25,
-                  py: 0.25,
-                }}
-              >
-                {errors.root.message}
-              </Typography>
-            ) : null}
+          {errors.root?.message ? (
+            <Typography role="alert" sx={{ color: "#ffb4ab", fontSize: "1rem" }}>
+              {errors.root.message}
+            </Typography>
+          ) : null}
 
-            <Paper
-              elevation={0}
+          <Paper
+            elevation={0}
+            sx={{
+              flexShrink: 0,
+              borderRadius: 2.5,
+              p: 1.25,
+              border: "1px solid rgba(229,226,225,0.12)",
+              bgcolor: "rgba(12,12,12,0.75)",
+            }}
+          >
+            <Button
+              variant="contained"
+              type="submit"
+              disableElevation
+              disabled={!isValid || isSubmitting}
+              fullWidth
               sx={{
-                minWidth: 0,
-                width: "100%",
-                flexShrink: 0,
-                mt: 0.5,
-                borderRadius: 2.5,
-                p: { xs: 0.75, sm: 0.85 },
-                border: "1px solid rgba(229,226,225,0.12)",
-                bgcolor: "rgba(12,12,12,0.72)",
+                minHeight: "clamp(72px, 6.5dvh, 96px)",
+                fontSize: "clamp(1.1rem, 2dvh, 1.35rem)",
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                fontWeight: 800,
+                borderRadius: 2,
+                backgroundImage: "none",
+                bgcolor: "primary.main",
               }}
             >
-              <Button
-                variant="contained"
-                type="submit"
-                disableElevation
-                disabled={!isValid || isSubmitting}
-                fullWidth
-                sx={{
-                  minHeight: 64,
-                  fontSize: "clamp(0.92rem, 2.2vw, 1.02rem)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  fontWeight: 800,
-                  borderRadius: 2,
-                  backgroundImage: "none",
-                  bgcolor: "primary.main",
-                }}
-              >
-                {t("continueLabel")}
-              </Button>
-            </Paper>
-          </Box>
-        </KioskLayout>
-      </Box>
+              {t("continueLabel")}
+            </Button>
+          </Paper>
+        </Stack>
+      </KioskScreen>
     </Box>
   );
 }

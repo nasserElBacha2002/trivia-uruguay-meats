@@ -24,33 +24,21 @@ export function KioskShell() {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "#000000",
         boxSizing: "border-box",
-        background: isAttract
-          ? "#000000"
-          : `radial-gradient(circle at 12% 10%, rgba(205,153,65,0.1) 0%, transparent 42%), radial-gradient(circle at 88% 92%, rgba(205,153,65,0.06) 0%, #000000 45%), #000000`,
+        bgcolor: "#000000",
+        ...(isAttract
+          ? {}
+          : {
+              backgroundImage: `radial-gradient(circle at 12% 10%, rgba(205,153,65,0.1) 0%, transparent 42%), radial-gradient(circle at 88% 92%, rgba(205,153,65,0.06) 0%, transparent 50%), url(${MEDIA_ASSETS.kioskAmbient})`,
+              backgroundSize: "cover, cover, cover",
+              backgroundPosition: "center, center, center",
+              backgroundRepeat: "no-repeat, no-repeat, no-repeat",
+              boxShadow: "inset 0 0 0 9999px rgba(0,0,0,0.88)",
+            }),
       }}
     >
-      {!isAttract ? (
-        <Box
-          aria-hidden
-          sx={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none",
-            backgroundImage: `url(${MEDIA_ASSETS.kioskAmbient})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: 0.1,
-          }}
-        />
-      ) : null}
-
       <Box
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: "1 1 0%",
           minHeight: 0,
           width: "100%",

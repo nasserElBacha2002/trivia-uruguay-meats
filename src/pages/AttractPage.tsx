@@ -1,10 +1,10 @@
 import { keyframes } from "@emotion/react";
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { BrandLogo } from "../components/BrandLogo";
-import { KioskFooterBrand, KioskLayout } from "../components/layout/KioskLayout";
+import { KioskHeader } from "../components/kiosk/KioskHeader";
+import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
@@ -28,7 +28,7 @@ const attractCtaIdle = keyframes`
 `;
 
 export function AttractPage() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const { state, resetSession, enterLanguage } = useSessionStore();
   const quizContent = getQuizContent("pt");
@@ -55,58 +55,8 @@ export function AttractPage() {
     resetSession();
   }, [resetSession, shouldResetSession]);
 
-  const attractFooter = (
-    <Stack
-      direction="row"
-      flexWrap="wrap"
-      alignItems="center"
-      justifyContent="center"
-      spacing={1.5}
-      sx={{ width: "100%", maxHeight: "100%", overflow: "hidden", rowGap: 0.5, columnGap: 1.5 }}
-    >
-      <Stack direction="row" spacing={0.75} alignItems="center">
-        <Typography sx={{ fontSize: "1.25rem", lineHeight: 1, color: BRAND_GOLD }} aria-hidden>
-          ✓
-        </Typography>
-        <Box>
-          <Typography sx={{ fontSize: "0.58rem", letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, opacity: 0.6, color: "common.white" }}>
-            {t("attractBadgeCertLabel")}
-          </Typography>
-          <Typography sx={{ fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.02em", lineHeight: 1.2, color: "common.white" }}>
-            {t("attractBadgeCertTitle")}
-          </Typography>
-        </Box>
-      </Stack>
-      <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.22)", display: { xs: "none", sm: "block" }, height: 28 }} />
-      <Stack direction="row" spacing={0.75} alignItems="center">
-        <Typography sx={{ fontSize: "1.25rem", lineHeight: 1, color: BRAND_GOLD }} aria-hidden>
-          ★
-        </Typography>
-        <Box>
-          <Typography sx={{ fontSize: "0.58rem", letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, opacity: 0.6, color: "common.white" }}>
-            {t("attractBadgePadraoLabel")}
-          </Typography>
-          <Typography sx={{ fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.02em", lineHeight: 1.2, color: "common.white" }}>
-            {t("attractBadgePadraoTitle")}
-          </Typography>
-        </Box>
-      </Stack>
-      <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.22)", display: { xs: "none", sm: "block" }, height: 28 }} />
-      <KioskFooterBrand />
-    </Stack>
-  );
-
   return (
-    <Box
-      sx={{
-        position: "relative",
-        height: "100%",
-        width: "100%",
-        minHeight: 0,
-        overflow: "hidden",
-        color: "common.white",
-      }}
-    >
+    <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, color: "common.white" }}>
       {!heroImageFailed ? (
         <Box
           component="img"
@@ -154,31 +104,29 @@ export function AttractPage() {
         }}
       />
 
-      <KioskLayout
+      <KioskScreen
+        variant="hero"
+        header={<KioskHeader logoSize="hero" />}
         rootSx={{
           bgcolor: "transparent",
           position: "relative",
           zIndex: 2,
-          height: "100%",
-          maxHeight: "100%",
         }}
-        header={<BrandLogo prominence="hero" />}
-        footer={attractFooter}
       >
-        <Box
+        <Stack
+          spacing={2}
           sx={{
+            flex: 1,
+            minHeight: 0,
             width: "100%",
-            maxWidth: 960,
+            maxWidth: "min(920px, 90vw)",
             mx: "auto",
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
+            px: 2,
+            py: 1,
             alignItems: "center",
             justifyContent: "center",
-            flex: "1 1 0%",
-            minHeight: 0,
+            textAlign: "center",
             overflow: "hidden",
-            py: 1,
           }}
         >
           <Typography
@@ -187,9 +135,8 @@ export function AttractPage() {
               fontWeight: 900,
               letterSpacing: "-0.03em",
               lineHeight: 1.05,
-              fontSize: "clamp(1.85rem, 5.2vw, 3.25rem)",
+              fontSize: "clamp(2.1rem, 4.5dvh, 3.6rem)",
               textShadow: "0 18px 40px rgba(0,0,0,0.55)",
-              mb: 1.5,
             }}
           >
             O Sabor da <Box component="span" sx={{ color: "secondary.main" }}>Excelência</Box>:
@@ -199,15 +146,13 @@ export function AttractPage() {
 
           <Typography
             sx={{
-              maxWidth: 720,
+              maxWidth: 800,
               mx: "auto",
               fontWeight: 500,
-              fontSize: "clamp(0.95rem, 2.4vw, 1.2rem)",
-              lineHeight: 1.4,
-              color: "rgba(247,242,234,0.9)",
+              fontSize: "clamp(1.15rem, 2.4dvh, 1.55rem)",
+              lineHeight: 1.45,
+              color: "rgba(247,242,234,0.92)",
               letterSpacing: "0.02em",
-              mb: 2,
-              flexShrink: 0,
             }}
           >
             {quizContent.subtitle}
@@ -217,7 +162,6 @@ export function AttractPage() {
             sx={{
               display: "flex",
               justifyContent: "center",
-              flexShrink: 0,
               [mediaNoReducedMotion]: {
                 animation: `${attractCtaEnter} ${motion.durationSlow}ms ${motion.easing} both`,
                 animationDelay: "60ms",
@@ -255,26 +199,25 @@ export function AttractPage() {
                 sx={{
                   position: "relative",
                   overflow: "hidden",
-                  minWidth: 280,
-                  minHeight: 64,
-                  px: 5,
+                  minWidth: "min(92vw, 420px)",
+                  minHeight: "clamp(72px, 7dvh, 96px)",
+                  px: 6,
                   borderRadius: "10px",
                   bgcolor: BRAND_GOLD,
                   color: "#0a0a0a",
                   backgroundImage: "none",
-                  fontSize: "clamp(1rem, 2.6vw, 1.25rem)",
+                  fontSize: "clamp(1.1rem, 2.2dvh, 1.45rem)",
                   fontWeight: 900,
-                  letterSpacing: "0.16em",
+                  letterSpacing: "0.14em",
                   textTransform: "uppercase",
                   border: "1px solid rgba(0, 0, 0, 0.12)",
                   boxShadow: "0 14px 36px rgba(0,0,0,0.45)",
-                  transitionProperty: "transform, box-shadow, border-color, filter, background-color",
+                  transitionProperty: "transform, box-shadow, filter, background-color",
                   transitionDuration: `${motion.duration}ms`,
                   transitionTimingFunction: motion.easingOut,
                   [mediaReducedMotion]: { transitionDuration: "0.01ms" },
                   "&:active": {
                     transform: "scale(0.98)",
-                    boxShadow: "0 10px 28px rgba(0,0,0,0.4)",
                   },
                   "&.Mui-focusVisible": {
                     outline: "none",
@@ -286,8 +229,8 @@ export function AttractPage() {
               </Button>
             </Box>
           </Box>
-        </Box>
-      </KioskLayout>
+        </Stack>
+      </KioskScreen>
     </Box>
   );
 }

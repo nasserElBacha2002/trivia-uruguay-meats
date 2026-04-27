@@ -4,9 +4,6 @@ import { useTranslation } from "react-i18next";
 import { MEDIA_ASSETS } from "../config/mediaAssets";
 
 type BrandLogoProps = {
-  /** Reservado para compatibilidad; el ancho real viene de `clamp()` por `prominence`. */
-  size?: number;
-  /** `hero`: pantalla inicial. `standard`: pantallas internas. */
   prominence?: "hero" | "standard";
 };
 
@@ -14,8 +11,8 @@ export function BrandLogo({ prominence = "standard" }: BrandLogoProps) {
   const { t } = useTranslation();
   const [assetMissing, setAssetMissing] = useState(false);
 
-  const heroW = "clamp(320px, min(52vw, 88dvw), 520px)";
-  const standardW = "clamp(190px, min(30vw, 55dvw), 260px)";
+  const heroW = "clamp(340px, 42vw, 560px)";
+  const standardW = "clamp(220px, 24vw, 340px)";
 
   if (assetMissing) {
     return (
