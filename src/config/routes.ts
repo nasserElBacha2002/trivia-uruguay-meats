@@ -1,5 +1,6 @@
 export const ROUTES = {
   attract: "/",
+  admin: "/admin",
   language: "/language",
   form: "/form",
   quiz: "/quiz",

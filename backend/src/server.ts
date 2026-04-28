@@ -27,7 +27,7 @@ const app = express();
 app.use(
   cors({
     origin: frontendOrigin,
-    credentials: false,
+    credentials: true,
   }),
 );
 app.use(express.json({ limit: "256kb" }));

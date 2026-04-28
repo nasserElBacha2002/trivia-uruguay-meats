@@ -1,48 +1,125 @@
 import { Router } from "express";
+import XLSX from "xlsx";
+import { createAdminAuth } from "../auth/adminAuth.js";
 import type { SqliteDatabase } from "../types/db.js";
 
 export function createAdminRouter(db: SqliteDatabase) {
   const router = Router();
+  const adminAuth = createAdminAuth();
 
-  router.get("/admin/submissions", (_req, res) => {
+  if (!adminAuth.isConfigured) {
+    throw new Error("ADMIN_USERNAME and ADMIN_PASSWORD must be set for admin panel.");
+  }
+
+  router.post("/admin/login", (req, res) => {
+    const body = req.body as { username?: unknown; password?: unknown };
+    const username = typeof body?.username === "string" ? body.username.trim() : "";
+    const password = typeof body?.password === "string" ? body.password : "";
+    if (!username || !password) {
+      res.status(400).json({ error: "Username and password are required." });
+      return;
+    }
+    const result = adminAuth.login(username, password);
+    if (!result.ok) {
+      res.status(401).json({ error: "Invalid admin credentials." });
+      return;
+    }
+    const token = adminAuth.createSession();
+    adminAuth.setSessionCookie(res, token);
+    // TODO(prod): replace plain env password check with hashed credential storage.
+    res.json({ ok: true, username: adminAuth.username });
+  });
+
+  router.post("/admin/logout", (req, res) => {
+    const token = adminAuth.readToken(req);
+    adminAuth.logout(token);
+    adminAuth.clearSessionCookie(res);
+    res.json({ ok: true });
+  });
+
+  router.get("/admin/me", (req, res) => {
+    const token = adminAuth.readToken(req);
+    if (!adminAuth.isAuthenticated(token)) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    res.json({ authenticated: true, username: adminAuth.username });
+  });
+
+  router.use("/admin", adminAuth.requireAdmin);
+
+  router.get("/admin/dashboard", (_req, res) => {
+    try {
+      const metrics = db
+        .prepare(
+          `
+          SELECT
+            (SELECT COUNT(*) FROM participants) AS total_participants,
+            (SELECT COUNT(*) FROM quiz_sessions WHERE status = 'completed') AS total_completed_sessions,
+            (SELECT ROUND(AVG(score), 2) FROM quiz_sessions WHERE status = 'completed' AND score IS NOT NULL) AS average_score,
+            (SELECT COUNT(*) FROM participants WHERE buys_uruguay_meat = 1) AS buyers_count
+        `,
+        )
+        .get() as {
+        total_participants: number;
+        total_completed_sessions: number;
+        average_score: number | null;
+        buyers_count: number;
+      };
+
+      res.json({
+        metrics: {
+          totalParticipants: Number(metrics.total_participants ?? 0),
+          totalCompletedSessions: Number(metrics.total_completed_sessions ?? 0),
+          averageScore: Number(metrics.average_score ?? 0),
+          buyersCount: Number(metrics.buyers_count ?? 0),
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to load dashboard metrics." });
+    }
+  });
+
+  router.get("/admin/sessions", (_req, res) => {
     try {
       const rows = db
         .prepare(
           `
-        SELECT
-          p.id AS participant_id,
-          p.name,
-          p.email,
-          p.country,
-          p.sector_id,
-          p.buys_uruguay_meat,
-          p.language,
-          p.created_at AS participant_created_at,
-          s.id AS session_id,
-          s.started_at,
-          s.completed_at,
-          s.score,
-          s.total_questions,
-          s.score_band,
-          s.status,
-          s.quiz_version,
-          (SELECT COUNT(*) FROM quiz_answers a WHERE a.session_id = s.id) AS answer_count
-        FROM quiz_sessions s
-        JOIN participants p ON p.id = s.participant_id
-        ORDER BY s.id DESC
-        LIMIT 200
-      `,
+          SELECT
+            p.id AS participant_id,
+            p.name,
+            p.email,
+            p.country,
+            p.sector_id,
+            p.buys_uruguay_meat,
+            p.language,
+            p.created_at AS participant_created_at,
+            qs.id AS session_id,
+            qs.started_at,
+            qs.completed_at,
+            qs.score,
+            qs.total_questions,
+            qs.score_band,
+            qs.status,
+            qs.quiz_version,
+            (SELECT COUNT(*) FROM quiz_answers qa WHERE qa.session_id = qs.id) AS answer_count
+          FROM participants p
+          LEFT JOIN quiz_sessions qs ON qs.participant_id = p.id
+          ORDER BY COALESCE(qs.started_at, p.created_at) DESC, p.id DESC
+          LIMIT 1000
+        `,
         )
         .all();
 
-      res.json({ submissions: rows });
+      res.json({ sessions: rows });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Failed to list submissions" });
+      res.status(500).json({ error: "Failed to list sessions." });
     }
   });
 
-  router.get("/admin/submissions/:sessionId", (req, res) => {
+  router.get("/admin/sessions/:sessionId/answers", (req, res) => {
     try {
       const sessionId = Number(req.params.sessionId);
       if (!Number.isInteger(sessionId) || sessionId < 1) {
@@ -52,56 +129,106 @@ export function createAdminRouter(db: SqliteDatabase) {
 
       const session = db
         .prepare(
-          `SELECT id, participant_id, started_at, completed_at, score, total_questions, score_band, status, quiz_version
-           FROM quiz_sessions WHERE id = ?`,
+          `SELECT id FROM quiz_sessions WHERE id = ?`,
         )
-        .get(sessionId) as
-        | {
-            id: number;
-            participant_id: number;
-            started_at: string;
-            completed_at: string | null;
-            score: number | null;
-            total_questions: number | null;
-            score_band: string | null;
-            status: string;
-            quiz_version: string | null;
-          }
-        | undefined;
+        .get(sessionId) as { id: number } | undefined;
 
       if (!session) {
-        res.status(404).json({ error: "Session not found" });
-        return;
-      }
-
-      const participant = db
-        .prepare(
-          `SELECT id, name, email, country, sector_id, buys_uruguay_meat, language, created_at
-           FROM participants WHERE id = ?`,
-        )
-        .get(session.participant_id) as Record<string, unknown> | undefined;
-
-      if (!participant) {
-        res.status(404).json({ error: "Participant not found for session" });
+        res.status(404).json({ error: "Session not found." });
         return;
       }
 
       const answers = db
         .prepare(
-          `SELECT id, question_id, selected_option_id, is_correct, answered_at
-           FROM quiz_answers WHERE session_id = ?
-           ORDER BY id ASC`,
+          `SELECT
+              session_id,
+              question_id,
+              selected_option_id,
+              is_correct,
+              answered_at
+            FROM quiz_answers
+            WHERE session_id = ?
+            ORDER BY answered_at ASC, id ASC`,
         )
         .all(sessionId);
 
       res.json({
-        session,
-        participant,
+        sessionId,
         answers,
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Failed to load submission detail" });
+      res.status(500).json({ error: "Failed to load answers." });
+    }
+  });
+
+  router.get("/admin/export.xlsx", (_req, res) => {
+    try {
+      const participantsRows = db
+        .prepare(
+          `
+          SELECT
+            p.id AS participant_id,
+            p.name,
+            p.email,
+            p.country,
+            p.sector_id,
+            p.buys_uruguay_meat,
+            p.language,
+            p.created_at AS participant_created_at,
+            qs.id AS session_id,
+            qs.started_at,
+            qs.completed_at,
+            qs.score,
+            qs.total_questions,
+            qs.score_band,
+            qs.status,
+            qs.quiz_version
+          FROM participants p
+          LEFT JOIN quiz_sessions qs ON qs.participant_id = p.id
+          ORDER BY COALESCE(qs.started_at, p.created_at) DESC, p.id DESC
+        `,
+        )
+        .all();
+
+      const answersRows = db
+        .prepare(
+          `
+          SELECT
+            qs.participant_id,
+            qa.session_id,
+            qa.question_id,
+            qa.selected_option_id,
+            qa.is_correct,
+            qa.answered_at
+          FROM quiz_answers qa
+          JOIN quiz_sessions qs ON qs.id = qa.session_id
+          ORDER BY qa.answered_at DESC, qa.id DESC
+        `,
+        )
+        .all();
+
+      const workbook = XLSX.utils.book_new();
+      const participantsSheet = XLSX.utils.json_to_sheet(participantsRows);
+      const answersSheet = XLSX.utils.json_to_sheet(answersRows);
+      XLSX.utils.book_append_sheet(workbook, participantsSheet, "Participantes");
+      XLSX.utils.book_append_sheet(workbook, answersSheet, "Respuestas");
+
+      const fileBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="trivia-admin-export-${timestamp}.xlsx"`,
+      );
+      res.send(fileBuffer);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to export XLSX." });
     }
   });
 

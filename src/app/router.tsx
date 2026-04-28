@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import { KioskShell } from "../components/KioskShell";
 import { ROUTES } from "../config/routes";
+import { AdminPage } from "../pages/AdminPage";
 import { AttractPage } from "../pages/AttractPage";
 import { FormPage } from "../pages/FormPage";
 import { LanguagePage } from "../pages/LanguagePage";
@@ -8,6 +9,10 @@ import { QuizFramePage } from "../pages/QuizFramePage";
 import { ResultFramePage } from "../pages/ResultFramePage";
 
 export const appRouter = createBrowserRouter([
+  {
+    path: ROUTES.admin,
+    element: <AdminPage />,
+  },
   {
     path: ROUTES.attract,
     element: <KioskShell />,
