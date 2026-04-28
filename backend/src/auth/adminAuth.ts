@@ -38,6 +38,7 @@ function safeEqual(a: string, b: string): boolean {
 export function createAdminAuth(): AdminSessionStore {
   const username = process.env.ADMIN_USERNAME ?? "";
   const password = process.env.ADMIN_PASSWORD ?? "";
+  const secureCookie = process.env.ADMIN_COOKIE_SECURE === "true";
   const isConfigured = username.length > 0 && password.length > 0;
   const sessions = new Set<string>();
 
@@ -47,27 +48,25 @@ export function createAdminAuth(): AdminSessionStore {
   };
 
   const setSessionCookie = (res: Response, token: string): void => {
-    const secure = process.env.NODE_ENV === "production";
     const serialized = [
       `${ADMIN_COOKIE}=${encodeURIComponent(token)}`,
       "Path=/",
       "HttpOnly",
       "SameSite=Lax",
       `Max-Age=${EIGHT_HOURS_SECONDS}`,
-      ...(secure ? ["Secure"] : []),
+      ...(secureCookie ? ["Secure"] : []),
     ].join("; ");
     res.setHeader("Set-Cookie", serialized);
   };
 
   const clearSessionCookie = (res: Response): void => {
-    const secure = process.env.NODE_ENV === "production";
     const serialized = [
       `${ADMIN_COOKIE}=`,
       "Path=/",
       "HttpOnly",
       "SameSite=Lax",
       "Max-Age=0",
-      ...(secure ? ["Secure"] : []),
+      ...(secureCookie ? ["Secure"] : []),
     ].join("; ");
     res.setHeader("Set-Cookie", serialized);
   };

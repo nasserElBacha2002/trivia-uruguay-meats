@@ -12,6 +12,7 @@ services:
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-false}
     volumes:
       - trivia_sqlite_data:/data
     restart: unless-stopped
