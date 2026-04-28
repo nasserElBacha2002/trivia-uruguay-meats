@@ -107,7 +107,6 @@ export function createAdminRouter(db: SqliteDatabase) {
           FROM participants p
           LEFT JOIN quiz_sessions qs ON qs.participant_id = p.id
           ORDER BY COALESCE(qs.started_at, p.created_at) DESC, p.id DESC
-          LIMIT 1000
         `,
         )
         .all();

@@ -14,6 +14,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
@@ -45,6 +46,20 @@ function formatScore(value: number | null, total: number | null): string {
 }
 
 type AuthStatus = "checking" | "logged_out" | "logged_in";
+type SortDirection = "asc" | "desc";
+type SortField =
+  | "name"
+  | "email"
+  | "country"
+  | "sectorId"
+  | "buysUruguayMeat"
+  | "language"
+  | "participantCreatedAt"
+  | "startedAt"
+  | "completedAt"
+  | "score"
+  | "scoreBand"
+  | "status";
 
 const emptyMetrics: AdminDashboardMetrics = {
   totalParticipants: 0,
@@ -52,6 +67,19 @@ const emptyMetrics: AdminDashboardMetrics = {
   averageScore: 0,
   buyersCount: 0,
 };
+
+const dateFieldSx = {
+  minWidth: 180,
+  bgcolor: "rgba(255,255,255,0.04)",
+  "& input[type='date']::-webkit-calendar-picker-indicator": {
+    opacity: 1,
+    cursor: "pointer",
+    filter: "invert(0.88) sepia(0.2) saturate(0.6)",
+  },
+  "& input[type='date']::-webkit-clear-button": {
+    display: "none",
+  },
+} as const;
 
 export function AdminPage() {
   const [authStatus, setAuthStatus] = useState<AuthStatus>("checking");
@@ -67,11 +95,78 @@ export function AdminPage() {
   const [answersBySession, setAnswersBySession] = useState<Record<number, AdminAnswerRecord[]>>({});
   const [answersLoadingId, setAnswersLoadingId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<AdminSessionRecord | null>(null);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [sortField, setSortField] = useState<SortField>("participantCreatedAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const selectedAnswers = useMemo(() => {
     if (!selectedSession?.sessionId) return [];
     return answersBySession[selectedSession.sessionId] ?? [];
   }, [answersBySession, selectedSession]);
+
+  const filteredAndSortedSessions = useMemo(() => {
+    const fromTs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : null;
+    const toTs = toDate ? new Date(`${toDate}T23:59:59`).getTime() : null;
+
+    const filtered = sessions.filter((row) => {
+      if (fromTs == null && toTs == null) return true;
+      const source = row.startedAt ?? row.participantCreatedAt;
+      if (!source) return false;
+      const ts = new Date(source).getTime();
+      if (Number.isNaN(ts)) return false;
+      if (fromTs != null && ts < fromTs) return false;
+      if (toTs != null && ts > toTs) return false;
+      return true;
+    });
+
+    const getComparable = (row: AdminSessionRecord): string | number => {
+      switch (sortField) {
+        case "name":
+          return row.name.toLowerCase();
+        case "email":
+          return row.email.toLowerCase();
+        case "country":
+          return row.country.toLowerCase();
+        case "sectorId":
+          return row.sectorId.toLowerCase();
+        case "buysUruguayMeat":
+          return row.buysUruguayMeat ? 1 : 0;
+        case "language":
+          return row.language;
+        case "participantCreatedAt":
+          return row.participantCreatedAt ? new Date(row.participantCreatedAt).getTime() : 0;
+        case "startedAt":
+          return row.startedAt ? new Date(row.startedAt).getTime() : 0;
+        case "completedAt":
+          return row.completedAt ? new Date(row.completedAt).getTime() : 0;
+        case "score":
+          return row.score ?? -1;
+        case "scoreBand":
+          return row.scoreBand ?? "";
+        case "status":
+          return row.status;
+        default:
+          return 0;
+      }
+    };
+
+    return [...filtered].sort((a, b) => {
+      const av = getComparable(a);
+      const bv = getComparable(b);
+      const base = av > bv ? 1 : av < bv ? -1 : 0;
+      return sortDirection === "asc" ? base : -base;
+    });
+  }, [fromDate, toDate, sessions, sortDirection, sortField]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortField(field);
+    setSortDirection("asc");
+  };
 
   const loadDashboardData = async () => {
     setIsLoadingData(true);
@@ -240,6 +335,28 @@ export function AdminPage() {
 
           {dataError ? <Alert severity="error">{dataError}</Alert> : null}
 
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+            <TextField
+              label="Desde"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={dateFieldSx}
+            />
+            <TextField
+              label="Hasta"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={dateFieldSx}
+            />
+            <Button variant="outlined" onClick={() => { setFromDate(""); setToDate(""); }}>
+              Limpiar filtros
+            </Button>
+          </Stack>
+
           <Stack direction={{ xs: "column", md: "row" }} spacing={1.25}>
             <MetricCard label="Participantes" value={metrics.totalParticipants} />
             <MetricCard label="Sesiones completadas" value={metrics.totalCompletedSessions} />
@@ -252,7 +369,7 @@ export function AdminPage() {
               <Stack alignItems="center" justifyContent="center" sx={{ p: 4, minHeight: "60vh" }}>
                 <CircularProgress size={28} />
               </Stack>
-            ) : sessions.length === 0 ? (
+            ) : filteredAndSortedSessions.length === 0 ? (
               <Stack alignItems="center" justifyContent="center" sx={{ p: 4, minHeight: "60vh" }}>
                 <Typography color="text.secondary">Todavía no hay registros.</Typography>
               </Stack>
@@ -261,23 +378,23 @@ export function AdminPage() {
                 <Table stickyHeader size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Nombre</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>País</TableCell>
-                      <TableCell>Sector</TableCell>
-                      <TableCell>Compra carne uruguaya</TableCell>
-                      <TableCell>Idioma</TableCell>
-                      <TableCell>Registro</TableCell>
-                      <TableCell>Inicio quiz</TableCell>
-                      <TableCell>Fin quiz</TableCell>
-                      <TableCell>Score</TableCell>
-                      <TableCell>Banda</TableCell>
-                      <TableCell>Estado</TableCell>
+                      <TableCell><TableSortLabel active={sortField === "name"} direction={sortDirection} onClick={() => handleSort("name")}>Nombre</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "email"} direction={sortDirection} onClick={() => handleSort("email")}>Email</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "country"} direction={sortDirection} onClick={() => handleSort("country")}>País</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "sectorId"} direction={sortDirection} onClick={() => handleSort("sectorId")}>Sector</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "buysUruguayMeat"} direction={sortDirection} onClick={() => handleSort("buysUruguayMeat")}>Compra carne uruguaya</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "language"} direction={sortDirection} onClick={() => handleSort("language")}>Idioma</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "participantCreatedAt"} direction={sortDirection} onClick={() => handleSort("participantCreatedAt")}>Registro</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "startedAt"} direction={sortDirection} onClick={() => handleSort("startedAt")}>Inicio quiz</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "completedAt"} direction={sortDirection} onClick={() => handleSort("completedAt")}>Fin quiz</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "score"} direction={sortDirection} onClick={() => handleSort("score")}>Score</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "scoreBand"} direction={sortDirection} onClick={() => handleSort("scoreBand")}>Banda</TableSortLabel></TableCell>
+                      <TableCell><TableSortLabel active={sortField === "status"} direction={sortDirection} onClick={() => handleSort("status")}>Estado</TableSortLabel></TableCell>
                       <TableCell>Respuestas</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {sessions.map((row) => (
+                    {filteredAndSortedSessions.map((row) => (
                       <TableRow key={`${row.participantId}-${row.sessionId ?? "none"}`} hover>
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{row.email}</TableCell>
