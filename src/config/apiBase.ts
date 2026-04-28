@@ -5,7 +5,7 @@ export function getApiBaseUrl(): string {
     return raw.trim().replace(/\/$/, "");
   }
   if (import.meta.env.PROD) {
-    return "/api";
+    return "";
   }
   return "http://localhost:3001";
 }
