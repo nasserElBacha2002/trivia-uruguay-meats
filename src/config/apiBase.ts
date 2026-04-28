@@ -4,5 +4,8 @@ export function getApiBaseUrl(): string {
   if (typeof raw === "string" && raw.trim().length > 0) {
     return raw.trim().replace(/\/$/, "");
   }
+  if (import.meta.env.PROD) {
+    return "/api";
+  }
   return "http://localhost:3001";
 }

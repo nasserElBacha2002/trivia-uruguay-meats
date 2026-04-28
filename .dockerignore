@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+*.log
+coverage
+backend/data
+backend/*.db
+backend/*.db-*
+trivia-uruguay
+trivia-uruguay-shm
+trivia-uruguay-wal

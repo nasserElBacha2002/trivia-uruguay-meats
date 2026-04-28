@@ -10,6 +10,9 @@
     "dev:all": "concurrently -n web,api -c blue,magenta \"npm run dev\" \"npm run dev:api\"",
     "setup:local": "node scripts/bootstrap-local.mjs",
     "build": "tsc -b && vite build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
     "typecheck": "tsc -b --noEmit",
     "preview": "vite preview",
     "lint": "eslint ."
