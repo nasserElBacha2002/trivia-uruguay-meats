@@ -37,7 +37,7 @@ Variables mínimas a revisar en `.env`:
 - `NODE_ENV=production`
 - `FRONTEND_PORT=80`
 - `PORT=3001`
-- `VITE_API_BASE_URL=/api`
+- `VITE_API_BASE_URL=` (vacío; el frontend ya usa rutas `/api/*`)
 - `FRONTEND_ORIGIN=http://<tu-dominio-o-ip>`
 - `SQLITE_DB_PATH=/data/trivia.db`
 - `ADMIN_USERNAME=<usuario-admin>`
