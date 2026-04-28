@@ -182,8 +182,15 @@ function ResultFramePageContent() {
             mx: "auto",
             px: 2,
             py: 1.5,
+            pb: { xs: 3, md: 2.5 },
             alignItems: "center",
-            overflow: "hidden",
+            justifyContent: "center",
+            overflowX: "hidden",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            "@media (max-height: 860px)": {
+              justifyContent: "flex-start",
+            },
             ...stackEnter,
           }}
         >

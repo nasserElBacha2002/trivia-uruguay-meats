@@ -22,7 +22,8 @@ export function KioskShell() {
         maxWidth: "100%",
         position: "relative",
         color: "text.primary",
-        overflow: "hidden",
+        overflowX: "hidden",
+        overflowY: "auto",
         display: "flex",
         flexDirection: "column",
         boxSizing: "border-box",
@@ -44,7 +45,8 @@ export function KioskShell() {
           flex: "1 1 0%",
           minHeight: 0,
           width: "100%",
-          overflow: "hidden",
+          overflowX: "hidden",
+          overflowY: "auto",
         }}
       >
         <Outlet />
