@@ -13,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-const PORT = Number(process.env.PORT) || 3001;
+const PORT = Number(process.env.PORT) || 3011;
 const frontendOrigin = process.env.FRONTEND_ORIGIN ?? "http://localhost:5173";
 const dbPath = process.env.SQLITE_DB_PATH
   ? path.isAbsolute(process.env.SQLITE_DB_PATH)
