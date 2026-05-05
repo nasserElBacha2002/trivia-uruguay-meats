@@ -17,8 +17,6 @@ import { BRAND_GOLD } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 import type { QuizQuestion, QuizQuestionOption } from "../types/quizContent";
 
-const OPTION_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 /** Card mount: opacity only so inner shell can run transform idle without fighting this animation. */
 const quizOptionEnter = keyframes`
   from { opacity: 0; }
@@ -48,6 +46,18 @@ const optText = {
   color: "rgba(247,242,234,0.96)",
   wordBreak: "break-word" as const,
 };
+
+/** Larger option copy while feedback is visible (after answering). */
+const optTextAfterAnswer = {
+  ...optText,
+  fontSize: "clamp(1.42rem, 2.75dvh, 2.05rem)",
+  lineHeight: 1.38,
+} as const;
+
+const optBadgeAfterAnswer = {
+  ...optLetter,
+  fontSize: "clamp(2.35rem, 4.6dvh, 3.35rem)",
+} as const;
 
 const cardMinH = "clamp(120px, 10dvh, 180px)";
 
@@ -80,9 +90,9 @@ export function QuizFramePage() {
     [options, currentQuestion.correctOptionId],
   );
 
-  const letterForId = (id: string) => {
+  const numberForOptionId = (id: string) => {
     const idx = options.findIndex((o) => o.id === id);
-    return OPTION_LETTERS[idx] ?? String(idx + 1);
+    return idx >= 0 ? String(idx + 1) : "?";
   };
 
   return (
@@ -95,7 +105,7 @@ export function QuizFramePage() {
           feedbackState={feedbackState}
           selectedOption={selectedOption}
           correctOption={correctOption}
-          letterForId={letterForId}
+          numberForOptionId={numberForOptionId}
           canContinue={canContinue}
           isLastQuestion={isLastQuestion}
           continueToNext={continueToNext}
@@ -210,7 +220,7 @@ function QuizQuestionLayout({
       <Box sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <Stack spacing={1.25} sx={{ width: "100%" }}>
           {options.map((option, index) => {
-            const letter = OPTION_LETTERS[index] ?? String(index + 1);
+            const optionNumber = String(index + 1);
             const isSelected = selectedOptionId === option.id;
             const awaiting = isSelected && !isAnswerPersistencePending;
             const staggerMs = index * 45;
@@ -318,7 +328,7 @@ function QuizQuestionLayout({
                     }}
                   >
                     <Typography className="quiz-option-letter" component="span" sx={{ ...optLetter, color: "rgba(255,255,255,0.9)", flexShrink: 0 }}>
-                      {letter}
+                      {optionNumber}
                     </Typography>
                     <Typography sx={optText}>{option.label}</Typography>
                   </Stack>
@@ -346,7 +356,7 @@ function QuizFeedbackLayout({
   feedbackState,
   selectedOption,
   correctOption,
-  letterForId,
+  numberForOptionId,
   canContinue,
   isLastQuestion,
   continueToNext,
@@ -357,7 +367,7 @@ function QuizFeedbackLayout({
   feedbackState: { isCorrect: boolean; message: string | null };
   selectedOption?: QuizQuestionOption;
   correctOption?: QuizQuestionOption;
-  letterForId: (id: string) => string;
+  numberForOptionId: (id: string) => string;
   canContinue: boolean;
   isLastQuestion: boolean;
   continueToNext: () => void;
@@ -388,10 +398,10 @@ function QuizFeedbackLayout({
       {selectedOption ? (
         <Box sx={{ p: 1.5, borderRadius: 2, border: "1px solid rgba(205,153,65,0.35)", bgcolor: "rgba(255,255,255,0.06)" }}>
           <Stack direction="row" spacing={1.25} alignItems="flex-start">
-            <Typography sx={{ ...optLetter, fontSize: "clamp(1.8rem, 3.5dvh, 2.5rem)", color: "secondary.main", flexShrink: 0 }}>
-              {letterForId(selectedOption.id)}
+            <Typography sx={{ ...optBadgeAfterAnswer, color: "secondary.main", flexShrink: 0 }}>
+              {numberForOptionId(selectedOption.id)}
             </Typography>
-            <Typography sx={{ ...optText, fontSize: "clamp(1.1rem, 2dvh, 1.45rem)" }}>{selectedOption.label}</Typography>
+            <Typography sx={optTextAfterAnswer}>{selectedOption.label}</Typography>
           </Stack>
         </Box>
       ) : null}
@@ -399,10 +409,10 @@ function QuizFeedbackLayout({
       {!feedbackState.isCorrect && correctOption ? (
         <Box sx={{ p: 1.5, borderRadius: 2, border: "1px solid rgba(129,199,132,0.45)", bgcolor: "rgba(32, 72, 40, 0.25)" }}>
           <Stack direction="row" spacing={1.25} alignItems="flex-start">
-            <Typography sx={{ ...optLetter, fontSize: "clamp(1.8rem, 3.5dvh, 2.5rem)", color: "rgba(200, 230, 205, 0.98)", flexShrink: 0 }}>
-              {letterForId(correctOption.id)}
+            <Typography sx={{ ...optBadgeAfterAnswer, color: "rgba(200, 230, 205, 0.98)", flexShrink: 0 }}>
+              {numberForOptionId(correctOption.id)}
             </Typography>
-            <Typography sx={{ ...optText, fontSize: "clamp(1.1rem, 2dvh, 1.45rem)", color: "rgba(232, 245, 234, 0.95)" }}>{correctOption.label}</Typography>
+            <Typography sx={{ ...optTextAfterAnswer, color: "rgba(232, 245, 234, 0.95)" }}>{correctOption.label}</Typography>
           </Stack>
         </Box>
       ) : null}
@@ -447,12 +457,12 @@ function QuizFeedbackLayout({
               </Box>
             </Box>
           ) : null}
-          <Typography sx={{ fontSize: "clamp(1.25rem, 2.5dvh, 1.65rem)", fontWeight: 800 }}>
+          <Typography sx={{ fontSize: "clamp(1.48rem, 2.85dvh, 2rem)", fontWeight: 800 }}>
             {feedbackState.isCorrect ? t("answerCorrectLabel") : t("answerIncorrectLabel")}
           </Typography>
         </Stack>
         {feedbackState.message ? (
-          <Typography sx={{ mt: 1.25, fontSize: "clamp(1.15rem, 2.1dvh, 1.5rem)", lineHeight: 1.5, color: "rgba(247,242,234,0.93)" }}>
+          <Typography sx={{ mt: 1.25, fontSize: "clamp(1.38rem, 2.55dvh, 1.82rem)", lineHeight: 1.52, color: "rgba(247,242,234,0.93)" }}>
             {feedbackState.message}
           </Typography>
         ) : null}
