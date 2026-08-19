@@ -47,9 +47,23 @@ export async function startDesktopApi(
 
 export function closeDesktopApi(started: StartedApi): Promise<void> {
   return new Promise((resolve, reject) => {
+    const closeRuntime = (): void => {
+      started.runtime.close();
+    };
+
+    if (!started.server.listening) {
+      try {
+        closeRuntime();
+        resolve();
+      } catch (closeErr) {
+        reject(closeErr instanceof Error ? closeErr : new Error(String(closeErr)));
+      }
+      return;
+    }
+
     started.server.close((err) => {
       try {
-        started.runtime.close();
+        closeRuntime();
       } catch (closeErr) {
         reject(closeErr instanceof Error ? closeErr : new Error(String(closeErr)));
         return;

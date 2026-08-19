@@ -1,0 +1,52 @@
+appId: com.uruguaymeats.trivia
+productName: Trivia Uruguay Meats
+copyright: Uruguay Meats
+asar: true
+asarUnpack:
+  - "**/*.node"
+  - "backend/node_modules/better-sqlite3/**"
+npmRebuild: false
+nodeGypRebuild: false
+buildDependenciesFromSource: false
+removePackageScripts: true
+directories:
+  output: dist/electron
+files:
+  - package.json
+  - dist/**/*
+  - dist-electron/**/*
+  - "!dist/electron/**"
+  - "!dist-electron/staffShortcutSmoke.js"
+  - backend/dist/**/*
+  - backend/package.json
+  - backend/node_modules/**/*
+  - "!backend/node_modules/typescript/**"
+  - "!backend/node_modules/tsx/**"
+  - "!backend/node_modules/@types/**"
+  - "!backend/node_modules/.bin/**"
+  - "!backend/node_modules/better-sqlite3/prebuilds/darwin-*.node"
+  - "!backend/node_modules/better-sqlite3/prebuilds/linux*.node"
+  - "!**/*.map"
+  - "!**/.env"
+  - "!**/.env.*"
+  - "!**/*.db"
+  - "!**/*.db-wal"
+  - "!**/*.db-shm"
+  - "!**/trivia-uruguay"
+  - "!**/trivia-uruguay-wal"
+  - "!**/trivia-uruguay-shm"
+win:
+  executableName: TriviaUruguayMeats
+  target:
+    - target: nsis
+      arch:
+        - x64
+  signAndEditExecutable: false
+nsis:
+  oneClick: true
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  deleteAppDataOnUninstall: false
+  shortcutName: Trivia Uruguay Meats
+  artifactName: Trivia Uruguay Meats Setup ${version}.${ext}

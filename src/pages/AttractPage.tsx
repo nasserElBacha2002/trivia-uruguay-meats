@@ -10,7 +10,7 @@ import { ROUTES } from "../config/routes";
 import { kioskCtaBreathe, kioskCtaGoldGlow } from "../animations/kioskKeyframes";
 import { getQuizContent } from "../content/quizContent";
 import { useSessionStore } from "../features/session/useSessionStore";
-import { BRAND_GOLD } from "../theme/appTheme";
+import { BRAND_GOLD, FONT_DIDOT } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 const attractCtaEnter = keyframes`
@@ -128,27 +128,30 @@ export function AttractPage() {
           <Typography
             component="h1"
             sx={{
-              fontWeight: 900,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.05,
+              fontFamily: FONT_DIDOT,
+              fontWeight: 400,
+              letterSpacing: "0.01em",
+              lineHeight: 1.08,
               fontSize: "clamp(2.1rem, 4.5dvh, 3.6rem)",
               textShadow: "0 18px 40px rgba(0,0,0,0.55)",
             }}
           >
-            O Sabor da <Box component="span" sx={{ color: "secondary.main" }}>Excelência</Box>:
+            O Sabor da <Box component="span" sx={{ color: "secondary.main", fontStyle: "italic" }}>Excelência</Box>:
             <br />
-            <Box component="span" sx={{ opacity: 0.96, fontWeight: 900 }}>Uruguay Lamb</Box>
+            <Box component="span" sx={{ opacity: 0.96 }}>Uruguay Lamb</Box>
           </Typography>
 
           <Typography
             sx={{
               maxWidth: 800,
               mx: "auto",
-              fontWeight: 500,
+              fontFamily: FONT_DIDOT,
+              fontStyle: "italic",
+              fontWeight: 400,
               fontSize: "clamp(1.15rem, 2.4dvh, 1.55rem)",
-              lineHeight: 1.45,
+              lineHeight: 1.4,
               color: "rgba(247,242,234,0.92)",
-              letterSpacing: "0.02em",
+              letterSpacing: "0.01em",
             }}
           >
             {quizContent.subtitle}

@@ -9,7 +9,7 @@ Hay dos modos de ejecución:
 | Web / Docker | este documento (`docker compose up`) | sí, en el **servidor** |
 | Desktop Electron | scripts `desktop:dev` / `desktop:build` (Fase 1) | **no**. La PC destino es zero-config |
 
-La distribución Windows (`Setup.exe`) todavía no está lista. Desktop (Fase 2) corre Express + SQLite dentro de Electron, zero-config. Ver `docs/Desktop.md`.
+La distribución Windows se genera con `npm run desktop:dist` (`dist/electron/Trivia Uruguay Meats Setup 1.0.0.exe`). Desktop corre Express + SQLite dentro de Electron, zero-config. Ver `docs/Desktop.md`.
 
 Este proyecto queda desplegado con dos contenedores:
 

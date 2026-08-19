@@ -6,6 +6,7 @@ import { appRouter } from "./app/router";
 import { subscribeDesktopAdminShortcut } from "./desktop/subscribeDesktopAdminShortcut";
 import { SessionProvider } from "./features/session/useSessionStore";
 import { appTheme } from "./theme/appTheme";
+import "@fontsource/gfs-didot/latin-400.css";
 import "./i18n";
 import "./app/styles.css";
 

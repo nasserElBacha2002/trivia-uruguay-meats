@@ -11,6 +11,8 @@ export type KioskScreenProps = {
   /** Si no se pasa, se usa `KioskFooter`. `null` = sin pie. */
   footer?: ReactNode | null;
   children: ReactNode;
+  /** Foto de campaña a pantalla completa, con velo negro para leer texto. */
+  backdropSrc?: string;
   /** p.ej. `bgcolor: 'transparent'` en attract sobre foto */
   rootSx?: SxProps<Theme>;
 };
@@ -24,13 +26,14 @@ const gridRows: Record<KioskScreenVariant, string> = {
  * Layout global del kiosk: CSS grid de tres filas (header / main / footer).
  * Ocupa el 100% del alto del padre; `KioskShell` fija el viewport (`100dvh` / `100vh`).
  */
-export function KioskScreen({ variant = "default", header, footer, children, rootSx }: KioskScreenProps) {
+export function KioskScreen({ variant = "default", header, footer, children, backdropSrc, rootSx }: KioskScreenProps) {
   const resolvedFooter = footer === undefined ? <KioskFooter /> : footer;
 
   return (
     <Box
       sx={[
         {
+          position: "relative",
           width: "100%",
           minHeight: "100%",
           height: "100%",
@@ -47,9 +50,40 @@ export function KioskScreen({ variant = "default", header, footer, children, roo
         ...(rootSx ? [rootSx] : []),
       ] as SxProps<Theme>}
     >
+      {backdropSrc ? (
+        <>
+          <Box
+            component="img"
+            src={backdropSrc}
+            alt=""
+            sx={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              pointerEvents: "none",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 0,
+              pointerEvents: "none",
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.7) 42%, rgba(0,0,0,0.84) 100%)",
+            }}
+          />
+        </>
+      ) : null}
       <Box
         sx={{
           gridArea: "khead",
+          position: "relative",
+          zIndex: 1,
           minHeight: 0,
           overflow: "visible",
           display: "flex",
@@ -63,6 +97,8 @@ export function KioskScreen({ variant = "default", header, footer, children, roo
       <Box
         sx={{
           gridArea: "kmain",
+          position: "relative",
+          zIndex: 1,
           minHeight: 0,
           overflowX: "hidden",
           overflowY: "auto",
@@ -75,7 +111,7 @@ export function KioskScreen({ variant = "default", header, footer, children, roo
       </Box>
 
       {resolvedFooter !== null ? (
-        <Box sx={{ gridArea: "kfoot", minHeight: 0, overflow: "hidden" }}>{resolvedFooter}</Box>
+        <Box sx={{ gridArea: "kfoot", position: "relative", zIndex: 1, minHeight: 0, overflow: "hidden" }}>{resolvedFooter}</Box>
       ) : null}
     </Box>
   );

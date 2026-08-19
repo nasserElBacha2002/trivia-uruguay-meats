@@ -1,7 +1,7 @@
 {
   "name": "trivia-uruguay-meats",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Kiosk trivia app for Uruguay Lamb",
   "type": "module",
   "scripts": {
@@ -22,7 +22,8 @@
     "desktop:build": "npm run build && npm run desktop:compile",
     "desktop:start": "node scripts/desktop-start.mjs",
     "desktop:smoke": "node scripts/desktop-smoke.mjs",
-    "desktop:staff-shortcut-smoke": "node scripts/desktop-staff-shortcut-smoke.mjs"
+    "desktop:staff-shortcut-smoke": "node scripts/desktop-staff-shortcut-smoke.mjs",
+    "desktop:dist": "npm run desktop:build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --publish never"
   },
   "keywords": [
     "kiosk",
@@ -36,6 +37,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@fontsource/gfs-didot": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@mui/material": "^6.5.0",
     "i18next": "^26.0.6",
@@ -55,6 +57,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "concurrently": "^9.1.2",
     "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

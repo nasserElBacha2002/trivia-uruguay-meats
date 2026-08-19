@@ -12,8 +12,9 @@ import {
 } from "../animations/kioskKeyframes";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
+import { getQuizStagePhoto } from "../config/mediaAssets";
 import { useQuizEngine } from "../features/quiz/useQuizEngine";
-import { BRAND_GOLD } from "../theme/appTheme";
+import { BRAND_GOLD, FONT_DIDOT } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 import type { QuizQuestion, QuizQuestionOption } from "../types/quizContent";
 
@@ -96,7 +97,7 @@ export function QuizFramePage() {
   };
 
   return (
-    <KioskScreen header={<KioskHeader logoSize="standard" progress={progressValue} />}>
+    <KioskScreen header={<KioskHeader logoSize="standard" progress={progressValue} />} backdropSrc={getQuizStagePhoto(currentQuestionIndex)}>
       {feedbackState.isVisible ? (
         <QuizFeedbackLayout
           currentQuestion={currentQuestion}
@@ -207,10 +208,13 @@ function QuizQuestionLayout({
         <Typography
           component="h1"
           sx={{
+            fontFamily: FONT_DIDOT,
             fontSize: "clamp(1.5rem, 3.2dvh, 2.35rem)",
-            lineHeight: 1.12,
-            fontWeight: 800,
-            letterSpacing: "-0.02em",
+            lineHeight: 1.18,
+            fontWeight: 400,
+            letterSpacing: "0.01em",
+            color: "#F7F2EA",
+            textShadow: "0 2px 16px rgba(0,0,0,0.9)",
           }}
         >
           {currentQuestion.prompt}
@@ -392,7 +396,7 @@ function QuizFeedbackLayout({
         <Typography sx={{ fontSize: "clamp(0.8rem, 1.5dvh, 0.95rem)", letterSpacing: "0.16em", fontWeight: 700, textTransform: "uppercase", opacity: 0.6, mb: 0.5 }}>
           {t("quizEyebrow", { current: currentQuestionIndex + 1, total: questionsLength })}
         </Typography>
-        <Typography sx={{ fontSize: "clamp(1.2rem, 2.5dvh, 1.75rem)", fontWeight: 800, lineHeight: 1.15 }}>{currentQuestion.prompt}</Typography>
+        <Typography sx={{ fontFamily: FONT_DIDOT, fontSize: "clamp(1.2rem, 2.5dvh, 1.75rem)", fontWeight: 400, lineHeight: 1.2, color: "#F7F2EA", textShadow: "0 2px 16px rgba(0,0,0,0.9)" }}>{currentQuestion.prompt}</Typography>
       </Box>
 
       {selectedOption ? (
@@ -462,7 +466,7 @@ function QuizFeedbackLayout({
           </Typography>
         </Stack>
         {feedbackState.message ? (
-          <Typography sx={{ mt: 1.25, fontSize: "clamp(1.38rem, 2.55dvh, 1.82rem)", lineHeight: 1.52, color: "rgba(247,242,234,0.93)" }}>
+          <Typography sx={{ mt: 1.25, fontFamily: FONT_DIDOT, fontStyle: "italic", fontSize: "clamp(1.38rem, 2.55dvh, 1.82rem)", lineHeight: 1.45, color: "rgba(247,242,234,0.93)" }}>
             {feedbackState.message}
           </Typography>
         ) : null}

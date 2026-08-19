@@ -21,6 +21,9 @@ declare module "@mui/material/styles" {
 /** Campaign accent — PANTONE 7407 C / client spec */
 export const BRAND_GOLD = "#CD9941";
 
+/** Campaign display face (GFS Didot OFL — Didot Regular). Italic via font-style. */
+export const FONT_DIDOT = '"GFS Didot", "Didot", serif';
+
 export const appTheme = createTheme({
   palette: {
     mode: "dark",
@@ -48,10 +51,10 @@ export const appTheme = createTheme({
   },
   typography: {
     fontFamily: "'PT Sans', sans-serif",
-    h1: { fontWeight: 700, lineHeight: 1.05, fontSize: "3.2rem" },
-    h2: { fontWeight: 700, lineHeight: 1.1, fontSize: "2.4rem" },
-    h3: { fontWeight: 700, lineHeight: 1.15, fontSize: "2rem" },
-    h4: { fontWeight: 700, lineHeight: 1.2, fontSize: "1.6rem" },
+    h1: { fontFamily: FONT_DIDOT, fontWeight: 400, lineHeight: 1.08, fontSize: "3.2rem" },
+    h2: { fontFamily: FONT_DIDOT, fontWeight: 400, lineHeight: 1.12, fontSize: "2.4rem" },
+    h3: { fontFamily: FONT_DIDOT, fontWeight: 400, lineHeight: 1.15, fontSize: "2rem" },
+    h4: { fontFamily: FONT_DIDOT, fontWeight: 400, lineHeight: 1.2, fontSize: "1.6rem" },
     h5: { fontWeight: 700, lineHeight: 1.3, fontSize: "1.35rem" },
     h6: { fontWeight: 700, lineHeight: 1.3 },
     button: { fontWeight: 700, textTransform: "none" },

@@ -27,7 +27,7 @@ import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content/quizContent";
 import { useCompleteQuizSession } from "../features/result/useCompleteQuizSession";
 import { useSessionStore } from "../features/session/useSessionStore";
-import { BRAND_GOLD } from "../theme/appTheme";
+import { BRAND_GOLD, FONT_DIDOT } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 /** Delays (ms) for staggered reveal — hero → headline → score → CTA. */
@@ -171,7 +171,7 @@ function ResultFramePageContent() {
 
   return (
     <Box sx={{ position: "relative", height: "100%", width: "100%", minHeight: 0, bgcolor: "#000", color: "text.primary" }}>
-      <KioskScreen header={<KioskHeader logoSize="standard" />}>
+      <KioskScreen header={<KioskHeader logoSize="standard" />} backdropSrc={MEDIA_ASSETS.kioskAmbient}>
         <Stack
           spacing={2}
           sx={{
@@ -278,10 +278,11 @@ function ResultFramePageContent() {
             <Typography
               component="h1"
               sx={{
+                fontFamily: FONT_DIDOT,
                 fontSize: "clamp(2rem, 4dvh, 3.4rem)",
-                lineHeight: 1.06,
-                fontWeight: 900,
-                letterSpacing: "-0.03em",
+                lineHeight: 1.12,
+                fontWeight: 400,
+                letterSpacing: "0.01em",
                 mb: 2,
                 ...(prefersReducedMotion
                   ? {
@@ -343,9 +344,11 @@ function ResultFramePageContent() {
               <Typography
                 sx={{
                   flex: 1,
+                  fontFamily: FONT_DIDOT,
+                  fontStyle: "italic",
                   fontSize: "clamp(1.2rem, 2.2dvh, 1.65rem)",
-                  lineHeight: 1.45,
-                  fontWeight: 600,
+                  lineHeight: 1.4,
+                  fontWeight: 400,
                   color: BRAND_GOLD,
                   textAlign: "center",
                   maxWidth: 560,

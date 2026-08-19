@@ -10,6 +10,7 @@ import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
 import { SectorIconIdle } from "../components/motion/SectorIconIdle";
 import { ShimmerOverlay } from "../components/motion/ShimmerOverlay";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ROUTES } from "../config/routes";
 import { getQuizContent } from "../content";
 import { createLeadSchema, leadDefaultValues, type LeadSchema } from "../features/lead/leadSchema";
@@ -19,6 +20,7 @@ import {
 } from "../features/lead/leadTypes";
 import { useSessionStore } from "../features/session/useSessionStore";
 import { createParticipantSession } from "../services/triviaApi";
+import { FONT_DIDOT } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 import type { QuizDataCollectionField, QuizFieldOption } from "../types/quizContent";
 
@@ -179,7 +181,7 @@ export function FormPage() {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ height: "100%", minHeight: 0 }}>
-      <KioskScreen header={<KioskHeader logoSize="standard" />}>
+      <KioskScreen header={<KioskHeader logoSize="standard" />} backdropSrc={MEDIA_ASSETS.stageForm}>
         <Stack
           spacing={1.25}
           sx={{
@@ -195,7 +197,7 @@ export function FormPage() {
         >
           <Stack spacing={0.75} sx={{ flexShrink: 0 }}>
             <Typography sx={{ ...labelSx, mb: 0 }}>{t("formEyebrow")}</Typography>
-            <Typography sx={{ fontSize: "clamp(1.5rem, 3dvh, 2.1rem)", lineHeight: 1.1, fontWeight: 800 }}>
+            <Typography sx={{ fontFamily: FONT_DIDOT, fontSize: "clamp(1.5rem, 3dvh, 2.1rem)", lineHeight: 1.12, fontWeight: 400 }}>
               {t("formTitle")}
             </Typography>
             <Typography sx={{ fontSize: "clamp(1rem, 1.8dvh, 1.2rem)", opacity: 0.78, lineHeight: 1.4, maxWidth: 820 }}>

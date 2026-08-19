@@ -7,9 +7,11 @@ import { kioskCardEnterUp } from "../animations/kioskKeyframes";
 import { StitchGlobeIcon, StitchLanguageIcon } from "../components/icons/LanguageScreenIcons";
 import { KioskHeader } from "../components/kiosk/KioskHeader";
 import { KioskScreen } from "../components/kiosk/KioskScreen";
+import { MEDIA_ASSETS } from "../config/mediaAssets";
 import { ShimmerOverlay } from "../components/motion/ShimmerOverlay";
 import { ROUTES } from "../config/routes";
 import { useSessionStore } from "../features/session/useSessionStore";
+import { FONT_DIDOT } from "../theme/appTheme";
 import { mediaNoReducedMotion, mediaReducedMotion, motion } from "../theme/motion";
 
 export function LanguagePage() {
@@ -25,7 +27,7 @@ export function LanguagePage() {
   };
 
   return (
-    <KioskScreen header={<KioskHeader logoSize="standard" />}>
+    <KioskScreen header={<KioskHeader logoSize="standard" />} backdropSrc={MEDIA_ASSETS.stageLanguage}>
       <Stack
         spacing={2}
         sx={{
@@ -44,10 +46,11 @@ export function LanguagePage() {
           <Typography
             component="h1"
             sx={{
-              fontWeight: 700,
+              fontFamily: FONT_DIDOT,
+              fontWeight: 400,
               fontSize: "clamp(1.85rem, 3.5dvh, 2.75rem)",
               lineHeight: 1.08,
-              letterSpacing: "-0.03em",
+              letterSpacing: "0.01em",
             }}
           >
             {t("languageHeroPrimary")}
@@ -55,6 +58,8 @@ export function LanguagePage() {
           <Typography
             sx={{
               mt: 0.75,
+              fontFamily: FONT_DIDOT,
+              fontStyle: "italic",
               fontWeight: 400,
               fontSize: "clamp(1.1rem, 2.2dvh, 1.5rem)",
               lineHeight: 1.2,

@@ -72,6 +72,19 @@ async function jsonFetch(url, init) {
   return text ? JSON.parse(text) : null;
 }
 
+function waitForExit(child, timeoutMs = 12_000) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      reject(new Error("second instance did not exit (single-instance lock failed)"));
+    }, timeoutMs);
+    child.once("exit", (code) => {
+      clearTimeout(timer);
+      resolve(code ?? 0);
+    });
+  });
+}
+
 function stop(child) {
   return new Promise((resolve) => {
     child.once("exit", () => resolve());
@@ -96,6 +109,13 @@ try {
   first = spawnElectron();
   const origin = await waitForLoaded(first);
   console.log("[smoke] origin", origin);
+  if (!origin.startsWith("http://127.0.0.1:")) {
+    throw new Error(`expected loopback origin, got ${origin}`);
+  }
+
+  const duplicate = spawnElectron();
+  await waitForExit(duplicate);
+  console.log("[smoke] single-instance ok");
 
   const health = await jsonFetch(`${origin}/api/health`);
   if (health.ok !== true || health.database !== "ok") {

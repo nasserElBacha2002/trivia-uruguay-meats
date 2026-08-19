@@ -1,5 +1,8 @@
-# PT Sans (self-hosted)
+# Fonts (self-hosted)
 
+No Google Fonts / CDN at runtime.
+
+## PT Sans
 SIL Open Font License 1.1 — see `OFL.txt`.
 
 | File | Weight |
@@ -7,4 +10,9 @@ SIL Open Font License 1.1 — see `OFL.txt`.
 | `pt-sans-400.woff2` | 400 |
 | `pt-sans-700.woff2` | 700 |
 
-Latin subset from Fontsource (`pt-sans@5.2.8`). Loaded via `@font-face` in `src/app/styles.css`. No Google Fonts / CDN at runtime.
+Used for UI (botones, formulario, opciones).
+
+## GFS Didot (campaña)
+OFL 1.1 via `@fontsource/gfs-didot` (Regular). Italic de campaña se aplica con `font-style: italic` sobre Regular (el paquete de Google no incluye el archivo Italic).
+
+Usado en títulos y textos de display.

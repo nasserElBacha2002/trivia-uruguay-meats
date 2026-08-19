@@ -20,5 +20,12 @@ export function resolveDefaultDbPath(): string {
 }
 
 export function closeDatabase(db: SqliteDatabase): void {
+  if (!db.open) return;
+  try {
+    db.pragma("wal_checkpoint(TRUNCATE)");
+  } catch (err) {
+    console.error("[sqlite] wal_checkpoint failed:", err);
+  }
+  if (!db.open) return;
   db.close();
 }
