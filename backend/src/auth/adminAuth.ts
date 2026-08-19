@@ -35,10 +35,16 @@ function safeEqual(a: string, b: string): boolean {
   return crypto.timingSafeEqual(aBuf, bBuf);
 }
 
-export function createAdminAuth(): AdminSessionStore {
-  const username = process.env.ADMIN_USERNAME ?? "";
-  const password = process.env.ADMIN_PASSWORD ?? "";
-  const secureCookie = process.env.ADMIN_COOKIE_SECURE === "true";
+export type AdminAuthConfig = {
+  username: string;
+  password: string;
+  secureCookie: boolean;
+};
+
+export function createAdminAuth(config: AdminAuthConfig): AdminSessionStore {
+  const username = config.username;
+  const password = config.password;
+  const secureCookie = config.secureCookie;
   const isConfigured = username.length > 0 && password.length > 0;
   const sessions = new Set<string>();
 

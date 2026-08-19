@@ -7,3 +7,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface TriviaDesktopApi {
+  readonly isDesktop: true;
+  onOpenAdmin: (callback: () => void) => () => void;
+}
+
+interface Window {
+  triviaDesktop?: TriviaDesktopApi;
+}

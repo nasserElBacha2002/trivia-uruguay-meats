@@ -1,11 +1,11 @@
 import { Router } from "express";
 import XLSX from "xlsx";
-import { createAdminAuth } from "../auth/adminAuth.js";
+import { createAdminAuth, type AdminAuthConfig } from "../auth/adminAuth.js";
 import type { SqliteDatabase } from "../types/db.js";
 
-export function createAdminRouter(db: SqliteDatabase) {
+export function createAdminRouter(db: SqliteDatabase, admin: AdminAuthConfig) {
   const router = Router();
-  const adminAuth = createAdminAuth();
+  const adminAuth = createAdminAuth(admin);
 
   if (!adminAuth.isConfigured) {
     throw new Error("ADMIN_USERNAME and ADMIN_PASSWORD must be set for admin panel.");

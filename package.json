@@ -13,9 +13,16 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "typecheck": "tsc -b --noEmit",
+    "typecheck": "tsc -b --noEmit && tsc -p backend/tsconfig.json --noEmit && tsc -p electron/tsconfig.json --noEmit && tsc -p electron/tsconfig.preload.json --noEmit",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "desktop:rebuild-native": "electron-rebuild --module-dir backend --only better-sqlite3",
+    "desktop:compile": "npm run build --prefix backend && tsc -p electron/tsconfig.json && tsc -p electron/tsconfig.preload.json && npm run desktop:rebuild-native",
+    "desktop:dev": "npm run desktop:compile && node scripts/desktop-dev.mjs",
+    "desktop:build": "npm run build && npm run desktop:compile",
+    "desktop:start": "node scripts/desktop-start.mjs",
+    "desktop:smoke": "node scripts/desktop-smoke.mjs",
+    "desktop:staff-shortcut-smoke": "node scripts/desktop-staff-shortcut-smoke.mjs"
   },
   "keywords": [
     "kiosk",
@@ -25,6 +32,7 @@
   ],
   "author": "Uruguay Meats",
   "license": "UNLICENSED",
+  "main": "dist-electron/main.js",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -39,11 +47,14 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.2.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "concurrently": "^9.1.2",
+    "electron": "^43.4.0",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

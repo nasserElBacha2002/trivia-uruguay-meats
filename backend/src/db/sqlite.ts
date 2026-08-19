@@ -18,3 +18,7 @@ export function openDatabase(dbPath: string): SqliteDatabase {
 export function resolveDefaultDbPath(): string {
   return path.resolve(process.cwd(), "data", "trivia.db");
 }
+
+export function closeDatabase(db: SqliteDatabase): void {
+  db.close();
+}

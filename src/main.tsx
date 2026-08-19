@@ -3,10 +3,13 @@ import ReactDOM from "react-dom/client";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { appRouter } from "./app/router";
+import { subscribeDesktopAdminShortcut } from "./desktop/subscribeDesktopAdminShortcut";
 import { SessionProvider } from "./features/session/useSessionStore";
 import { appTheme } from "./theme/appTheme";
 import "./i18n";
 import "./app/styles.css";
+
+subscribeDesktopAdminShortcut();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

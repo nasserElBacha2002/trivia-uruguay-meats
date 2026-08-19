@@ -1,0 +1,45 @@
+---
+description: Desktop Electron must be zero-configuration; never require .env on the target PC
+alwaysApply: true
+---
+
+# Desktop zero-config (requisito de feria)
+
+La app Windows se entrega como `Setup.exe` / `Portable.exe`. El operador solo instala y abre. **Ningún `.env` debe existir, pedirse ni documentarse en la PC destino.**
+
+Flujo válido: descargar → doble clic → instalar (acceso directo en escritorio) → abrir → listo.
+
+Prohibido en desktop: Node, Docker, Nginx, CMD, configurar puertos, crear SQLite a mano, editar variables.
+
+## Variables: resolver en código, no en env de usuario
+
+| Variable web | Desktop |
+| --- | --- |
+| `NODE_ENV` | `production` en el build |
+| `PORT` / `FRONTEND_PORT` | puerto efímero en `127.0.0.1`; no fijo |
+| `FRONTEND_ORIGIN` | `http://127.0.0.1:<puerto>` |
+| `SQLITE_DB_PATH` | `path.join(app.getPath("userData"), "trivia.db")` → `%APPDATA%\TriviaUruguayMeats\trivia.db` |
+| `ADMIN_COOKIE_SECURE` | siempre `false` |
+
+Portable: DB junto al exe (`PORTABLE_EXECUTABLE_DIR`), no AppData. Nunca DB en `app.asar` ni Program Files.
+
+## Admin (único secreto)
+
+No empaquetar `ADMIN_PASSWORD` en `.env` / extraResources / texto plano extraíble.
+
+V1 aceptable: usuario `admin` + hash (scrypt/argon2) compilado; opcionalmente persistir fila en SQLite al primer arranque. Entregar la contraseña inicial por canal privado, no en la app.
+
+```ts
+// ❌ BAD — .env en el instalador o extraResources
+ADMIN_PASSWORD=uruguay...
+
+// ✅ GOOD — hash compilado; comparar en backend; nunca loguear el secreto
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD_HASH = process.env.DESKTOP_ADMIN_PASSWORD_HASH; // solo CI/build machine
+```
+
+`process.env` de Electron Main está bien. Un archivo `.env` en la PC del cliente no.
+
+## Arquitectura
+
+Electron + Express in-process. UI y `/api` en el mismo origin loopback. No `file://`. No pedir al usuario CORS, puerto ni path de DB. Web/Docker sigue usando `.env` en el servidor; desktop no comparte ese flujo.

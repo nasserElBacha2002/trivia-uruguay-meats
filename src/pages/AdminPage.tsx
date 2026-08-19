@@ -19,6 +19,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../config/routes";
 import { ApiError } from "../services/api";
 import {
   adminLogin,
@@ -67,6 +69,15 @@ const emptyMetrics: AdminDashboardMetrics = {
   averageScore: 0,
   buyersCount: 0,
 };
+
+function BackToTriviaButton() {
+  const navigate = useNavigate();
+  return (
+    <Button type="button" variant="outlined" onClick={() => navigate(ROUTES.attract)}>
+      Volver a trivia
+    </Button>
+  );
+}
 
 const dateFieldSx = {
   minWidth: 180,
@@ -310,6 +321,7 @@ export function AdminPage() {
             <Button type="submit" variant="contained" disabled={isSubmittingLogin}>
               {isSubmittingLogin ? "Ingresando..." : "Ingresar"}
             </Button>
+            <BackToTriviaButton />
           </Stack>
         </Paper>
       </Stack>
@@ -323,7 +335,8 @@ export function AdminPage() {
             <Typography variant="h4" sx={{ fontWeight: 800, color: "common.white" }}>
               Panel admin
             </Typography>
-            <Stack direction="row" spacing={1.25}>
+            <Stack direction="row" spacing={1.25} flexWrap="wrap" useFlexGap>
+              <BackToTriviaButton />
               <Button variant="contained" onClick={handleExport} disabled={isExporting}>
                 {isExporting ? "Exportando..." : "Exportar Excel"}
               </Button>

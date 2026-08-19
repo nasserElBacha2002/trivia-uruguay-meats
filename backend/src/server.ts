@@ -1,13 +1,8 @@
-import cors from "cors";
 import dotenv from "dotenv";
-import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { openDatabase, resolveDefaultDbPath } from "./db/sqlite.js";
-import { createAdminRouter } from "./routes/adminRoutes.js";
-import { healthRouter } from "./routes/healthRoutes.js";
-import { createParticipantRouter } from "./routes/participantRoutes.js";
-import { createSessionRouter } from "./routes/sessionRoutes.js";
+import { createApp } from "./createApp.js";
+import { resolveDefaultDbPath } from "./db/sqlite.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -21,35 +16,17 @@ const dbPath = process.env.SQLITE_DB_PATH
     : path.resolve(process.cwd(), process.env.SQLITE_DB_PATH)
   : resolveDefaultDbPath();
 
-const db = openDatabase(dbPath);
-const app = express();
-
-app.use(
-  cors({
-    origin: frontendOrigin,
-    credentials: true,
-  }),
-);
-app.use(express.json({ limit: "256kb" }));
-
-app.use("/api", healthRouter);
-app.use("/api", createParticipantRouter(db));
-app.use("/api", createSessionRouter(db));
-app.use("/api", createAdminRouter(db));
-
-app.use(
-  (
-    err: unknown,
-    _req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction,
-  ) => {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+const runtime = createApp({
+  databasePath: dbPath,
+  admin: {
+    username: process.env.ADMIN_USERNAME ?? "",
+    password: process.env.ADMIN_PASSWORD ?? "",
+    secureCookie: process.env.ADMIN_COOKIE_SECURE === "true",
   },
-);
+  corsOrigin: frontendOrigin,
+});
 
-const server = app.listen(PORT, () => {
+const server = runtime.app.listen(PORT, () => {
   console.log(`Trivia API listening on http://localhost:${PORT}`);
   console.log(`SQLite database: ${dbPath}`);
 });

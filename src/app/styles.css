@@ -1,4 +1,27 @@
-@import url("https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap");
+@font-face {
+  font-family: "PT Sans";
+  src: url("/fonts/pt-sans-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PT Sans";
+  src: url("/fonts/pt-sans-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* UI uses font-weight 800; PT Sans has no 800 face. Same as Google css2 400;700. */
+@font-face {
+  font-family: "PT Sans";
+  src: url("/fonts/pt-sans-700.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 html,
 body,

@@ -1,5 +1,16 @@
 # Deploy en VPS (OpenCloud) con Docker Compose
 
+Este documento cubre el modo **web** (Docker Compose).
+
+Hay dos modos de ejecución:
+
+| Modo | Cómo | `.env` |
+| --- | --- | --- |
+| Web / Docker | este documento (`docker compose up`) | sí, en el **servidor** |
+| Desktop Electron | scripts `desktop:dev` / `desktop:build` (Fase 1) | **no**. La PC destino es zero-config |
+
+La distribución Windows (`Setup.exe`) todavía no está lista. Desktop (Fase 2) corre Express + SQLite dentro de Electron, zero-config. Ver `docs/Desktop.md`.
+
 Este proyecto queda desplegado con dos contenedores:
 
 - `frontend`: React/Vite build servido por Nginx (puerto público 80).
